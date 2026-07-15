@@ -13,6 +13,12 @@ return new class extends Migration
     {
         Schema::create('anime_masters', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('anilist_id')->unique();
+            $table->string('title');
+            $table->string('cover_image')->nullable();
+            $table->text('description')->nullable();
+            $table->string('genre')->nullable();
+            $table->string('broadcast_year')->nullable();
             $table->timestamps();
         });
     }
