@@ -11,7 +11,7 @@ class AnimeMaster extends Model
     use HasFactory;
 
     protected $fillable = [
-        'anilist_id',
+        'mal_id',
         'title',
         'cover_image',
         'description',
