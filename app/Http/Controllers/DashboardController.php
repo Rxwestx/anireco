@@ -23,7 +23,7 @@ class DashboardController extends Controller
                 'created_at' => $userAnime->created_at?->format('Y-m-d'),
                 'anime_master' =>[
                     'id' => $userAnime->anime_master_id,
-                    'anilist_id' => $userAnime->animeMaster->anilist_id,
+                    'mal_id' => $userAnime->animeMaster->mal_id,
                     'title' => $userAnime->animeMaster->title,
                     'cover_image' => $userAnime->animeMaster->cover_image,
                     'description' => $userAnime->animeMaster->description,
