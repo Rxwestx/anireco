@@ -3,7 +3,7 @@ import { dashboard } from '@/routes';
 
 type AnimeMaster ={
     id: number;
-    ani_list_id: number;
+    mal_id: number;
     title: string;
     cover_image: string | null;
     description: string | null;
@@ -14,7 +14,7 @@ type AnimeMaster ={
 type UserAnime = {
     id : number;
     status: string;
-    status_label: string;
+    statuslabel: string;
     created_at: string | null;
     anime_master: AnimeMaster;
 };
@@ -71,7 +71,7 @@ export default function Dashboard({
                                         {userAnime.anime_master.title}
                                     </h3>
                                     <p className="m-1 text-sm text-muted-foreground">
-                                        {userAnime.status_label}</p>
+                                        {userAnime.statuslabel}</p>
                                     </div>
                                 </article>
                             ))}
