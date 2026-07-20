@@ -75,7 +75,25 @@ export function AppSidebar() {
 
             <SidebarFooter>
                 {/* <NavFooter items={footerNavItems} className="mt-auto" /> */}
-                <NavUser />
+                {auth.user ? (
+                <NavUser user={auth.user} />
+                ) : (
+                <div className="flex flex-col gap-2 p-2">
+                    <Link
+                        href="/register"
+                        className="w-full items-center justify-center rounded-full bg-primary px-4 py-2.5 text-center text-sm font-medium text-primary-foreground shadow-sm hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none"
+                    >
+                        新規登録
+                    </Link>
+                    <Link
+                        href="/login"
+                        className="w-full items-center justify-center rounded-full bg-secondary px-4 py-2.5 text-center text-sm font-medium text-secondary-foreground shadow-sm hover:bg-secondary/80 focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none"
+                    >
+                        ログイン
+                    </Link>
+                </div>
+                )}
+
             </SidebarFooter>
         </Sidebar>
     );
