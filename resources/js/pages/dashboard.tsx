@@ -102,11 +102,11 @@ export default function Dashboard({
     );
 }
 
-Dashboard.layout = {
-    breadcrumbs: [
-        {
-            title: 'Home',
-            href: dashboard(),
-        },
-    ],
-};
+// Dashboard.layout = {
+//     breadcrumbs: [
+//         {
+//             title: 'マイページ',
+//             href: dashboard(),
+//         },
+//     ],
+// };
