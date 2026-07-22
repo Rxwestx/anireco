@@ -8,6 +8,9 @@ class UserAnimeController extends Controller
 {
     public function store(Request $request)
     {
-        dd($request->all());
+        $validated = $request->validate([
+            'anime_id' => ['required', 'integer'],
+        ]);
+        dd($validated);
     }
 }
