@@ -6,44 +6,37 @@ import { useState } from 'react';
 
 import { Input } from '@/components/ui/input';
 
-type SearchProps = {
-    keyword: string;
-};
+
 
 type Anime = {
-    id: number;
-    title: string;
-    image: string | null;
-    year: string;
-    genre:string;
+        node:{
+        id: number;
+        title: string;
+        main_picture: {
+            medium: string;
+            large: string;
+        } | null;
+        start_date: string | null;
+        genres: {
+            id: number;
+            name: string;
+        }[];
+    };
+};
+
+type SearchProps = {
+    keyword: string;
+    animes: Anime[];
 };
 
 // Laravel側から受け取った keywordを初期値として設定するために、propsでinitialKeywordとして受け取る。
-export default function Search({keyword: initialKeyword}: SearchProps) {
+export default function Search({
+    keyword: initialKeyword,
+    animes,
+}: SearchProps)
+
     const [keyword, setKeyword] = useState(initialKeyword);
     // 検索結果のアニメリストを格納する配列
-    const animes: Anime[] =
-        keyword === 'フリーレン'
-        ? [
-            {
-                id: 1,
-                title: '葬送のフリーレン',
-                image: null,
-                year: '2023',
-                genre: 'ファンタジー',
-            },
-        ]
-        : keyword === '薬屋'
-        ? [
-            {
-                id: 2,
-                title: '薬屋のひとりごと',
-                image: null,
-                year: '2023',
-                genre: 'ミステリー',
-            },
-        ]
-        : [];
 
     const handleSearch: SubmitEventHandler<HTMLFormElement> = (e) => {
         e.preventDefault();
@@ -87,16 +80,24 @@ export default function Search({keyword: initialKeyword}: SearchProps) {
                                     >
                                     <div className="flex gap-4">
                                             <div className="flex h-28 w-20 items-center justify-center rounded-lg bg-muted">
-                                            No Image
+                                                {anime.node.main_picture ? (
+                                                    <img
+                                                        src={anime.node.main_picture.medium}
+                                                        alt={anime.node.title}
+                                                        className="h-full w-full object-cover"
+                                                    />
+                                                ) : (
+                                                    'No Image'
+                                                )}
                                         </div>
                                         <div className="flex-1">
-                                            <h3 className="text-lg font-semibold">{anime.title}
+                                            <h3 className="text-lg font-semibold">{anime.node.title}
                                             </h3>
                                             <p className="text-sm text-muted-foreground">
-                                                放送年：{anime.year}
+                                                放送年：{anime.node.start_date}
                                             </p>
                                             <p className="text-sm text-muted-foreground">
-                                                ジャンル：{anime.genre}
+                                                ジャンル：{anime.node.genre}
                                             </p>
                                             <button className="mt-4 rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">
                                                 登録
