@@ -1,4 +1,6 @@
 <?php
+
+use App\Http\Controllers\AnimeSearchController;
 use App\Http\Controllers\DashboardController;
 // use App\Http\Controllers\Admin\AdminDashboardController;
 use Illuminate\Support\Facades\Route;
@@ -6,9 +8,8 @@ use Illuminate\Support\Facades\Route;
 Route::inertia('/', 'welcome')->name('home');
 
 // 検索用route
-Route::get('/search',function () {
-    return inertia('search');
-})->name('search');
+Route::get('/search', [AnimeSearchController::class, 'index'])
+->name('anime.search');
 
 // ログイン・メール認証済みユーザー用Route
 Route::middleware(['auth', 'verified'])->group(function () {
