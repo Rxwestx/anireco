@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    'myanimelist' => [
+        'client_id' => env('MYANIMELIST_CLIENT_ID'),
+        'client_secret' => env('MYANIMELIST_CLIENT_SECRET'),
+    ],
+
 ];
