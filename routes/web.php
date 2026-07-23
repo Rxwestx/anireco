@@ -1,4 +1,6 @@
 <?php
+
+use App\Http\Controllers\AnimeController;
 use App\Http\Controllers\AnimeSearchController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\UserAnimeController;
@@ -11,13 +13,17 @@ Route::inertia('/', 'welcome')->name('home');
 Route::get('/search', [AnimeSearchController::class, 'index'])
 ->name('anime.search');
 
+// アニメ詳細画面route
+Route::get('/animes/{malId}', [AnimeController::class, 'show'])
+->name('anime.show');
+
 // ログイン・メール認証済みユーザー用Route
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])
     ->name('dashboard');
+     // ユーザーアニメ登録用route
     Route::post('/user-animes', [UserAnimeController::class, 'store'])
     ->name('user-animes.store');
-
     // 感情タグ画面Route
     Route::get('/emotion-tags', function () {
         return inertia('emotion-tags');
