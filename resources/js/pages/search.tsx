@@ -1,8 +1,7 @@
-import { Head, router } from '@inertiajs/react';
+import { Head, Link,router } from '@inertiajs/react';
 
 import type { SubmitEventHandler } from 'react';
 import { useState } from 'react';
-
 
 import { Input } from '@/components/ui/input';
 
@@ -33,7 +32,7 @@ type SearchProps = {
 export default function Search({
     keyword: initialKeyword,
     animes,
-}: SearchProps)
+}: SearchProps) {
 
     const [keyword, setKeyword] = useState(initialKeyword);
     // 検索結果のアニメリストを格納する配列
@@ -66,45 +65,62 @@ export default function Search({
                     </button>
                 </section>
             </form>
-            {keyword !== '' && (
+            {initialKeyword !== '' && (
                 <section className="mt-8">
+                    <div className="mb-4 flex items-center justify-between">
                         <h2 className="mb-4 text-xl font-semibold">
-                            検索結果
+                            検索結果：{animes.length}件
                         </h2>
+                    </div>
                         {animes.length > 0 ? (
-                            <div className="grid gap-4 md:grid-cols-2">
+                            <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
                                 {animes.map(anime => (
-                                <article
-                                    key={anime.id}
-                                    className="rounded-xl border p-4"
-                                    >
-                                    <div className="flex gap-4">
-                                            <div className="flex h-28 w-20 items-center justify-center rounded-lg bg-muted">
+                                <Link
+                                    key={anime.node.id}
+                                    href={`/animes/${anime.node.id}`}
+                                    className="group block overflow-hidden rounded-xl border bg-background transition hover:-translate-y-1 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-ring"
+                                >
+                                    <article>
+                                        <div className="aspect-[16/9] w-full overflow-hidden bg-muted">
                                                 {anime.node.main_picture ? (
                                                     <img
-                                                        src={anime.node.main_picture.medium}
-                                                        alt={anime.node.title}
-                                                        className="h-full w-full object-cover"
+                                                        src={
+                                                            anime.node.main_picture.large ??
+                                                            anime.node.main_picture.medium
+                                                        }
+                                                        alt={anime.node.title
+                                                        }
+                                                        className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
                                                     />
                                                 ) : (
+                                                    <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
                                                     'No Image'
+                                                    </div>
                                                 )}
                                         </div>
-                                        <div className="flex-1">
+                                        <div className="space-y-2 p-4">
                                             <h3 className="text-lg font-semibold">{anime.node.title}
                                             </h3>
                                             <p className="text-sm text-muted-foreground">
-                                                放送年：{anime.node.start_date}
+                                                放送年：{anime.node.start_date ?? '未定'}
                                             </p>
-                                            <p className="text-sm text-muted-foreground">
-                                                ジャンル：{anime.node.genre}
-                                            </p>
-                                            <button className="mt-4 rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">
-                                                登録
-                                            </button>
+                                            <div className="flex flex-wrap gap-2">
+                                                {anime.node.genres.length > 0 ? (
+                                                    anime.node.genres.map((genre) => (
+                                                        <span
+                                                            key={genre.id}
+                                                            className="rounded-full bg-muted px-2 py-1 text-xs text-muted-foreground"
+                                                        >
+                                                            {genre.name}
+                                                        </span>
+                                                    ))
+                                                ) : (
+                                                    <span className="text-xs text-muted-foreground">ジャンル情報なし</span>
+                                                )}
+                                            </div>
                                         </div>
-                                    </div>
-                                </article>
+                                    </article>
+                                </Link>
                                 ))}
                             </div>
                         ) : (
