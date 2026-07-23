@@ -2,8 +2,8 @@ import { Head, Link,router } from '@inertiajs/react';
 
 import type { SubmitEventHandler } from 'react';
 import { useState } from 'react';
-
 import { Input } from '@/components/ui/input';
+import RegisterAnimeDialog from '@/components/ui/RegisterAnimeDialog';
 
 
 
@@ -33,6 +33,7 @@ export default function Search({
 }: SearchProps) {
 
     const [keyword, setKeyword] = useState(initialKeyword);
+
     // 検索結果のアニメリストを格納する配列
 
     const handleSearch: SubmitEventHandler<HTMLFormElement> = (e) => {
@@ -73,54 +74,57 @@ export default function Search({
                         {animes.length > 0 ? (
                             <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
                                 {animes.map(anime => (
-                                <Link
+                                <article
                                     key={anime.id}
-                                    href={`/animes/${anime.id}`}
-                                    className="grop block overflow-hidden rounded-xl border bg-background transition hover:-translate-y-1 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-ring"
-                                >
-                                    <article>
-                                        <div className="aspect-[16/9] w-full overflow-hidden bg-muted">
-                                                {anime.main_picture ? (
-                                                    <img
-                                                        src={
-                                                            anime.main_picture.large ??
-                                                            anime.main_picture.medium
-                                                        }
-                                                        alt={anime.title
-                                                        }
-                                                        className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
-                                                    />
-                                                ) : (
-                                                    <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
-                                                    'No Image'
-                                                    </div>
-                                                )}
-                                        </div>
-                                        <div className="space-y-2 p-4">
-                                            <h3 className="text-lg font-semibold">{anime.title}
-                                            </h3>
-                                            <p className="text-sm text-muted-foreground">
-                                                放送年：{anime.start_date ?? '未定'}
-                                            </p>
-                                            <div className="flex flex-wrap gap-2">
-                                                {anime.genres.length > 0 ? (
-                                                    anime.genres.map((genre) => (
-                                                        <span
-                                                            key={genre.id}
-                                                            className="rounded-full bg-muted px-2 py-1 text-xs text-muted-foreground"
-                                                        >
-                                                            {genre.name}
-                                                        </span>
-                                                    ))
-                                                ) : (
-                                                    <span className="text-xs text-muted-foreground">ジャンル情報なし</span>
-                                                )}
+                                    className="group block overflow-hidden rounded-xl border bg-background transition hover:-translate-y-1 hover:shadow-lg">
+                                        <Link
+                                            href={`/animes/${anime.id}`}
+                                            className="block focus:outline-none focus:ring-2 focus:ring-ring"
+                                        >
+                                            <div className="aspect-[16/9] w-full overflow-hidden bg-muted">
+                                                    {anime.main_picture ? (
+                                                        <img
+                                                            src={
+                                                                anime.main_picture.large ??
+                                                                anime.main_picture.medium
+                                                            }
+                                                            alt={anime.title
+                                                            }
+                                                            className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                                                        />
+                                                    ) : (
+                                                        <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
+                                                        'No Image'
+                                                        </div>
+                                                    )}
                                             </div>
-                                        </div>
-                                    </article>
-                                </Link>
+                                            <div className="space-y-2 p-4">
+                                                <h3 className="text-lg font-semibold">
+                                                    {anime.title}
+                                                </h3>
+                                                <p className="text-sm text-muted-foreground">
+                                                    放送年：{anime.start_date ?? '未定'}
+                                                </p>
+                                                <div className="flex flex-wrap gap-2">
+                                                    {anime.genres.length > 0 ? (
+                                                        anime.genres.map((genre) => (
+                                                            <span
+                                                                key={genre.id}
+                                                                className="rounded-full bg-muted px-2 py-1 text-xs text-muted-foreground"
+                                                            >
+                                                                {genre.name}
+                                                            </span>
+                                                        ))
+                                                    ) : (
+                                                        <span className="text-xs text-muted-foreground">ジャンル情報なし</span>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </Link>
+                                    <RegisterAnimeDialog anime={anime} />
+                                </article>
                                 ))}
-                            </div>
+                        </div>
                         ) : (
                             <p className="text-muted-foreground">
                             検索結果はありません。
@@ -140,3 +144,4 @@ export default function Search({
 //         },
 //     ],
 // // };
+
