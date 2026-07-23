@@ -1,7 +1,7 @@
 <?php
-
 use App\Http\Controllers\AnimeSearchController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\UserAnimeController;
 // use App\Http\Controllers\Admin\AdminDashboardController;
 use Illuminate\Support\Facades\Route;
 
@@ -15,6 +15,8 @@ Route::get('/search', [AnimeSearchController::class, 'index'])
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])
     ->name('dashboard');
+    Route::post('/user-animes', [UserAnimeController::class, 'store'])
+    ->name('user-animes.store');
 
     // 感情タグ画面Route
     Route::get('/emotion-tags', function () {
