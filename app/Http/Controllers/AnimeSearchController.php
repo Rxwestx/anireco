@@ -14,6 +14,10 @@ class AnimeSearchController extends Controller
         MyAnimeListService $myAnimeListService
     ): Response
     {
+        $request->validate([
+            'keyword' => ['nullable', 'string', 'min:2'],
+        ]);
+        
         $keyword = $request->string('keyword')->toString();
         $animes = $keyword !==''
         ? $myAnimeListService->searchAnime($keyword)
