@@ -1,3 +1,4 @@
+import { router }  from '@inertiajs/react';
 import { useState } from "react";
 import { Check, Circle, Pause, Play, Square } from "lucide-react";
 
@@ -30,6 +31,13 @@ export default function RegisterAnimeDialog({
 }: RegisterAnimeDialogProps) {
     const [open, setOpen] = useState(false);
     const [selectedStatus, setSelectedStatus] = useState("want_to_watch");
+    const handleRegister = () => {
+        router.post('/user-animes', {
+            anime_id: anime.id,
+            status: selectedStatus,
+        });
+    };
+
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <button
@@ -90,7 +98,7 @@ export default function RegisterAnimeDialog({
                     <button type="button" onClick={() => setOpen(false)}>
                         閉じる
                     </button>
-                    <button type="button">
+                    <button type="button" onClick={handleRegister}>
                         登録
                     </button>
                 </DialogFooter>
