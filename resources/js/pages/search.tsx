@@ -1,4 +1,4 @@
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link,router } from '@inertiajs/react';
 
 import type { SubmitEventHandler } from 'react';
 import { useState } from 'react';
@@ -8,7 +8,6 @@ import { Input } from '@/components/ui/input';
 
 
 type Anime = {
-        node:{
         id: number;
         title: string;
         main_picture: {
@@ -20,7 +19,6 @@ type Anime = {
             id: number;
             name: string;
         }[];
-    };
 };
 
 type SearchProps = {
@@ -76,19 +74,19 @@ export default function Search({
                             <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
                                 {animes.map(anime => (
                                 <Link
-                                    key={anime.node.id}
-                                    href={`/animes/${anime.node.id}`}
-                                    className="group block overflow-hidden rounded-xl border bg-background transition hover:-translate-y-1 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-ring"
+                                    key={anime.id}
+                                    href={`/animes/${anime.id}`}
+                                    className="grop block overflow-hidden rounded-xl border bg-background transition hover:-translate-y-1 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-ring"
                                 >
                                     <article>
                                         <div className="aspect-[16/9] w-full overflow-hidden bg-muted">
-                                                {anime.node.main_picture ? (
+                                                {anime.main_picture ? (
                                                     <img
                                                         src={
-                                                            anime.node.main_picture.large ??
-                                                            anime.node.main_picture.medium
+                                                            anime.main_picture.large ??
+                                                            anime.main_picture.medium
                                                         }
-                                                        alt={anime.node.title
+                                                        alt={anime.title
                                                         }
                                                         className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
                                                     />
@@ -99,14 +97,14 @@ export default function Search({
                                                 )}
                                         </div>
                                         <div className="space-y-2 p-4">
-                                            <h3 className="text-lg font-semibold">{anime.node.title}
+                                            <h3 className="text-lg font-semibold">{anime.title}
                                             </h3>
                                             <p className="text-sm text-muted-foreground">
-                                                放送年：{anime.node.start_date ?? '未定'}
+                                                放送年：{anime.start_date ?? '未定'}
                                             </p>
                                             <div className="flex flex-wrap gap-2">
-                                                {anime.node.genres.length > 0 ? (
-                                                    anime.node.genres.map((genre) => (
+                                                {anime.genres.length > 0 ? (
+                                                    anime.genres.map((genre) => (
                                                         <span
                                                             key={genre.id}
                                                             className="rounded-full bg-muted px-2 py-1 text-xs text-muted-foreground"
