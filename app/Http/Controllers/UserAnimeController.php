@@ -11,6 +11,10 @@ class UserAnimeController extends Controller
         $validated = $request->validate([
             'anime_id' => ['required', 'integer'],
         ]);
-        dd($validated);
+
+        $anime = app(\App\Services\MyAnimeListService::class)
+        ->getAnimeByMalId($validated['anime_id']);
+
+        dd($anime);
     }
 }
