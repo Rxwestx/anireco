@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Services\MyAnimeListService;
 use App\Models\AnimeMaster;
+use App\Models\UserAnime;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -24,16 +25,17 @@ class AnimeSearchController extends Controller
         ? $myAnimeListService->searchAnime($keyword)
         : [];
 
-        $registeredStatus = collect();
+        $registeredStatuses = collect();
+
         if ($request->user() && $animes !== []) {
             $malIds = collect($animes)->pluck('id');
 
-            $registeredStatus = AnimeMaster::query()
+            $registeredStatuses = UserAnime::query()
                 ->join(
                     'anime_masters',
                     'user_animes.anime_master_id',
                     '=',
-                    'anime_masters.id'
+                    'anime_masters.id',
                 )
                 ->where('user_animes.user_id', $request->user()->id)
                 ->whereIn('anime_masters.mal_id', $malIds)
@@ -41,10 +43,10 @@ class AnimeSearchController extends Controller
         }
 
         $animes = collect($animes)
-            ->map(function (array $anime) use ($registeredStatus) {
+            ->map(function (array $anime) use ($registeredStatuses) {
                 return [
                     ...$anime,
-                    'registered_status' => $registeredStatus->get($anime['id']),
+                    'registered_status' => $registeredStatuses->get($anime['id']),
                 ];
             })
             ->values()
@@ -54,7 +56,7 @@ class AnimeSearchController extends Controller
         return Inertia::render('search', [
             'keyword' => $keyword,
             'animes' => $animes,
-            'registeredStatus' => $registeredStatus,
+            'registeredStatus' => $registeredStatuses,
         ]);
     }
 }
