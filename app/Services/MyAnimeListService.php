@@ -66,6 +66,7 @@ class MyAnimeListService
                 'synopsis',
                 'genres',
                 'source',
+                'num_episodes',
                 ]),
         ]);
 
@@ -75,7 +76,8 @@ class MyAnimeListService
 
         return [
             'id' => $anime['id'],
-            'title' => $anime['alternative_titles'] ['ja'] ?: $anime['title'],
+            'title' => $anime['alternative_titles'] ['ja'] ??
+            $anime['title'],
             'main_picture' => $anime['main_picture'] ?? null,
             'start_date' => $anime['start_date'] ?? null,
             'genres' => $anime['genres'] ?? [],
@@ -85,6 +87,10 @@ class MyAnimeListService
                 $anime['synopsis'] ?? '',
             ),
             'source' => $anime['source'] ?? null,
+            'num_episodes' => $anime['num_episodes'] ?? null,
+            'broadcast_year' => $anime['start_date']
+                ? (int)substr($anime['start_date'], 0, 4)
+                : null,
         ];
     }
 }
