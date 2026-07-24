@@ -1,5 +1,5 @@
-import { Head, Link,router } from '@inertiajs/react';
-
+import { Head, Link,router,usePage } from '@inertiajs/react';
+import type { ShareData } from '@/types';
 import type { SubmitEventHandler } from 'react';
 import { useState } from 'react';
 import { Input } from '@/components/ui/input';
@@ -19,21 +19,35 @@ type Anime = {
             id: number;
             name: string;
         }[];
+        registered_status:
+            | 'want_to_watch'
+            | 'watching'
+            | 'completed'
+            | 'dropped'
+            | null;
 };
 
 type SearchProps = {
     keyword: string;
     animes: Anime[];
-};
+}
 
+const statusLabels = {
+want_to_watch: '見たい',
+watching: '視聴中',
+completed: '視聴済み',
+dropped: '断念',
+} as const;
 // Laravel側から受け取った keywordを初期値として設定するために、propsでinitialKeywordとして受け取る。
 export default function Search({
     keyword: initialKeyword,
     animes,
 }: SearchProps) {
 
+
     const [keyword, setKeyword] = useState(initialKeyword);
 
+    const { auth } = usePage< ShareData>().props;
     // 検索結果のアニメリストを格納する配列
 
     const handleSearch: SubmitEventHandler<HTMLFormElement> = (e) => {
@@ -121,7 +135,23 @@ export default function Search({
                                                 </div>
                                             </div>
                                         </Link>
-                                    <RegisterAnimeDialog anime={anime} />
+                                        <div className="p-4 pt-0">
+                                            {!auth.user ? (
+                                                <Link
+                                                    href="/login"
+                                                    className="block w-full rounded-md px-4 py-2 text-sm font-medium hover:bg-muted">
+                                                        +登録する
+                                                </Link>
+                                            ) : anime.registered_status ? (
+                                                <button
+                                                    type="button"
+                                                    className="block w-full rounded-md bg-muted px-4 py-2 text-sm font-medium hover:bg-muted">
+                                                       {statusLabels[anime.registered_status]}
+                                                </button>
+                                            ) : (
+                                                <RegisterAnimeDialog anime={anime} />
+                                            )}
+                                        </div>
                                 </article>
                                 ))}
                         </div>
