@@ -9,21 +9,26 @@ use Illuminate\Support\Facades\Route;
 
 Route::inertia('/', 'welcome')->name('home');
 
-// 検索用route
+// 公開：検索用route
 Route::get('/search', [AnimeSearchController::class, 'index'])
 ->name('anime.search');
 
-// アニメ詳細画面route
+// 公開：アニメ詳細画面route
 Route::get('/animes/{malId}', [AnimeController::class, 'show'])
 ->name('anime.show');
 
 // ログイン・メール認証済みユーザー用Route
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])
-    ->name('dashboard');
-     // ユーザーアニメ登録用route
+        ->name('dashboard');
+
+        // ユーザーアニメ登録用route
     Route::post('/user-animes', [UserAnimeController::class, 'store'])
     ->name('user-animes.store');
+
+    Route::patch('/user-animes/{userAnime}', [UserAnimeController::class, 'update'])
+        ->name('user-animes.update');
+
     // 感情タグ画面Route
     Route::get('/emotion-tags', function () {
         return inertia('emotion-tags');
