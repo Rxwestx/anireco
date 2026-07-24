@@ -16,6 +16,8 @@ class AnimeMaster extends Model
         'cover_image',
         'description',
         'genre',
+        'source',
+        'num_episodes',
         'broadcast_year',
     ];
 
