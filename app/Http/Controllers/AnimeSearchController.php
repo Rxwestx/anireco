@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Services\MyAnimeListService;
+use App\Models\AnimeMaster;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -17,15 +18,43 @@ class AnimeSearchController extends Controller
         $request->validate([
             'keyword' => ['nullable', 'string', 'min:2'],
         ]);
-        
+
         $keyword = $request->string('keyword')->toString();
         $animes = $keyword !==''
         ? $myAnimeListService->searchAnime($keyword)
         : [];
 
+        $registeredStatus = collect();
+        if ($request->user() && $animes !== []) {
+            $malIds = collect($animes)->pluck('id');
+
+            $registeredStatus = AnimeMaster::query()
+                ->join(
+                    'anime_masters',
+                    'user_animes.anime_master_id',
+                    '=',
+                    'anime_masters.id'
+                )
+                ->where('user_animes.user_id', $request->user()->id)
+                ->whereIn('anime_masters.mal_id', $malIds)
+                ->pluck('user_animes.status' ,'anime_masters.mal_id');
+        }
+
+        $animes = collect($animes)
+            ->map(function (array $anime) use ($registeredStatus) {
+                return [
+                    ...$anime,
+                    'registered_status' => $registeredStatus->get($anime['id']),
+                ];
+            })
+            ->values()
+            ->all();
+
+
         return Inertia::render('search', [
             'keyword' => $keyword,
             'animes' => $animes,
+            'registeredStatus' => $registeredStatus,
         ]);
     }
 }
