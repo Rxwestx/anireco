@@ -25,12 +25,12 @@ class AnimeSearchController extends Controller
         ? $myAnimeListService->searchAnime($keyword)
         : [];
 
-        $registeredStatuses = collect();
+        $registeredUserAnimes = collect();
 
         if ($request->user() && $animes !== []) {
             $malIds = collect($animes)->pluck('id');
 
-            $registeredStatuses = UserAnime::query()
+            $registeredUserAnimes = UserAnime::query()
                 ->join(
                     'anime_masters',
                     'user_animes.anime_master_id',
@@ -39,14 +39,22 @@ class AnimeSearchController extends Controller
                 )
                 ->where('user_animes.user_id', $request->user()->id)
                 ->whereIn('anime_masters.mal_id', $malIds)
-                ->pluck('user_animes.status' ,'anime_masters.mal_id');
+                ->get([
+                'user_animes.id',
+                'user_animes.status',
+                'anime_masters.mal_id'
+                ])
+                ->keyBy('mal_id');
         }
 
         $animes = collect($animes)
-            ->map(function (array $anime) use ($registeredStatuses) {
+            ->map(function (array $anime) use ($registeredUserAnimes) {
+                $registeredUserAnime = $registeredUserAnimes->get($anime['id']);
+
                 return [
                     ...$anime,
-                    'registered_status' => $registeredStatuses->get($anime['id']),
+                    'user_anime_id' => $registeredUserAnime?->id,
+                    'registered_status' => $registeredUserAnime?->status->value,
                 ];
             })
             ->values()
@@ -56,7 +64,7 @@ class AnimeSearchController extends Controller
         return Inertia::render('search', [
             'keyword' => $keyword,
             'animes' => $animes,
-            'registeredStatus' => $registeredStatuses,
+            'registeredStatus' => $registeredUserAnimes,
         ]);
     }
 }
