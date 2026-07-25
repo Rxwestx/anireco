@@ -57,4 +57,23 @@ class UserAnimeController extends Controller
         }
         return back()->with('success', 'アニメ作品を登録しました！');
     }
+
+    public function update(
+        Request $request,
+        UserAnime $userAnime,
+    ):RedirectResponse {
+        abort_unless(
+            $userAnime->user_id === $request->user()->id,
+            403
+        );
+        $validated = $request->validate([
+            'status' => ['required', Rule::enum(WatchingStatus::class)],
+        ]);
+
+        $userAnime->update([
+            'status' => $validated['status'],
+        ]);
+
+        return back()->with('success', 'アニメ作品のステータスを更新しました！');
+    }
 }
