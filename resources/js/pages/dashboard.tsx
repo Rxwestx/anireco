@@ -1,5 +1,4 @@
-import { Head } from '@inertiajs/react';
-import { dashboard } from '@/routes';
+import { Head, Link } from '@inertiajs/react';
 
 type AnimeMaster ={
     id: number;
@@ -14,7 +13,7 @@ type AnimeMaster ={
 type UserAnime = {
     id : number;
     status: string;
-    statuslabel: string;
+    statusLabel: string;
     created_at: string | null;
     anime_master: AnimeMaster;
 };
@@ -54,25 +53,31 @@ export default function Dashboard({
                                 <article
                                  key={userAnime.id}
                                 className="rounded-xl border p-4">
-                                    {userAnime.anime_master.cover_image ? (
-                                        <img
-                                            src={userAnime.anime_master.cover_image}
-                                            alt={userAnime.anime_master.title}
-                                            className="aspect-[3/4] w-full rounded-lg object-cover"
-                                        />
+                                    <Link
+                                        href={`/animes/${userAnime.anime_master.mal_id}`}
+                                        className="block p-4 transition hover:bg-muted/50">
+                                        {userAnime.anime_master.cover_image ? (
+                                            <img
+                                                src={userAnime.anime_master.cover_image}
+                                                alt={userAnime.anime_master.title}
+                                                className="aspect-[3/4] w-full rounded-lg object-cover"
+                                            />
 
-                                    ) : (
-                                        <div className="flex aspect-[3/4] items-center justify-center rounded-lg bg-muted-foreground">
-                                            <span className="text-sm text-muted-foreground">No Image</span>
+                                        ) : (
+                                            <div className="flex aspect-[3/4] items-center justify-center rounded-lg bg-muted-foreground">
+                                                <span className="text-sm text-muted-foreground">
+                                                    No Image
+                                                </span>
+                                            </div>
+                                        )}
+                                        <div className="mt-4">
+                                            <h3 className="text-lg font-semibold">
+                                                {userAnime.anime_master.title}
+                                            </h3>
+                                            <p className="m-1 text-sm text-muted-foreground">
+                                                {userAnime.statusLabel}</p>
                                         </div>
-                                    )}
-                                    <div className="mt-4">
-                                    <h3 className="text-lg font-semibold">
-                                        {userAnime.anime_master.title}
-                                    </h3>
-                                    <p className="m-1 text-sm text-muted-foreground">
-                                        {userAnime.statuslabel}</p>
-                                    </div>
+                                    </Link>
                                 </article>
                             ))}
                         </div>
