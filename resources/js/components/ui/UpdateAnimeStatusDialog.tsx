@@ -1,6 +1,7 @@
 import { router } from '@inertiajs/react';
 import { useState } from 'react';
 
+import { Check, Circle, Play, Square } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 import {
@@ -94,23 +95,31 @@ export default function UpdateAnimeStatusDialog({
 
                     <SelectContent>
                         <SelectItem value="want_to_watch">
-                            見たい
+                            <span className="flex items-center gap-2">
+                                <Circle className="size-4 fill-current" />
+                                見たい
+                            </span>
                         </SelectItem>
-
                         <SelectItem value="watching">
-                            視聴中
+                            <span className="flex items-center gap-2">
+                                <Play className="size-4 fill-current" />
+                                視聴中
+                            </span>
                         </SelectItem>
-
                         <SelectItem value="completed">
-                            視聴済み
+                            <span className="flex items-center gap-2">
+                                <Check className="size-4 fill-current" />
+                                視聴済み
+                            </span>
                         </SelectItem>
-
                         <SelectItem value="dropped">
-                            断念
+                            <span className="flex items-center gap-2">
+                                <Square className="size-4 fill-current" />
+                                断念
+                            </span>
                         </SelectItem>
-                    </SelectContent>
+                        </SelectContent>
                 </Select>
-
                 <DialogFooter>
                     <Button type="button" onClick={handleUpdate}>
                         変更する
