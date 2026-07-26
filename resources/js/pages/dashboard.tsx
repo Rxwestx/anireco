@@ -1,4 +1,5 @@
 import { Head, Link, router } from '@inertiajs/react';
+import UpdateAnimeStatusDialog from '@/components/ui/UpdateAnimeStatusDialog';
 
 type AnimeMaster ={
     id: number;
@@ -39,7 +40,7 @@ export default function Dashboard({
             }
         );
     };
-    
+
     return (
         <>
             <Head title="マイページ" />
@@ -147,7 +148,14 @@ export default function Dashboard({
                                             <p className="m-1 text-sm text-muted-foreground">
                                                 {userAnime.statusLabel}</p>
                                         </div>
+
                                     </Link>
+                                    <div className="px-4 pb-4" >
+                                        <UpdateAnimeStatusDialog
+                                            userAnimeId={userAnime.id}
+                                            currentStatus={userAnime.status}
+                                        />
+                                    </div>
                                 </article>
                             ))}
                         </div>
