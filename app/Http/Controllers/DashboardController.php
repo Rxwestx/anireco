@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\WatchingStatus;
+use Illuminate\Validation\Rule;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -10,9 +12,21 @@ class DashboardController extends Controller
 {
     public function index(Request $request): Response
     {
+        $validated = $request->validate([
+            'status' => [
+                'nullable',
+                 Rule::enum(WatchingStatus::class)],
+        ]);
+
+        $status = $validated['status'] ?? null;
+
         $userAnimes = $request->user()
         ->userAnimes()
         ->with('animeMaster')
+        ->when(
+            $status,
+            fn ($query, $status) => $query->where('status', $status),
+        )
         ->latest()
         ->get()
         ->map(function ($userAnime) {
@@ -36,6 +50,7 @@ class DashboardController extends Controller
         return Inertia::render('dashboard', [
             'userAnimes' => $userAnimes,
             'recentlyAdded' => $userAnimes->take(3)->values(),
+            'slectedStatus' => $status,
         ]);
     }
 }
