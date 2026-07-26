@@ -2,7 +2,7 @@ import { Head, Link, usePage } from '@inertiajs/react';
 
 import RegisterAnimeDialog from '@/components/ui/RegisterAnimeDialog';
 import UpdateAnimeStatusDialog from '@/components/ui/UpdateAnimeStatusDialog';
-import type { ShareData } from '@/types';
+import type { Auth } from '@/types';
 
 type WatchingStatus =
     | 'want_to_watch'
@@ -23,7 +23,7 @@ type Anime = {
         id: number;
         name: string;
     }[];
-    source?: string | null
+    source?: string | null;
     num_episodes?: number | null;
     user_anime_id: number | null;
     registered_status: WatchingStatus | null;
@@ -50,7 +50,8 @@ const sourceLabels: Record<string, string> = {
 
 
 export default function Show({ anime }: ShowProps) {
-    const { auth } = usePage<ShareData>().props;
+    const { auth } = usePage<SharedData>().props;
+
     return (
         <>
             <Head title={anime.title} />
