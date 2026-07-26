@@ -20,13 +20,10 @@ class DashboardController extends Controller
 
         $status = $validated['status'] ?? null;
 
-        $userAnimes = $request->user()
+        // ログインユーザーの登録商品を全件取得
+        $allUserAnimes = $request->user()
         ->userAnimes()
         ->with('animeMaster')
-        ->when(
-            $status,
-            fn ($query, $status) => $query->where('status', $status),
-        )
         ->latest()
         ->get()
         ->map(function ($userAnime) {
@@ -42,15 +39,24 @@ class DashboardController extends Controller
                     'cover_image' => $userAnime->animeMaster->cover_image,
                     'description' => $userAnime->animeMaster->description,
                     'genre' => $userAnime->animeMaster->genre,
-                    'broadcast_year' => $userAnime->animeMaster->broadcast_year,
+                    'broadcast_year' => $userAnime
+                        ->animeMaster
+                        ->broadcast_year,
                 ],
             ];
         });
 
+        // ステータスが指定されている場合だけ一覧を絞り込む
+        $userAnimes = $status
+            ? $allUserAnimes->where('status', $status)
+                ->where('status', $status)
+                ->values()
+            : $allUserAnimes->values();
+
         return Inertia::render('dashboard', [
             'userAnimes' => $userAnimes,
-            'recentlyAdded' => $userAnimes->take(3)->values(),
-            'slectedStatus' => $status,
+            'recentlyAdded' => $allUserAnimes->take(3)->values(),
+            'selectedStatus' => $status,
         ]);
     }
 }
