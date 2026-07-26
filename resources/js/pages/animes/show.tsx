@@ -1,4 +1,14 @@
-import { Head } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
+
+import RegisterAnimeDialog from '@/components/ui/RegisterAnimeDialog';
+import UpdateAnimeStatusDialog from '@/components/ui/UpdateAnimeStatusDialog';
+import type { ShareData } from '@/types';
+
+type WatchingStatus =
+    | 'want_to_watch'
+    | 'watching'
+    | 'completed'
+    | 'dropped';
 
 type Anime = {
     id: number;
@@ -13,13 +23,34 @@ type Anime = {
         id: number;
         name: string;
     }[];
+    source?: string | null
+    num_episodes?: number | null;
+    user_anime_id: number | null;
+    registered_status: WatchingStatus | null;
 };
 
 type ShowProps = {
     anime: Anime;
 };
 
+const sourceLabels: Record<string, string> = {
+    'manga': '漫画',
+    'light_novel': 'ライトノベル',
+    'novel': '小説',
+    'original': 'オリジナル',
+    'visual_novel': 'ビジュアルノベル',
+    'game': 'ゲーム',
+    'web_manga': 'web漫画',
+    'web_novel': 'web小説',
+    'book': '書籍',
+    'music': '音楽',
+    'card_game': 'カードゲーム',
+    'other': 'その他',
+};
+
+
 export default function Show({ anime }: ShowProps) {
+    const { auth } = usePage<ShareData>().props;
     return (
         <>
             <Head title={anime.title} />
@@ -49,9 +80,36 @@ export default function Show({ anime }: ShowProps) {
                         <h1 className="text-3xl font-bold">
                             {anime.title}
                         </h1>
+                        <div className="mt-4 max-w-xs">
+                            {!auth.user ? (
+                                <Link
+                                    href="/login"
+                                    className="block w-full rounded-md px-4 py-2 text-sm text-center font-medium hover:bg-muted">
+                                        +登録する
+                                </Link>
+                            ) : anime.registered_status &&
+                                anime.user_anime_id ? (
+                                    <UpdateAnimeStatusDialog
+                                        userAnimeId={anime.user_anime_id}
+                                        currentStatus={anime.registered_status}
+                                    />
+                                ) : (
+                                    <RegisterAnimeDialog anime={anime} />
+                            )}
+                        </div>
                         <div className="mt-4 space-y-3">
                             <p className="text-sm text-muted-foreground">
                                 {anime.start_date ?? '放送年未定'}
+                            </p>
+                            <p className="text-sm text-muted-foreground">
+                                原作：{anime.source
+                                    ? (sourceLabels[anime.source] ?? anime.source)
+                                    : '情報なし'}
+                            </p>
+                            <p className="text-sm text-muted-foreground">
+                                総話数：{anime.num_episodes !== null && anime.num_episodes !== undefined
+                                    ? `${anime.num_episodes}話`
+                                    : '情報なし'}
                             </p>
 
                             <div className="flex flex-wrap gap-2">
