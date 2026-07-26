@@ -1,6 +1,6 @@
-import { router }  from '@inertiajs/react';
+import { router } from '@inertiajs/react';
 import { useState } from "react";
-import { Check, Circle, Pause, Play, Square } from "lucide-react";
+import { Check, Circle, Play, Square } from "lucide-react";
 
 import {
     Select,
