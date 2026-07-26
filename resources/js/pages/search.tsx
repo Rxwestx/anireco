@@ -4,8 +4,13 @@ import type { SubmitEventHandler } from 'react';
 import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import RegisterAnimeDialog from '@/components/ui/RegisterAnimeDialog';
+import UpdateAnimeStatusDialog from '@/components/ui/UpdateAnimeStatusDialog';
 
-
+type WatchingStatus =
+        | 'want_to_watch'
+        | 'watching'
+        | 'completed'
+        | 'dropped';
 
 type Anime = {
         id: number;
@@ -19,12 +24,8 @@ type Anime = {
             id: number;
             name: string;
         }[];
-        registered_status:
-            | 'want_to_watch'
-            | 'watching'
-            | 'completed'
-            | 'dropped'
-            | null;
+        user_anime_id: number | null;
+        registered_status: WatchingStatus | null;
 };
 
 type SearchProps = {
@@ -139,15 +140,14 @@ export default function Search({
                                             {!auth.user ? (
                                                 <Link
                                                     href="/login"
-                                                    className="block w-full rounded-md px-4 py-2 text-sm font-medium hover:bg-muted">
+                                                    className="block w-full rounded-md px-4 py-2 text-sm text-center font-medium hover:bg-muted">
                                                         +登録する
                                                 </Link>
-                                            ) : anime.registered_status ? (
-                                                <button
-                                                    type="button"
-                                                    className="block w-full rounded-md bg-muted px-4 py-2 text-sm font-medium hover:bg-muted">
-                                                       {statusLabels[anime.registered_status]}
-                                                </button>
+                                            ) : anime.registered_status && anime.user_anime_id ? (
+                                                <UpdateAnimeStatusDialog
+                                                    userAnimeId={anime.user_anime_id}
+                                                    currentStatus={anime.registered_status}
+                                                />
                                             ) : (
                                                 <RegisterAnimeDialog anime={anime} />
                                             )}
