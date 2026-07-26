@@ -1,4 +1,4 @@
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
 
 type AnimeMaster ={
     id: number;
@@ -21,12 +21,25 @@ type UserAnime = {
 type DashboardProps = {
     userAnimes: UserAnime[];
     recentlyAdded: UserAnime[];
+    selectedStatus: string | null;
 };
 
 export default function Dashboard({
     userAnimes,
     recentlyAdded,
+    selectedStatus,
  }: DashboardProps) {
+    const handleStatusFilter = (status: string | null) => {
+        router.get(
+            '/dashboard',
+            status ? { status } : {},
+            {
+                preserveState: true,
+                preserveScroll: true,
+            }
+        );
+    };
+    
     return (
         <>
             <Head title="マイページ" />
@@ -41,6 +54,63 @@ export default function Dashboard({
                 <section>
                 <h2 className="mb-4 text-xl font-semibold">登録アニメ作品
                 </h2>
+                <div className="mb-4 flex flex-wrap gap-2">
+                    <button
+                        type="button"
+                        onClick={() => handleStatusFilter(null)}
+                        className={`rounded-md border px-3 py-2 text-sm ${
+                            selectedStatus === null
+                                ? 'bg-primary text-primary-foreground'
+                                : 'hover:bg-muted'
+                        }`}
+                    >
+                        すべて
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => handleStatusFilter('want_to_watch')}
+                        className={`rounded-md border px-3 py-2 text-sm ${
+                            selectedStatus === 'want_to_watch'
+                                ? 'bg-primary text-primary-foreground'
+                                : 'hover:bg-muted'
+                        }`}
+                    >
+                        見たい
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => handleStatusFilter('watching')}
+                        className={`rounded-md border px-3 py-2 text-sm ${
+                            selectedStatus === 'watching'
+                                ? 'bg-primary text-primary-foreground'
+                                : 'hover:bg-muted'
+                        }`}
+                    >
+                        視聴中
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => handleStatusFilter('completed')}
+                        className={`rounded-md border px-3 py-2 text-sm ${
+                            selectedStatus === 'completed'
+                                ? 'bg-primary text-primary-foreground'
+                                : 'hover:bg-muted'
+                        }`}
+                    >
+                        視聴済み
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => handleStatusFilter('dropped')}
+                        className={`rounded-md border px-3 py-2 text-sm ${
+                            selectedStatus === 'dropped'
+                                ? 'bg-primary text-primary-foreground'
+                                : 'hover:bg-muted'
+                        }`}
+                    >
+                        断念
+                    </button>
+                </div>
                 {userAnimes.length === 0 ? (
                     <div className="rounded-xl border p-6">
                         <p className="text-muted-foreground">
