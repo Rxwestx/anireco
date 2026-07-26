@@ -1,10 +1,10 @@
 import { Head, Link,router,usePage } from '@inertiajs/react';
-import type { ShareData } from '@/types';
 import type { SubmitEventHandler } from 'react';
 import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import RegisterAnimeDialog from '@/components/ui/RegisterAnimeDialog';
 import UpdateAnimeStatusDialog from '@/components/ui/UpdateAnimeStatusDialog';
+import type { Auth } from '@/types';
 
 type WatchingStatus =
         | 'want_to_watch'
@@ -48,7 +48,7 @@ export default function Search({
 
     const [keyword, setKeyword] = useState(initialKeyword);
 
-    const { auth } = usePage< ShareData>().props;
+    const { auth } = usePage<{ auth: Auth }>().props;
     // 検索結果のアニメリストを格納する配列
 
     const handleSearch: SubmitEventHandler<HTMLFormElement> = (e) => {
