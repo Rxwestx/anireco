@@ -1,5 +1,5 @@
 <?php
-
+use App\Http\Controllers\EmotionTagController;
 use App\Http\Controllers\AnimeController;
 use App\Http\Controllers\AnimeSearchController;
 use App\Http\Controllers\DashboardController;
@@ -30,9 +30,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('user-animes.update');
 
     // 感情タグ画面Route
-    Route::get('/emotion-tags', function () {
-        return inertia('emotion-tags');
-    })->name('emotion-tags.index');
+    Route::get('/emotion-tags', [EmotionTagController::class, 'index'])
+        ->name('emotion-tags.index');
 });
 
     // 管理者用route
