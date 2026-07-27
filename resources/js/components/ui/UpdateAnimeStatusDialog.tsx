@@ -73,7 +73,7 @@ export default function UpdateAnimeStatusDialog({
         }}
         >
             <DialogTrigger asChild>
-                <Button type="button" variant="outline" className="w-full">
+                <Button type="button" variant="outline" className="w-full cursor-pointer">
                     {statusLabels[currentStatus]}
                 </Button>
             </DialogTrigger>
@@ -89,30 +89,30 @@ export default function UpdateAnimeStatusDialog({
                         setSelectedStatus(value);
                     }}
                 >
-                    <SelectTrigger className="w-full">
+                    <SelectTrigger className="w-full cursor-pointer">
                         <SelectValue placeholder="ステータスを選択" />
                     </SelectTrigger>
 
                     <SelectContent>
-                        <SelectItem value="want_to_watch">
+                        <SelectItem value="want_to_watch"className="cursor-pointer">
                             <span className="flex items-center gap-2">
                                 <Circle className="size-4 fill-current" />
                                 見たい
                             </span>
                         </SelectItem>
-                        <SelectItem value="watching">
+                        <SelectItem value="watching" className="cursor-pointer">
                             <span className="flex items-center gap-2">
                                 <Play className="size-4 fill-current" />
                                 視聴中
                             </span>
                         </SelectItem>
-                        <SelectItem value="completed">
+                        <SelectItem value="completed" className="cursor-pointer">
                             <span className="flex items-center gap-2">
                                 <Check className="size-4 fill-current" />
                                 視聴済み
                             </span>
                         </SelectItem>
-                        <SelectItem value="dropped">
+                        <SelectItem value="dropped" className="cursor-pointer">
                             <span className="flex items-center gap-2">
                                 <Square className="size-4 fill-current" />
                                 断念
@@ -121,7 +121,7 @@ export default function UpdateAnimeStatusDialog({
                         </SelectContent>
                 </Select>
                 <DialogFooter>
-                    <Button type="button" onClick={handleUpdate}>
+                    <Button type="button" onClick={handleUpdate} className="cursor-pointer">
                         変更する
                     </Button>
                 </DialogFooter>
