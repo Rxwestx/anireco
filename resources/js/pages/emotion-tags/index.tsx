@@ -1,6 +1,6 @@
 import emotionTags from "@/routes/emotion-tags";
 import { Head } from "@inertiajs/react";
-import { useState } from "react";
+
 
 type EmotionTag = {
     id: number;
@@ -24,7 +24,7 @@ export default function EmotionTagsIndex({
                     <h1 className="text-2xl font-bold">
                         感情タグ
                     </h1>
-        
+
                     <p className="mt-1 text-sm text-muted-foreground">
                         アニメを視聴し、自分の感じた感想を表すタグを管理することができます。
                     </p>
