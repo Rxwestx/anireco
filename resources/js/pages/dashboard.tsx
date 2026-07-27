@@ -1,4 +1,5 @@
 import { Head, Link, router } from '@inertiajs/react';
+import { useState } from 'react';
 import UpdateAnimeStatusDialog from '@/components/ui/UpdateAnimeStatusDialog';
 
 type AnimeMaster ={
@@ -23,21 +24,42 @@ type DashboardProps = {
     userAnimes: UserAnime[];
     recentlyAdded: UserAnime[];
     selectedStatus: string | null;
+    keyword: string | null;
 };
 
 export default function Dashboard({
     userAnimes,
     recentlyAdded,
     selectedStatus,
+    keyword,
  }: DashboardProps) {
+    const [searchkeyword, setSearchKeyword] = useState(keyword ?? '');
     const handleStatusFilter = (status: string | null) => {
         router.get(
             '/dashboard',
-            status ? { status } : {},
+            {
+                ...(status ? { status } : {}),
+                ...(searchkeyword ? { keyword:searchkeyword } : {}),
+            },
             {
                 preserveState: true,
                 preserveScroll: true,
             }
+        );
+    };
+
+    const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        router.get(
+            '/dashboard',
+            {
+                ...(selectedStatus ? { status: selectedStatus } : {}),
+                ...(searchkeyword ? { keyword: searchkeyword } : {}),
+            },
+            {
+                preserveState: true,
+                preserveScroll: true,
+            },
         );
     };
 
@@ -55,6 +77,23 @@ export default function Dashboard({
                 <section>
                 <h2 className="mb-4 text-xl font-semibold">登録アニメ作品
                 </h2>
+                
+                <form onSubmit={handleSearch} className="mb-4 flex gap-2">
+                    <input
+                        type="text"
+                        value={searchkeyword}
+                        onChange={(e) => setSearchKeyword(e.target.value)}
+                        placeholder="登録作品タイトルで検索"
+                        className="min-w-0 flex-1 rounded-md border bg-background px-3 py-2 text-sm"
+                    />
+                    <button
+                        type="submit"
+                        className="cursor-pointer rounded-md border bg-primary px-4 py-2 text-sm text-primary-foreground hover:bg-primary/80"
+                    >
+                        検索
+                    </button>
+                </form>
+
                 <div className="mb-4 flex flex-wrap gap-2">
                     <button
                         type="button"
@@ -112,6 +151,7 @@ export default function Dashboard({
                         断念
                     </button>
                 </div>
+
                 {userAnimes.length === 0 ? (
                     <div className="rounded-xl border p-6">
                         <p className="text-muted-foreground">
