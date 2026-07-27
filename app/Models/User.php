@@ -36,6 +36,11 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(UserAnime::class);
     }
+    
+    public function emotionTags(): HasMany
+    {
+        return $this->hasMany(EmotionTag::class);
+    }
     /**
      * Get the attributes that should be cast.
      *
@@ -48,4 +53,5 @@ class User extends Authenticatable implements MustVerifyEmail
             'password' => 'hashed',
         ];
     }
+
 }
