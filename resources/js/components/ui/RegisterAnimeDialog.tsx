@@ -31,11 +31,29 @@ export default function RegisterAnimeDialog({
 }: RegisterAnimeDialogProps) {
     const [open, setOpen] = useState(false);
     const [selectedStatus, setSelectedStatus] = useState("want_to_watch");
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
     const handleRegister = () => {
-        router.post('/user-animes', {
-            anime_id: anime.id,
-            status: selectedStatus,
-        });
+        router.post(
+            '/user-animes',
+            {
+                anime_id: anime.id,
+                status: selectedStatus,
+            },
+            {
+                preserveScroll: true,
+                onSuccess: () => {
+                    setOpen(false);
+                },
+                onError: (errors) => {
+                    setErrorMessage(
+                        typeof errors.anime === 'string'
+                        ? errors.anime
+                        : "エラーが発生しました",
+                    );
+                },
+            },
+        );
     };
 
     return (
@@ -46,9 +64,10 @@ export default function RegisterAnimeDialog({
                     e.preventDefault();
                     e.stopPropagation();
                     setSelectedStatus('want_to_watch');
+                    setErrorMessage(null);
                     setOpen(true);
                 }}
-                className="mx-4 mb-4 w-[calc(100%-2rem)] rounded-md px-4 py-2 hover:bg-muted">
+                className="mx-4 mb-4 w-[calc(100%-2rem)] cursor-pointer rounded-md px-4 py-2 hover:bg-muted">
                     +登録する
             </button>
 
@@ -62,30 +81,30 @@ export default function RegisterAnimeDialog({
                 <Select
                     value={selectedStatus}
                     onValueChange={setSelectedStatus}>
-                    <SelectTrigger className="w-full">
+                    <SelectTrigger className="w-full cursor-pointer">
                         <SelectValue placeholder="ステータスを選択" />
                     </SelectTrigger>
 
-                    <SelectContent>
-                        <SelectItem value="want_to_watch">
+                    <SelectContent >
+                        <SelectItem value="want_to_watch"className="cursor-pointer">
                             <span className="flex items-center gap-2">
                                 <Circle className="size-4 fill-current" />
                                 見たい
                             </span>
                         </SelectItem>
-                        <SelectItem value="watching">
+                        <SelectItem value="watching" className="cursor-pointer">
                             <span className="flex items-center gap-2">
                                 <Play className="size-4 fill-current" />
                                 視聴中
                             </span>
                         </SelectItem>
-                        <SelectItem value="plan_to_watch">
+                        <SelectItem value="completed" className="cursor-pointer">
                             <span className="flex items-center gap-2">
                                 <Check className="size-4 fill-current" />
                                 視聴済み
                             </span>
                         </SelectItem>
-                        <SelectItem value="watched">
+                        <SelectItem value="dropped" className="cursor-pointer">
                             <span className="flex items-center gap-2">
                                 <Square className="size-4 fill-current" />
                                 断念
@@ -94,11 +113,17 @@ export default function RegisterAnimeDialog({
                     </SelectContent>
                 </Select>
 
+                {errorMessage && (
+                    <p className="rounded-md border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700">
+                        {errorMessage}
+                    </p>
+                )}
+
                 <DialogFooter>
-                    <button type="button" onClick={() => setOpen(false)}>
+                    <button type="button" onClick={() => setOpen(false)} className="cursor-pointer">
                         閉じる
                     </button>
-                    <button type="button" onClick={handleRegister}>
+                    <button type="button" onClick={handleRegister} className="cursor-pointer">
                         登録
                     </button>
                 </DialogFooter>
