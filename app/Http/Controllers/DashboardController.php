@@ -15,18 +15,41 @@ class DashboardController extends Controller
         $validated = $request->validate([
             'status' => [
                 'nullable',
-                 Rule::enum(WatchingStatus::class)],
+                 Rule::enum(WatchingStatus::class)
+            ],
+            'keyword' => [
+                'nullable',
+                'string',
+                'max:100',
+            ],
         ]);
 
         $status = $validated['status'] ?? null;
+        $keyword = $validated['keyword'] ?? null;
 
         // ログインユーザーの登録商品を全件取得
-        $allUserAnimes = $request->user()
+        $userAnimesQuery = $request->user()
         ->userAnimes()
         ->with('animeMaster')
-        ->latest()
-        ->get()
-        ->map(function ($userAnime) {
+        ->latest();
+
+        // キーワードが指定されている場合だけ検索を実行
+        if($keyword) {
+            $userAnimesQuery->whereHas(
+                'animeMaster',
+                function ($query) use ($keyword) {
+                    $query->where(
+                        'title',
+                        'ILIKE',
+                        '%' . $keyword . '%',
+                    );
+                },
+            );
+        }
+
+        $allUserAnimes = $userAnimesQuery
+            ->get()
+            ->map(function ($userAnime) {
             return [
                 'id' => $userAnime->id,
                 'status' => $userAnime->status->value,
@@ -55,8 +78,11 @@ class DashboardController extends Controller
 
         return Inertia::render('dashboard', [
             'userAnimes' => $userAnimes,
-            'recentlyAdded' => $allUserAnimes->take(3)->values(),
+            'recentlyAdded' => $allUserAnimes
+                ->take(3)
+                ->values(),
             'selectedStatus' => $status,
+            'keyword' => $keyword,
         ]);
     }
 }
