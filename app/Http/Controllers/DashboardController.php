@@ -22,10 +22,22 @@ class DashboardController extends Controller
                 'string',
                 'max:100',
             ],
+            'sort' => [
+                'nullable',
+                Rule::in([
+                    'newest',
+                    'oldest',
+                    ]),
+            ],
         ]);
 
         $status = $validated['status'] ?? null;
         $keyword = $validated['keyword'] ?? null;
+        $sort = $validated['sort'] ?? 'newest';
+
+        $haRegisteredAnimes = $request->user()
+        ->userAnimes()
+        ->exists();
 
         // ログインユーザーの最近登録作品を3件取得
         $recentlyAdded = $request->user()
@@ -60,8 +72,7 @@ class DashboardController extends Controller
         // ログインユーザーの登録作品を全件取得
         $userAnimesQuery = $request->user()
         ->userAnimes()
-        ->with('animeMaster')
-        ->latest();
+        ->with('animeMaster');
 
         // キーワードが指定されている場合だけ検索を実行
         if( $keyword ) {
@@ -81,6 +92,11 @@ class DashboardController extends Controller
             $userAnimesQuery->where('status', $status);
         }
 
+        if( $sort === 'oldest' ) {
+            $userAnimesQuery->oldest();
+        } else {
+            $userAnimesQuery->latest();
+        }
 
         $userAnimes = $userAnimesQuery
             ->get()
@@ -110,6 +126,8 @@ class DashboardController extends Controller
             'recentlyAdded' => $recentlyAdded,
             'selectedStatus' => $status,
             'keyword' => $keyword,
+            'hasRegisteredAnimes' => $haRegisteredAnimes,
+            'selectedSort' => $sort,
         ]);
     }
 }
