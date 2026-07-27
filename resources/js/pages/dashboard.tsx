@@ -25,21 +25,25 @@ type DashboardProps = {
     recentlyAdded: UserAnime[];
     selectedStatus: string | null;
     keyword: string | null;
+    hasRegisteredAnimes: boolean;
+    selectedSort: 'newest' | 'oldest';
 };
 
 export default function Dashboard({
-    userAnimes,
-    recentlyAdded,
-    selectedStatus,
-    keyword,
- }: DashboardProps) {
-    const [searchkeyword, setSearchKeyword] = useState(keyword ?? '');
+        userAnimes,
+        recentlyAdded,
+        selectedStatus,
+        keyword,
+        hasRegisteredAnimes,
+        selectedSort,
+}: DashboardProps) {
+    const [searchKeyword, setSearchKeyword] = useState(keyword ?? '');
     const handleStatusFilter = (status: string | null) => {
         router.get(
             '/dashboard',
             {
                 ...(status ? { status } : {}),
-                ...(searchkeyword ? { keyword:searchkeyword } : {}),
+                sort: selectedSort,
             },
             {
                 preserveState: true,
@@ -54,11 +58,27 @@ export default function Dashboard({
             '/dashboard',
             {
                 ...(selectedStatus ? { status: selectedStatus } : {}),
-                ...(searchkeyword ? { keyword: searchkeyword } : {}),
+                ...(searchKeyword ? { keyword: searchKeyword } : {}),
+                sort: selectedSort,
             },
             {
                 preserveState: true,
                 preserveScroll: true,
+            },
+        );
+    };
+
+    const handleSortChange = (sort: 'newest' | 'oldest') => {
+        router.get(
+            '/dashboard',
+            {
+                ...(selectedStatus ? { status: selectedStatus } : {}),
+                ...(searchKeyword ? { keyword: searchKeyword } : {}),
+                sort,
+            },
+            {
+                    preserveState: true,
+                    preserveScroll: true,
             },
         );
     };
@@ -77,11 +97,11 @@ export default function Dashboard({
                 <section>
                 <h2 className="mb-4 text-xl font-semibold">登録アニメ作品
                 </h2>
-                
+
                 <form onSubmit={handleSearch} className="mb-4 flex gap-2">
                     <input
                         type="text"
-                        value={searchkeyword}
+                        value={searchKeyword}
                         onChange={(e) => setSearchKeyword(e.target.value)}
                         placeholder="登録作品タイトルで検索"
                         className="min-w-0 flex-1 rounded-md border bg-background px-3 py-2 text-sm"
@@ -94,6 +114,20 @@ export default function Dashboard({
                     </button>
                 </form>
 
+                <div className="mb-4 flex justify-end">
+                    <select
+                        value={selectedSort}
+                        onChange={(e) =>
+                            handleSortChange(
+                                e.target.value as 'newest' | 'oldest'
+                            )
+                        }
+                        className="cursor-pointer rounded-md border bg-background px-3 py-2 text-sm"
+                    >
+                        <option value="newest">新しく登録した順</option>
+                        <option value="oldest">古く登録した順</option>
+                    </select>
+                </div>
                 <div className="mb-4 flex flex-wrap gap-2">
                     <button
                         type="button"
@@ -155,7 +189,12 @@ export default function Dashboard({
                 {userAnimes.length === 0 ? (
                     <div className="rounded-xl border p-6">
                         <p className="text-muted-foreground">
-                        登録したアニメはありません。
+                            {!hasRegisteredAnimes
+                                ? '登録したアニメ作品はありません。'
+                                : selectedStatus
+                                ? 'このステータスに登録アニメ作品はありません。'
+                                : '検索条件に一致する登録アニメ作品はありません。'
+                            }
                         </p>
                     </div>
                 ) : (
