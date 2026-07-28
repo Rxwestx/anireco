@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -22,5 +23,38 @@ class EmotionTagController extends Controller
         return Inertia::render('emotion-tags/index', [
             'emotionTags' => $emotionTags,
         ]);
+    }
+
+    public function store(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'name' => [
+                'required',
+                'string',
+                'max:50',
+            ],
+        ]);
+
+        $alreadyExists = $request->user()
+            ->emotionTags()
+            ->where('name', $validated['name'])
+            ->exists();
+
+        if ($alreadyExists) {
+            return back()->withErrors([
+                'name' => '同じ名前の感情タグはすでに登録されています。'
+            ]);
+        }
+
+        $request->user()
+            ->emotionTags()
+            ->create([
+                'name' => $validated['name'],
+            ]);
+
+        return back()->with(
+            'success',
+            '感情タグを登録しました。',
+        );
     }
 }
