@@ -1,5 +1,5 @@
-import emotionTags from "@/routes/emotion-tags";
-import { Head } from "@inertiajs/react";
+import { Head, useForm } from "@inertiajs/react";
+import type { FormEvent } from "react";
 
 
 type EmotionTag = {
@@ -15,6 +15,26 @@ type EmotionTagsIndexProps = {
 export default function EmotionTagsIndex({
     emotionTags,
 }: EmotionTagsIndexProps) {
+    const {
+            data,
+            setData,
+            post,
+            processing,
+            errors,
+            riset,
+    } = useForm({
+        name: "",
+    });
+
+    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        post("emotion-tags", {
+            preserveScroll: true,
+            onSuccess: () => reset("name"),
+        });
+    };
+
     return (
         <>
             <Head title="感情タグ管理" />
@@ -28,6 +48,40 @@ export default function EmotionTagsIndex({
                     <p className="mt-1 text-sm text-muted-foreground">
                         アニメを視聴し、自分の感じた感想を表すタグを管理することができます。
                     </p>
+                </section>
+                <section>
+                    <h2 className="mb-4 text-xl font-semibold">
+                        新しい感情タグを追加
+                    </h2>
+                    <form onSubmit={handleSubmit} className="max-w-md space-y-3">
+                        <div>
+                            <label htmlFor="name" className="mb-2 block text-sm font-medium">
+                                タグ名
+                            </label>
+
+                            <input
+                                id="name"
+                                type="text"
+                                value={data.name}
+                                onChange={(e) => setData("name", e.target.value)}
+                                placeholder="新しい感情タグを追加 例：感動した"
+                                className="w-full rounded-md border bg-ground px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
+                            />
+                        {errors.name &&(
+                            <p className="mt-1 text-sm text-red-600">
+                                {errors.name}
+                            </p>
+                        )}
+                        </div>
+
+                        <button
+                            type="submit"
+                            disabled={processing}
+                            className="cursor-pointer rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                        >
+                            {processing ? "登録中..." : "登録する"}
+                        </button>
+                    </form>
                 </section>
                 <section>
                     <h2 className="mb-4 text-xl font-semibold">
