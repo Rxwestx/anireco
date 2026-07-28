@@ -37,8 +37,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/emotion-tags', [EmotionTagController::class, 'store'])
         ->name('emotion-tags.store');
 
-    Route::patch('/emotion-tags/{emotionTag}', [EmotionTagController::class, 'update'])
+    Route::patch(
+        '/emotion-tags/{emotionTag}',
+        [EmotionTagController::class, 'update'])
         ->name('emotion-tags.update');
+
+    Route::delete(
+        '/emotion-tags/{emotionTag}',
+        [EmotionTagController::class, 'destroy'])
+        ->name('emotion-tags.destroy');
 });
 
     // 管理者用route
