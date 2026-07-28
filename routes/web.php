@@ -22,18 +22,23 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])
         ->name('dashboard');
 
-        // ユーザーアニメ登録用route
+    // ユーザーアニメ登録用route
     Route::post('/user-animes', [UserAnimeController::class, 'store'])
     ->name('user-animes.store');
 
     Route::patch('/user-animes/{userAnime}', [UserAnimeController::class, 'update'])
         ->name('user-animes.update');
 
+
     // 感情タグ画面Route
     Route::get('/emotion-tags', [EmotionTagController::class, 'index'])
         ->name('emotion-tags.index');
+
     Route::post('/emotion-tags', [EmotionTagController::class, 'store'])
         ->name('emotion-tags.store');
+
+    Route::patch('/emotion-tags/{emotionTag}', [EmotionTagController::class, 'update'])
+        ->name('emotion-tags.update');
 });
 
     // 管理者用route
