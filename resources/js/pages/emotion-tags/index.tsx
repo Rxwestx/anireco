@@ -71,6 +71,23 @@ export default function EmotionTagsIndex({
         });
     }
 
+    const handleDelete = (emotionTag: EmotionTag) => {
+        const shouldDelete = window.confirm(
+            `本当に「${emotionTag.name}」を削除しますか？`,
+        );
+        if (shouldDelete) {
+            // 削除処理をここに追加
+            editForm.delete(`/emotion-tags/${emotionTag.id}`, {
+                preserveScroll: true,
+                onSuccess: () => {
+                    setEditingTagId(null);
+                    editForm.reset('name');
+                    editForm.clearErrors();
+                },
+            });
+        }
+    };
+
     return (
         <>
             <Head title="感情タグ管理" />
@@ -186,7 +203,15 @@ export default function EmotionTagsIndex({
                                             >
                                                 編集
                                             </button>
+                                            <button
+                                                type="button"
+                                                onClick={() => handleDelete(emotionTag)}
+                                                className="cursor-pointer text-sm font-medium text-red-600 underline-offset-4 hover:underline disabled:cursor-not-allowed disabled:opacity-50"
+                                            >
+                                                削除
+                                            </button>
                                         </div>
+
                                     )}
                                 </div>
                             ))}
