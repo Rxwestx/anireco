@@ -97,4 +97,21 @@ class EmotionTagController extends Controller
             '感情タグを更新しました。',
         );
     }
+
+    public function destroy(
+        Request $request,
+        EmotionTag $emotionTag
+    ): RedirectResponse {
+        abort_unless(
+            $emotionTag->user_id === $request->user()->id,
+            403
+        );
+
+        $emotionTag->delete();
+
+        return back()->with(
+            'success',
+            '感情タグを削除しました。',
+        );
+    }
 }
