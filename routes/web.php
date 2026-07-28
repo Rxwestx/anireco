@@ -32,6 +32,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // 感情タグ画面Route
     Route::get('/emotion-tags', [EmotionTagController::class, 'index'])
         ->name('emotion-tags.index');
+    Route::post('/emotion-tags', [EmotionTagController::class, 'store'])
+        ->name('emotion-tags.store');
 });
 
     // 管理者用route
