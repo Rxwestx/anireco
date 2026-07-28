@@ -1,5 +1,7 @@
+import { edit } from "@/routes/appearance";
 import { Head, useForm } from "@inertiajs/react";
-import type { FormEvent } from "react";
+import { useState } from "react";
+import type { SubmitEvent } from "react";
 
 
 type EmotionTag = {
@@ -15,18 +17,21 @@ type EmotionTagsIndexProps = {
 export default function EmotionTagsIndex({
     emotionTags,
 }: EmotionTagsIndexProps) {
+
+    const [editingTagId, setEditingTagId] = useState<number | null>(null);
+
     const {
             data,
             setData,
             post,
             processing,
             errors,
-            riset,
+            reset,
     } = useForm({
         name: "",
     });
 
-    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    const handleSubmit = (e: SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         post("emotion-tags", {
@@ -34,6 +39,37 @@ export default function EmotionTagsIndex({
             onSuccess: () => reset("name"),
         });
     };
+
+        const editForm = useForm({
+        name: "",
+    });
+
+    const startEditing = (emotionTag: EmotionTag) => {
+        setEditingTagId(emotionTag.id);
+        editForm.setData("name", emotionTag.name);
+        editForm.clearErrors();
+    };
+
+    const cancelEditing = () => {
+        setEditingTagId(null);
+        editForm.reset();
+        editForm.clearErrors();
+    };
+
+    const handleUpdate = (e: SubmitEvent<HTMLFormElement>,
+        emotionTagId: number,
+    ) => {
+        e.preventDefault();
+
+        editForm.patch(`/emotion-tags/${emotionTagId}`, {
+            preserveScroll: true,
+            onSuccess: () => {
+                setEditingTagId(null);
+                editForm.reset('name');
+                editForm.clearErrors();
+            },
+        });
+    }
 
     return (
         <>
@@ -96,11 +132,62 @@ export default function EmotionTagsIndex({
                     ) : (
                         <div className="flex flex-wrap gap-3">
                             {emotionTags.map((emotionTag) => (
-                                <div
-                                    key={emotionTag.id}
-                                    className="rounded-full border px-4 py-2 text-sm"
-                                    >
-                                    {emotionTag.name}
+                                <div key={emotionTag.id}>
+                                    {editingTagId === emotionTag.id ? (
+                                        <form
+                                            onSubmit={(e) =>
+                                                handleUpdate(e, emotionTag.id)
+                                            }
+                                            className="flex flex-wrap items-start gap-2 rounded-lg border p-3"
+                                        >
+                                            <div>
+                                                <input
+                                                    type="text"
+                                                    value={editForm.data.name}
+                                                    onChange={(e) => editForm.setData(
+                                                        "name",
+                                                        e.target.value
+                                                    )
+                                                }
+                                                    className="rounded-md border bg-ground px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
+                                                />
+                                                {editForm.errors.name && (
+                                                    <p className="mt-1 text-sm text-red-600">
+                                                        {editForm.errors.name}
+                                                    </p>
+                                                )}
+                                            </div>
+
+                                            <button
+                                                type="submit"
+                                                disabled={editForm.processing}
+                                                className="cursor-pointer rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                                            >
+                                                {editForm.processing ?
+                                                    "更新中..."
+                                                    : "保存"}
+                                            </button>
+
+                                            <button
+                                                type="button"
+                                                onClick={cancelEditing}
+                                                className="cursor-pointer rounded-md border px-3 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-50"
+                                            >
+                                                キャンセル
+                                            </button>
+                                        </form>
+                                    ) : (
+                                        <div className="flex items-center gap-2 rounded-full border px-4 py-2 text-sm">
+                                            <span>{emotionTag.name}</span>
+                                            <button
+                                                type="button"
+                                                onClick={() => startEditing(emotionTag)}
+                                                className="cursor-pointer text-sm font-medium underline-offset-4 hover:underline"
+                                            >
+                                                編集
+                                            </button>
+                                        </div>
+                                    )}
                                 </div>
                             ))}
                         </div>
