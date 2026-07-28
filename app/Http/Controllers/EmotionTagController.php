@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\EmotionTag;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -42,7 +43,7 @@ class EmotionTagController extends Controller
 
         if ($alreadyExists) {
             return back()->withErrors([
-                'name' => '同じ名前の感情タグはすでに登録されています。'
+                'name' => '同じ名前の感情タグはすでに登録されています。',
             ]);
         }
 
@@ -55,6 +56,45 @@ class EmotionTagController extends Controller
         return back()->with(
             'success',
             '感情タグを登録しました。',
+        );
+    }
+
+    public function update(
+        Request $request,
+        EmotionTag $emotionTag
+    ): RedirectResponse {
+        abort_unless(
+            $emotionTag->user_id === $request->user()->id,
+            403
+        );
+
+        $validated = $request->validate([
+            'name' => [
+                'required',
+                'string',
+                'max:50',
+            ],
+        ]);
+
+        $alreadyExists = $request->user()
+            ->emotionTags()
+            ->where('name', $validated['name'])
+            ->whereKeyNot($emotionTag->id)
+            ->exists();
+
+        if ($alreadyExists) {
+            return back()->withErrors([
+                'name' => '同じ名前の感情タグはすでに登録されています。',
+            ]);
+        }
+
+        $emotionTag->update([
+            'name' => $validated['name'],
+        ]);
+
+        return back()->with(
+            'success',
+            '感情タグを更新しました。',
         );
     }
 }
