@@ -19,22 +19,39 @@ class AnimeController extends Controller
         $anime = $myAnimeListService->getAnimeByMalId($malId);
 
         $userAnime = null;
+        $emotionTags = collect();
+        $attachedEmotionTagIds = collect();
 
         if ($request->user()) {
             $userAnime = UserAnime::query()
+                ->with('emotionTags')
                 ->where('user_id', $request->user()->id)
                 ->whereHas('animeMaster', function ($query) use ($malId) {
                     $query->where('mal_id', $malId);
                 })
                 ->first();
+
+            $emotionTags = $request->user()
+                ->emotionTags()
+                ->latest()
+                ->get([
+                    'id',
+                    'name',
+                ]);
+
+            $attachedEmotionTagIds = $userAnime?->emotionTags
+                ->pluck('id')
+                ?? collect();
         }
-        
+
         return Inertia::render('animes/show', [
             'anime' =>[
                 ...$anime,
                 'user_anime_id' => $userAnime?->id,
-                'registered_status' => $userAnime?->status->value,
+                'registered_status' => $userAnime?->status?->value,
             ],
+            'emotionTags' => $emotionTags,
+            'attachedEmotionTagIds' => $attachedEmotionTagIds,
         ]);
     }
 }
