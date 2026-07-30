@@ -1,4 +1,6 @@
 <?php
+
+use App\Http\Controllers\WatchNoteController;
 use App\Http\Controllers\UserAnimeTagController;
 use App\Http\Controllers\EmotionTagController;
 use App\Http\Controllers\AnimeController;
@@ -32,6 +34,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         [UserAnimeController::class, 'update']
     )->name('user-animes.update');
 
+    // 視聴メモ登録用route
+    Route::post(
+        '/user-animes/{userAnime}/watch-notes',
+        [WatchNoteController::class, 'store']
+    )->name('watch-notes.store');
 
     // 感情タグ画面Route
     Route::get('/emotion-tags', [EmotionTagController::class, 'index'])
