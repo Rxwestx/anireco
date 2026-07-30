@@ -21,10 +21,16 @@ class AnimeController extends Controller
         $userAnime = null;
         $emotionTags = collect();
         $attachedEmotionTagIds = collect();
+        $watchNotes = collect();
 
         if ($request->user()) {
             $userAnime = UserAnime::query()
-                ->with('emotionTags')
+                ->with([
+                    'emotionTags',
+                    'watchNotes' => function ($query) {
+                        $query->latest();
+                    },
+                ])
                 ->where('user_id', $request->user()->id)
                 ->whereHas('animeMaster', function ($query) use ($malId) {
                     $query->where('mal_id', $malId);
@@ -42,6 +48,19 @@ class AnimeController extends Controller
             $attachedEmotionTagIds = $userAnime?->emotionTags
                 ->pluck('id')
                 ?? collect();
+
+            $watchNotes = $userAnime?->watchNotes
+                ->map(function ($watchNote) {
+                    return [
+                        'id' => $watchNote->id,
+                        'episode' => $watchNote->episode,
+                        'content' => $watchNote->content,
+                        'created_at' => $watchNote->created_at?->format(
+                            'Y-m-d H:i:s'
+                        ),
+                    ];
+                })
+                ?? collect();
         }
 
         return Inertia::render('animes/show', [
@@ -52,6 +71,7 @@ class AnimeController extends Controller
             ],
             'emotionTags' => $emotionTags,
             'attachedEmotionTagIds' => $attachedEmotionTagIds,
+            'watchNotes' => $watchNotes,
         ]);
     }
 }
