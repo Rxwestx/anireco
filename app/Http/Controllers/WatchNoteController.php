@@ -44,7 +44,7 @@ class WatchNoteController extends Controller
 
         $ownedEmotionTagIds = $request->user()
             ->emotionTags()
-            ->whereIn('id', $emotionTagIds)
+            ->whereIn('id', $emotionTagIds->all())
             ->pluck('id');
 
         abort_unless(
@@ -52,14 +52,12 @@ class WatchNoteController extends Controller
             403
         );
 
-        $userAnime->emotionTags()->sync($emotionTagIds);
-
         $userAnime->watchNotes()->create([
                 'episode' => $validated['episode'] ?? null,
                 'content' => $validated['content'],
             ]);
 
-        $userAnime->emotionTags()->syncWithoutDetaching(
+        $userAnime->emotionTags()->sync(
             $ownedEmotionTagIds->all()
         );
 
