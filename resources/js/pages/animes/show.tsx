@@ -1,4 +1,4 @@
-import { Head, Link, usePage } from '@inertiajs/react';
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
 
 import RegisterAnimeDialog from '@/components/ui/RegisterAnimeDialog';
 import UpdateAnimeStatusDialog from '@/components/ui/UpdateAnimeStatusDialog';
@@ -29,8 +29,15 @@ type Anime = {
     registered_status: WatchingStatus | null;
 };
 
+type EmotionTag = {
+    id: number;
+    name: string;
+};
+
 type ShowProps = {
     anime: Anime;
+    emotionTags: EmotionTag[];
+    attachedEmotionTagIds: number[];
 };
 
 const sourceLabels: Record<string, string> = {
@@ -49,8 +56,24 @@ const sourceLabels: Record<string, string> = {
 };
 
 
-export default function Show({ anime }: ShowProps) {
-    const { auth } = usePage<SharedData>().props;
+export default function Show({
+     anime,
+     emotionTags,
+     attachedEmotionTagIds,
+}: ShowProps) {
+    const { auth } = usePage<{ auth: Auth }>().props;
+
+    const tagForm = useForm({
+        emotion_tag_id: '',
+    });
+
+    const attachedEmotionTags = emotionTags.filter((emotionTag) =>
+        attachedEmotionTagIds.includes(emotionTag.id),
+    );
+
+    const availableEmotionTags = emotionTags.filter(
+        (emotionTag) => !attachedEmotionTagIds.includes(emotionTag.id),
+    );
 
     return (
         <>
@@ -98,6 +121,101 @@ export default function Show({ anime }: ShowProps) {
                                     <RegisterAnimeDialog anime={anime} />
                             )}
                         </div>
+                        {auth.user && anime.user_anime_id && (
+                            <section className="mt-6 rounded-b-xl border p-4">
+                                <h2 className="text-lg font-semibold">
+                                    感情タグ
+                                </h2>
+                                {attachedEmotionTags.length > 0 ? (
+                                    <div className="mt-3 flex flex-wrap gap-2">
+                                        {attachedEmotionTags.map((emotionTag) => (
+                                            <span
+                                                key={emotionTag.id}
+                                                className="rounded-full bg-muted px-3 py-1 text-sm"
+                                            >
+                                                {emotionTag.name}
+                                            </span>
+                                        ))}
+                                    </div>
+                                    ) : (
+                                        <p className="mt-4 text-sm text-muted-foreground">
+                                             この作品には、感情タグが付いていません。
+                                        </p>
+                                )}
+                                    {emotionTags.length === 0 ? (
+                                        <p className="mt-4 text-sm text-muted-foreground">
+                                            感情タグが登録されていません。
+                                        </p>
+                                    ) : availableEmotionTags.length === 0 ? (
+                                        <p className="mt-4 text-sm text-muted-foreground">
+                                            この作品には、以下の感情タグが付いています。
+                                        </p>
+                                    ) : (
+                                        <form
+                                            className="mt-4 flex max-w-md flex-wrap items-start gap-2"
+                                            onSubmit={(e) => {
+                                                e.preventDefault();
+                                                tagForm.post(
+                                                    `/user-animes/${anime.user_anime_id}/emotion-tags`,
+                                                    {
+                                                        preserveScroll: true,
+                                                        onSuccess: () => {
+                                                            tagForm.reset('emotion_tag_id');
+                                                        },
+                                                    },
+                                                );
+                                            }}
+                                        >
+                                            <div className="min-w-52 flex-1">
+                                                <label
+                                                    htmlFor="emotion_tag_id"
+                                                    className="sr-only"
+                                                    >
+                                                    追加する感情タグ
+                                                </label>
+                                                <select
+                                                    id="emotion_tag_id"
+                                                    value={tagForm.data.emotion_tag_id}
+                                                    onChange={(e) =>
+                                                        tagForm.setData(
+                                                            'emotion_tag_id',
+                                                            e.target.value,
+                                                        )
+                                                    }
+                                                    className="w-full rounded-md border bg-background px-3 py-2 text-sm"
+                                                >
+                                                    <option value="">
+                                                        追加する感情タグを選択
+                                                    </option>
+                                                    {availableEmotionTags.map((emotionTag) => (
+                                                        <option
+                                                            key={emotionTag.id}
+                                                            value={emotionTag.id}
+                                                        >
+                                                            {emotionTag.name}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                                {tagForm.errors.emotion_tag_id && (
+                                                    <p className="mt-1 text-sm text-red-600">
+                                                        {tagForm.errors.emotion_tag_id}
+                                                    </p>
+                                                )}
+                                            </div>
+                                            <button
+                                                type="submit"
+                                                disabled={
+                                                    tagForm.processing ||
+                                                    tagForm.data.emotion_tag_id === ''
+                                                }
+                                                className="cursor-pointer rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                                            >
+                                                {tagForm.processing ? '追加中...' : '追加する'}
+                                            </button>
+                                        </form>
+                                    )}
+                            </section>
+                        )}
                         <div className="mt-4 space-y-3">
                             <p className="text-sm text-muted-foreground">
                                 {anime.start_date ?? '放送年未定'}
