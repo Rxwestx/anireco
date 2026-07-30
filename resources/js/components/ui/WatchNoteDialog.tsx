@@ -129,6 +129,15 @@ export default function WatchNoteDialog({
                                     e.target.value,
                                 )
                             }
+                            onKeyDown={(e) => {
+                                if (
+                                    (e.metaKey || e.ctrlKey) &&
+                                    e.key === "Enter"
+                            ) {
+                                    e.preventDefault();
+                                    e.currentTarget.form?.requestSubmit();
+                                }
+                            }}
                             maxLength={500}
                             rows={6}
                             placeholder="視聴中や視聴後の感想をメモとして残すことができます。"
@@ -163,7 +172,7 @@ export default function WatchNoteDialog({
                         <button
                             type="submit"
                             disabled={form.processing}
-                            className="cursor-pointer rounded-md px-4 py-2 text-sm font-medium text-primary-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                            className="cursor-pointer rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:cursor-not-allowed disabled:opacity-50"
                         >
                             {form.processing ? "保存中..." : "保存する"}
                         </button>
