@@ -1,9 +1,9 @@
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
 
+import WatchNoteDialog from '@/components/ui/WatchNoteDialog';
 import RegisterAnimeDialog from '@/components/ui/RegisterAnimeDialog';
 import UpdateAnimeStatusDialog from '@/components/ui/UpdateAnimeStatusDialog';
 import type { Auth } from '@/types';
-import { Section } from 'lucide-react';
 
 type WatchingStatus = 'want_to_watch' | 'watching' | 'completed' | 'dropped';
 
@@ -116,7 +116,7 @@ export default function Show({
                                 原作：
                                 {anime.source
                                     ? (sourceLabels[anime.source] ??
-                                      anime.source)
+                                                anime.source)
                                     : '情報なし'}
                             </p>
                             <p className="text-sm text-muted-foreground">
@@ -293,12 +293,7 @@ export default function Show({
                                 すべて見る
                             </button>
                         </div>
-                        <button
-                            type="button"
-                            className="cursor-pointer rounded border border-foreground text-sm font-semibold hover:bg-muted"
-                        >
-                            + 新しいメモを追加
-                        </button>
+                        <WatchNoteDialog userAnimeId={anime.user_anime_id} />
                         {watchNotes.length === 0 ? (
                             <div className="mt-4 rounded-xl border p-6">
                                 <p className="text-sm text-muted-foreground">
