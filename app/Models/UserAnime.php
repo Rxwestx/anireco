@@ -6,6 +6,8 @@ use App\Enums\WatchingStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 
 class UserAnime extends Model
@@ -33,5 +35,20 @@ class UserAnime extends Model
     public function animeMaster(): BelongsTo
     {
         return $this->belongsTo(AnimeMaster::class);
+    }
+
+    public function userAnimeTags(): HasMany
+    {
+        return $this->hasMany(UserAnimeTag::class);
+    }
+
+    public function emotionTags(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            EmotionTag::class,
+            'user_anime_tags',
+            'user_anime_id',
+            'emotion_tag_id'
+        )->withTimestamps();
     }
 }
