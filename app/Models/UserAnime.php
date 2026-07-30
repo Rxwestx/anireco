@@ -37,6 +37,11 @@ class UserAnime extends Model
         return $this->belongsTo(AnimeMaster::class);
     }
 
+    public function watchNotes(): HasMany
+    {
+        return $this->hasMany(WatchNote::class);
+    }
+    
     public function userAnimeTags(): HasMany
     {
         return $this->hasMany(UserAnimeTag::class);
@@ -51,4 +56,5 @@ class UserAnime extends Model
             'emotion_tag_id'
         )->withTimestamps();
     }
+
 }
