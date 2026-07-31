@@ -140,7 +140,7 @@ export default function Dashboard({
                 <section>
                     <h1 className="text-2xl font-bold">マイページ</h1>
                     <p className="mt-1 text-sm text-muted-foreground">
-                       登録したアニメの管理や、最近追加したアニメの確認ができます。
+                        登録したアニメの管理や、最近追加したアニメの確認ができます。
                     </p>
                 </section>
 
@@ -288,8 +288,8 @@ export default function Dashboard({
                     <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3">
                             {userAnimes.map((userAnime) => (
                                 <article
-                                 key={userAnime.id}
-                                className="rounded-xl border p-4">
+                                    key={userAnime.id}
+                                    className="rounded-xl border p-4">
                                     <Link
                                         href={`/animes/${userAnime.anime_master.mal_id}`}
                                         className="block p-4 transition hover:bg-muted/50">
