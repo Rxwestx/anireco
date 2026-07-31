@@ -29,13 +29,24 @@ class DashboardController extends Controller
                     'oldest',
                     ]),
             ],
+            'emotion_tag_id' => [
+                'nullable',
+                'integer',
+            ],
         ]);
 
         $status = $validated['status'] ?? null;
         $keyword = $validated['keyword'] ?? null;
         $sort = $validated['sort'] ?? 'newest';
+        $emotionTagId = $validated['emotion_tag_id'] ?? null;
+        // 感情タグIDが指定されている場合は、ログインユーザーが所有している感情タグかどうかを確認
+        if ($emotionTagId) {
+            $request->user()
+                ->emotionTags()
+                ->findOrFail($emotionTagId);
+        }
 
-        $haRegisteredAnimes = $request->user()
+        $hasRegisteredAnimes = $request->user()
         ->userAnimes()
         ->exists();
 
@@ -92,6 +103,18 @@ class DashboardController extends Controller
             $userAnimesQuery->where('status', $status);
         }
 
+        if( $emotionTagId ) {
+            $userAnimesQuery->whereHas(
+                'emotionTags',
+                function ($query) use ($emotionTagId) {
+                    $query->where(
+                        'emotion_tags.id',
+                        $emotionTagId,
+                    );
+                },
+            );
+        }
+
         if( $sort === 'oldest' ) {
             $userAnimesQuery->oldest();
         } else {
@@ -126,8 +149,16 @@ class DashboardController extends Controller
             'recentlyAdded' => $recentlyAdded,
             'selectedStatus' => $status,
             'keyword' => $keyword,
-            'hasRegisteredAnimes' => $haRegisteredAnimes,
+            'hasRegisteredAnimes' => $hasRegisteredAnimes,
             'selectedSort' => $sort,
+            'emotionTags'=> $request->user()
+                ->emotionTags()
+                ->orderBy('name')
+                ->get([
+                    'id',
+                    'name',
+                ]),
+            'selectedEmotionTagId' => $emotionTagId,
         ]);
     }
 }
