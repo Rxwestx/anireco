@@ -63,6 +63,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         [UserAnimeTagController::class, 'store']
     )->name('user-anime-tags.store');
 
+    // ユーザーアニメ感情タグ解除用route
+    Route::delete(
+        '/user-animes/{userAnime}/emotion-tags/{emotionTag}',
+        [UserAnimeTagController::class, 'destroy']
+    )->name('user-anime-tags.destroy');
 });
 
     // 管理者用route
