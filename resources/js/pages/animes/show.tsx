@@ -1,8 +1,8 @@
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
 
-import WatchNoteDialog from '@/components/ui/WatchNoteDialog';
 import RegisterAnimeDialog from '@/components/ui/RegisterAnimeDialog';
 import UpdateAnimeStatusDialog from '@/components/ui/UpdateAnimeStatusDialog';
+import WatchNoteDialog from '@/components/ui/WatchNoteDialog';
 import type { Auth } from '@/types';
 
 type WatchingStatus = 'want_to_watch' | 'watching' | 'completed' | 'dropped';
@@ -187,6 +187,15 @@ export default function Show({
                                             type="button"
                                             aria-label={`${emotionTag.name}を外す`}
                                             title="この作品から外す"
+                                            disabled={tagForm.processing}
+                                            onClick={() => {
+                                                tagForm.delete(
+                                                    `/user-animes/${anime.user_anime_id}/emotion-tags/${emotionTag.id}`,
+                                                    {
+                                                        preserveScroll: true,
+                                                    },
+                                                );
+                                            }}
                                             className="cursor-pointer text-muted-foreground transition hover:text-foreground">
                                                 ×
                                             </button>
