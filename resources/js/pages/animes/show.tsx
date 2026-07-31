@@ -116,7 +116,7 @@ export default function Show({
                                 原作：
                                 {anime.source
                                     ? (sourceLabels[anime.source] ??
-                                                anime.source)
+                                      anime.source)
                                     : '情報なし'}
                             </p>
                             <p className="text-sm text-muted-foreground">
@@ -177,12 +177,20 @@ export default function Show({
                         {attachedEmotionTags.length > 0 ? (
                             <div className="mt-3 flex flex-wrap gap-2">
                                 {attachedEmotionTags.map((emotionTag) => (
-                                    <span
+                                    <div
                                         key={emotionTag.id}
-                                        className="rounded-full bg-muted px-3 py-1 text-sm"
+                                        className="inline-flex items-center gap-2 rounded-full bg-muted px-3 py-1.5 text-sm"
                                     >
-                                        {emotionTag.name}
-                                    </span>
+                                        <span>{emotionTag.name}</span>
+
+                                        <button
+                                            type="button"
+                                            aria-label={`${emotionTag.name}を外す`}
+                                            title="この作品から外す"
+                                            className="cursor-pointer text-muted-foreground transition hover:text-foreground">
+                                                ×
+                                            </button>
+                                    </div>
                                 ))}
                             </div>
                         ) : (
@@ -199,72 +207,48 @@ export default function Show({
                                 この作品には、以下の感情タグが付いています。
                             </p>
                         ) : (
-                            <form
-                                className="mt-4 flex max-w-md flex-wrap items-start gap-2"
-                                onSubmit={(e) => {
-                                    e.preventDefault();
-                                    tagForm.post(
-                                        `/user-animes/${anime.user_anime_id}/emotion-tags`,
-                                        {
-                                            preserveScroll: true,
-                                            onSuccess: () => {
-                                                tagForm.reset('emotion_tag_id');
-                                            },
-                                        },
-                                    );
-                                }}
-                            >
-                                <div className="min-w-52 flex-1">
-                                    <label
-                                        htmlFor="emotion_tag_id"
-                                        className="sr-only"
-                                    >
-                                        追加する感情タグ
-                                    </label>
-                                    <select
-                                        id="emotion_tag_id"
-                                        value={tagForm.data.emotion_tag_id}
-                                        onChange={(e) =>
-                                            tagForm.setData(
-                                                'emotion_tag_id',
-                                                e.target.value,
-                                            )
-                                        }
-                                        className="w-full rounded-md border bg-background px-3 py-2 text-sm"
-                                    >
-                                        <option value="">
-                                            追加する感情タグを選択
-                                        </option>
-                                        {availableEmotionTags.map(
-                                            (emotionTag) => (
-                                                <option
-                                                    key={emotionTag.id}
-                                                    value={emotionTag.id}
-                                                >
-                                                    {emotionTag.name}
-                                                </option>
-                                            ),
-                                        )}
-                                    </select>
-                                    {tagForm.errors.emotion_tag_id && (
-                                        <p className="mt-1 text-sm text-red-600">
-                                            {tagForm.errors.emotion_tag_id}
-                                        </p>
-                                    )}
+                            <div className="mt-4">
+                                <p className="mb-2 text-xs text-muted-foreground">
+                                    追加するタグを選択
+                                </p>
+
+                                <div className="flex flex-wrap gap-2">
+                                    {availableEmotionTags.map((emotionTag) => (
+                                        <button
+                                            key={emotionTag.id}
+                                            type="button"
+                                            disabled={tagForm.processing}
+                                            onClick={() => {
+                                                tagForm.setData(
+                                                    'emotion_tag_id',
+                                                    String(emotionTag.id),
+                                                );
+
+                                                tagForm.post(
+                                                    `/user-animes/${anime.user_anime_id}/emotion-tags`,
+                                                    {
+                                                        preserveScroll: true,
+                                                        onSuccess: () => {
+                                                            tagForm.reset(
+                                                                'emotion_tag_id',
+                                                            );
+                                                        },
+                                                    },
+                                                );
+                                            }}
+                                            className="cursor-pointer rounded-full border bg-background px-3 py-1.5 text-sm transition hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50"
+                                        >
+                                            + {emotionTag.name}
+                                        </button>
+                                    ))}
                                 </div>
-                                <button
-                                    type="submit"
-                                    disabled={
-                                        tagForm.processing ||
-                                        tagForm.data.emotion_tag_id === ''
-                                    }
-                                    className="cursor-pointer rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:cursor-not-allowed disabled:opacity-50"
-                                >
-                                    {tagForm.processing
-                                        ? '追加中...'
-                                        : '追加する'}
-                                </button>
-                            </form>
+
+                                {tagForm.errors.emotion_tag_id && (
+                                    <p className="mt-2 text-sm text-red-600">
+                                        {tagForm.errors.emotion_tag_id}
+                                    </p>
+                                )}
+                            </div>
                         )}
                     </section>
                 )}
@@ -293,7 +277,11 @@ export default function Show({
                                 すべて見る
                             </button>
                         </div>
-                        <WatchNoteDialog userAnimeId={anime.user_anime_id} />
+                        <WatchNoteDialog
+                            userAnimeId={anime.user_anime_id}
+                            emotionTags={emotionTags}
+                            attachedEmotionTagIds={attachedEmotionTagIds}
+                        />
                         {watchNotes.length === 0 ? (
                             <div className="mt-4 rounded-xl border p-6">
                                 <p className="text-sm text-muted-foreground">
