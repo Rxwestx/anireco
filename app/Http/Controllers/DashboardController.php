@@ -29,8 +29,11 @@ class DashboardController extends Controller
                     'oldest',
                     ]),
             ],
-            'emotion_tag_id' => [
+            'emotion_tag_ids' => [
                 'nullable',
+                'array',
+            ],
+            'emotion_tag_ids.*' => [
                 'integer',
             ],
         ]);
@@ -38,12 +41,18 @@ class DashboardController extends Controller
         $status = $validated['status'] ?? null;
         $keyword = $validated['keyword'] ?? null;
         $sort = $validated['sort'] ?? 'newest';
-        $emotionTagId = $validated['emotion_tag_id'] ?? null;
+        $emotionTagIds = $validated['emotion_tag_ids'] ?? [];
         // 感情タグIDが指定されている場合は、ログインユーザーが所有している感情タグかどうかを確認
-        if ($emotionTagId) {
-            $request->user()
+        if ($emotionTagIds !== []) {
+            $ownedEmotionTagCount = $request->user()
                 ->emotionTags()
-                ->findOrFail($emotionTagId);
+                ->whereIn('id', $emotionTagIds)
+                ->count();
+
+            abort_unless(
+                $ownedEmotionTagCount === count($emotionTagIds),
+                404,
+            );
         }
 
         $hasRegisteredAnimes = $request->user()
@@ -102,8 +111,8 @@ class DashboardController extends Controller
         if( $status ) {
             $userAnimesQuery->where('status', $status);
         }
-
-        if( $emotionTagId ) {
+        // 感情タグIDが指定されている場合は、指定された感情タグを持つ作品だけを取得
+        foreach( $emotionTagIds as $emotionTagId ) {
             $userAnimesQuery->whereHas(
                 'emotionTags',
                 function ($query) use ($emotionTagId) {
@@ -158,7 +167,10 @@ class DashboardController extends Controller
                     'id',
                     'name',
                 ]),
-            'selectedEmotionTagId' => $emotionTagId,
+            'selectedEmotionTagIds' => array_map(
+                'intval',
+                $emotionTagIds,
+            ),
         ]);
     }
 }
