@@ -40,6 +40,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         [WatchNoteController::class, 'store']
     )->name('watch-notes.store');
 
+    // 視聴メモ削除用route
+    Route::delete(
+        '/user-animes/{userAnime}/watch-notes/{watchNote}',
+        [WatchNoteController::class, 'destroy']
+    )->name('watch-notes.destroy');
+
     // 感情タグ画面Route
     Route::get('/emotion-tags', [EmotionTagController::class, 'index'])
         ->name('emotion-tags.index');
