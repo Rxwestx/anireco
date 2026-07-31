@@ -68,6 +68,45 @@ class WatchNoteController extends Controller
         );
     }
 
+    public function update(
+        Request $request,
+        UserAnime $userAnime,
+        WatchNote $watchNote,
+    ): RedirectResponse{
+        abort_unless(
+            $userAnime->user_id === $request->user()->id,
+            403,
+        );
+
+        abort_unless(
+            $watchNote->user_anime_id === $userAnime->id,
+            404,
+        );
+
+        $validated = $request->validate([
+            'episode' => [
+                'nullable',
+                'integer',
+                'min:1',
+            ],
+            'content' => [
+                'required',
+                'string',
+                'max:500',
+            ],
+        ]);
+
+        $watchNote->update([
+            'episode' => $validated['episode'] ?? null,
+            'content' => $validated['content'],
+        ]);
+
+        return back()->with(
+            'success',
+            '視聴メモを更新しました。',
+        );
+    }
+
     public function destroy(
         Request $request,
         UserAnime $userAnime,
