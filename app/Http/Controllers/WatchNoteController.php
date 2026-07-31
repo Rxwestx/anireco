@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\UserAnime;
+use App\Models\WatchNote;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
@@ -64,6 +65,29 @@ class WatchNoteController extends Controller
         return back()->with(
             'success',
             '視聴メモを登録しました。',
+        );
+    }
+
+    public function destroy(
+        Request $request,
+        UserAnime $userAnime,
+        WatchNote $watchNote,
+    ): RedirectResponse{
+        abort_unless(
+            $userAnime->user_id === $request->user()->id,
+            403,
+        );
+
+        abort_unless(
+            $watchNote->user_anime_id === $userAnime->id,
+            404,
+        );
+
+        $watchNote->delete();
+
+        return back()->with(
+            'success',
+            '視聴メモを削除しました。',
         );
     }
 }
