@@ -6,6 +6,7 @@ import {
     usePage,
 } from '@inertiajs/react';
 
+import EditWatchNoteDialog from '@/components/ui/EditWatchNoteDialog';
 import RegisterAnimeDialog from '@/components/ui/RegisterAnimeDialog';
 import UpdateAnimeStatusDialog from '@/components/ui/UpdateAnimeStatusDialog';
 import WatchNoteDialog from '@/components/ui/WatchNoteDialog';
@@ -345,6 +346,10 @@ export default function Show({
                                                     watchNote.created_at,
                                                 ).toLocaleDateString('ja-JP')}
                                             </time>
+                                            <EditWatchNoteDialog
+                                                userAnimeId={anime.user_anime_id}
+                                                watchNote={watchNote}
+                                            />
                                             <button
                                                 type="button"
                                                 onClick={() =>
