@@ -40,6 +40,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         [WatchNoteController::class, 'store']
     )->name('watch-notes.store');
 
+    // 視聴メモ更新用route
+    Route::patch(
+        '/user-animes/{userAnime}/watch-notes/{watchNote}',
+        [WatchNoteController::class, 'update']
+    )->name('watch-notes.update');
+    
     // 視聴メモ削除用route
     Route::delete(
         '/user-animes/{userAnime}/watch-notes/{watchNote}',
