@@ -34,7 +34,7 @@ type DashboardProps = {
     hasRegisteredAnimes: boolean;
     selectedSort: 'newest' | 'oldest';
     emotionTags: EmotionTag[];
-    selectedEmotionTagId: number | null;
+    selectedEmotionTagIds: number[];
 };
 
 export default function Dashboard({
@@ -45,29 +45,38 @@ export default function Dashboard({
         hasRegisteredAnimes,
         selectedSort,
         emotionTags,
-        selectedEmotionTagId,
+        selectedEmotionTagIds,
 }: DashboardProps) {
 
     const [searchKeyword, setSearchKeyword] = useState(keyword ?? '');
 
     // 感情タグの絞り込み処理
     const handleEmotionTagFilter = (emotionTagId: number | null) => {
+        const nextEmotionTagIds =
+            emotionTagId === null
+            ? []
+            :selectedEmotionTagIds.includes(emotionTagId)
+                ? selectedEmotionTagIds.filter(
+                    (selectedId) => selectedId !== emotionTagId,
+                )
+                : [...selectedEmotionTagIds, emotionTagId];
+
         router.get(
             '/dashboard',
             {
                 ...(selectedStatus ? { status: selectedStatus } : {}),
                 ...(searchKeyword ? { keyword: searchKeyword } : {}),
-                ...(emotionTagId
-                    ? { emotion_tag_id: emotionTagId }
+                ...(nextEmotionTagIds.length > 0
+                    ? { emotion_tag_ids: nextEmotionTagIds }
                     : {}),
-                    sort: selectedSort,
-                },
-                {
-                    preserveState: true,
-                    preserveScroll: true,
-                }
-            );
-        };
+                sort: selectedSort,
+            },
+            {
+                preserveState: true,
+                preserveScroll: true,
+            }
+        );
+    };
 
         const handleStatusFilter = (status: string | null) => {
             router.get(
@@ -75,8 +84,8 @@ export default function Dashboard({
                 {
                     ...(status ? { status } : {}),
                     ...(searchKeyword ? { keyword: searchKeyword } : {}),
-                    ...(selectedEmotionTagId
-                        ? { emotion_tag_id: selectedEmotionTagId }
+                    ...(selectedEmotionTagIds.length > 0
+                        ? { emotion_tag_ids: selectedEmotionTagIds }
                         : {}),
                     sort: selectedSort,
                 },
@@ -94,8 +103,8 @@ export default function Dashboard({
             {
                 ...(selectedStatus ? { status: selectedStatus } : {}),
                     ...(searchKeyword ? { keyword: searchKeyword } : {}),
-                ...(selectedEmotionTagId
-                    ? { emotion_tag_id: selectedEmotionTagId }
+                ...(selectedEmotionTagIds.length > 0
+                    ? { emotion_tag_ids: selectedEmotionTagIds }
                     : {}),
                 sort: selectedSort,
             },
@@ -112,8 +121,8 @@ export default function Dashboard({
             {
                 ...(selectedStatus ? { status: selectedStatus } : {}),
                 ...(searchKeyword ? { keyword: searchKeyword } : {}),
-                ...(selectedEmotionTagId
-                    ? { emotion_tag_id: selectedEmotionTagId }
+                ...(selectedEmotionTagIds.length > 0
+                    ? { emotion_tag_ids: selectedEmotionTagIds }
                     : {}),
                 sort,
             },
@@ -179,7 +188,7 @@ export default function Dashboard({
                                 type="button"
                                 onClick={() => handleEmotionTagFilter(null)}
                                 className={`cursor-pointer rounded-full border px-3 py-1.5 text-sm ${
-                                    selectedEmotionTagId === null
+                                    selectedEmotionTagIds.length === 0
                                         ? 'bg-primary text-primary-foreground'
                                         : 'hover:bg-muted'
                                 }`}
@@ -195,7 +204,7 @@ export default function Dashboard({
                                     handleEmotionTagFilter(emotionTag.id)
                                 }
                                 className={`cursor-pointer rounded-full border px-3 py-1.5 text-sm ${
-                                    selectedEmotionTagId === emotionTag.id
+                                    selectedEmotionTagIds.includes(emotionTag.id)
                                         ? 'bg-primary text-primary-foreground'
                                         : 'hover:bg-muted'
                                 }`}
