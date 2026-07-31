@@ -1,4 +1,10 @@
-import { Head, Link, useForm, usePage } from '@inertiajs/react';
+import {
+    Head,
+    Link,
+    router,
+    useForm,
+    usePage,
+} from '@inertiajs/react';
 
 import RegisterAnimeDialog from '@/components/ui/RegisterAnimeDialog';
 import UpdateAnimeStatusDialog from '@/components/ui/UpdateAnimeStatusDialog';
@@ -79,6 +85,27 @@ export default function Show({
     const availableEmotionTags = emotionTags.filter(
         (emotionTag) => !attachedEmotionTagIds.includes(emotionTag.id),
     );
+
+    const handleDeleteWatchNote = (watchNoteId: number) => {
+        if (anime.user_anime_id === null) {
+            return;
+        }
+
+        const shouldDelete = window.confirm(
+            'この視聴メモを削除しますか？'
+        );
+
+        if (!shouldDelete) {
+            return;
+        }
+
+        router.delete(
+            `/user-animes/${anime.user_anime_id}/watch-notes/${watchNoteId}`,
+            {
+                preserveScroll: true,
+            },
+        );
+    };
 
     return (
         <>
@@ -196,7 +223,8 @@ export default function Show({
                                                     },
                                                 );
                                             }}
-                                            className="cursor-pointer text-muted-foreground transition hover:text-foreground">
+                                            className="cursor-pointer text-muted-foreground transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                                            >
                                                 ×
                                             </button>
                                     </div>
@@ -304,18 +332,30 @@ export default function Show({
                                         key={watchNote.id}
                                         className="rounded-xl border p-4"
                                     >
-                                        <div className="flex flex-wrap items-center justify-between gap-2">
-                                            <p className="text-sm font-medium">
-                                                {watchNote.episode !== null
-                                                    ? `第${watchNote.episode}話`
-                                                    : '話数未設定'}
-                                            </p>
+                                    <div className="flex flex-wrap items-center justify-between gap-2">
+                                        <p className="text-sm font-medium">
+                                            { watchNote.episode !== null &&
+                                            watchNote.episode !== undefined
+                                                ? `第${watchNote.episode}話`
+                                                : '話数未設定'}
+                                        </p>
+                                        <div className="flex items-center gap-3">
                                             <time className="text-xs text-muted-foreground">
                                                 {new Date(
                                                     watchNote.created_at,
                                                 ).toLocaleDateString('ja-JP')}
                                             </time>
+                                            <button
+                                                type="button"
+                                                onClick={() =>
+                                                    handleDeleteWatchNote(watchNote.id)
+                                                }
+                                                className="cursor-pointer text-xs text-red-600 hover:underline"
+                                            >
+                                                削除
+                                            </button>
                                         </div>
+                                    </div>
                                         <p className="mt-3 text-sm leading-6 whitespace-pre-wrap">
                                             {watchNote.content}
                                         </p>
