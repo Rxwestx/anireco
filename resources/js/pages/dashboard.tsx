@@ -2,6 +2,7 @@ import { Head, Link, router } from '@inertiajs/react';
 import { useState } from 'react';
 import UpdateAnimeStatusDialog from '@/components/ui/UpdateAnimeStatusDialog';
 
+
 type AnimeMaster ={
     id: number;
     mal_id: number;
@@ -20,6 +21,11 @@ type UserAnime = {
     anime_master: AnimeMaster;
 };
 
+type EmotionTag = {
+    id: number;
+    name: string;
+};
+
 type DashboardProps = {
     userAnimes: UserAnime[];
     recentlyAdded: UserAnime[];
@@ -27,6 +33,8 @@ type DashboardProps = {
     keyword: string | null;
     hasRegisteredAnimes: boolean;
     selectedSort: 'newest' | 'oldest';
+    emotionTags: EmotionTag[];
+    selectedEmotionTagId: number | null;
 };
 
 export default function Dashboard({
@@ -36,29 +44,59 @@ export default function Dashboard({
         keyword,
         hasRegisteredAnimes,
         selectedSort,
+        emotionTags,
+        selectedEmotionTagId,
 }: DashboardProps) {
-    const [searchKeyword, setSearchKeyword] = useState(keyword ?? '');
-    const handleStatusFilter = (status: string | null) => {
-        router.get(
-            '/dashboard',
-            {
-                ...(status ? { status } : {}),
-                sort: selectedSort,
-            },
-            {
-                preserveState: true,
-                preserveScroll: true,
-            }
-        );
-    };
 
-    const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
+    const [searchKeyword, setSearchKeyword] = useState(keyword ?? '');
+
+    // 感情タグの絞り込み処理
+    const handleEmotionTagFilter = (emotionTagId: number | null) => {
         router.get(
             '/dashboard',
             {
                 ...(selectedStatus ? { status: selectedStatus } : {}),
                 ...(searchKeyword ? { keyword: searchKeyword } : {}),
+                ...(emotionTagId
+                    ? { emotion_tag_id: emotionTagId }
+                    : {}),
+                    sort: selectedSort,
+                },
+                {
+                    preserveState: true,
+                    preserveScroll: true,
+                }
+            );
+        };
+
+        const handleStatusFilter = (status: string | null) => {
+            router.get(
+                '/dashboard',
+                {
+                    ...(status ? { status } : {}),
+                    ...(searchKeyword ? { keyword: searchKeyword } : {}),
+                    ...(selectedEmotionTagId
+                        ? { emotion_tag_id: selectedEmotionTagId }
+                        : {}),
+                    sort: selectedSort,
+                },
+                {
+                    preserveState: true,
+                    preserveScroll: true,
+                }
+            );
+        };
+
+        const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
+            e.preventDefault();
+        router.get(
+            '/dashboard',
+            {
+                ...(selectedStatus ? { status: selectedStatus } : {}),
+                    ...(searchKeyword ? { keyword: searchKeyword } : {}),
+                ...(selectedEmotionTagId
+                    ? { emotion_tag_id: selectedEmotionTagId }
+                    : {}),
                 sort: selectedSort,
             },
             {
@@ -74,6 +112,9 @@ export default function Dashboard({
             {
                 ...(selectedStatus ? { status: selectedStatus } : {}),
                 ...(searchKeyword ? { keyword: searchKeyword } : {}),
+                ...(selectedEmotionTagId
+                    ? { emotion_tag_id: selectedEmotionTagId }
+                    : {}),
                 sort,
             },
             {
@@ -128,6 +169,43 @@ export default function Dashboard({
                         <option value="oldest">古く登録した順</option>
                     </select>
                 </div>
+                {emotionTags.length > 0 && (
+                    <div className="mb-4">
+                        <p className="mb-2 font-medium text-sm">
+                            感情タグで絞り込み
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                            <button
+                                type="button"
+                                onClick={() => handleEmotionTagFilter(null)}
+                                className={`cursor-pointer rounded-full border px-3 py-1.5 text-sm ${
+                                    selectedEmotionTagId === null
+                                        ? 'bg-primary text-primary-foreground'
+                                        : 'hover:bg-muted'
+                                }`}
+                            >
+                                すべてのタグ
+                        </button>
+
+                        {emotionTags.map((emotionTag) => (
+                            <button
+                                key={emotionTag.id}
+                                type="button"
+                                onClick={() =>
+                                    handleEmotionTagFilter(emotionTag.id)
+                                }
+                                className={`cursor-pointer rounded-full border px-3 py-1.5 text-sm ${
+                                    selectedEmotionTagId === emotionTag.id
+                                        ? 'bg-primary text-primary-foreground'
+                                        : 'hover:bg-muted'
+                                }`}
+                            >
+                                {emotionTag.name}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+                )}
                 <div className="mb-4 flex flex-wrap gap-2">
                     <button
                         type="button"
