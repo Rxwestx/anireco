@@ -92,7 +92,10 @@ class DashboardController extends Controller
         // ログインユーザーの登録作品を全件取得
         $userAnimesQuery = $request->user()
         ->userAnimes()
-        ->with('animeMaster');
+        ->with([
+            'animeMaster',
+            'emotionTags:id',
+            ]);
 
         // キーワードが指定されている場合だけ検索を実行
         if( $keyword ) {
@@ -138,6 +141,11 @@ class DashboardController extends Controller
                 'status' => $userAnime->status->value,
                 'statusLabel' => $userAnime->status->label(),
                 'created_at' => $userAnime->created_at?->format('Y-m-d H:i:s'),
+                'attachedEmotionTagIds' => $userAnime
+                    ->emotionTags
+                    ->pluck('id')
+                    ->values()
+                    ->all(),
                 'anime_master' =>[
                     'id' => $userAnime->animeMaster->id,
                     'mal_id' => $userAnime->animeMaster->mal_id,
