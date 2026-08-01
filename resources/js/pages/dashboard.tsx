@@ -1,7 +1,7 @@
 import { Head, Link, router } from '@inertiajs/react';
 import { useState } from 'react';
 import UpdateAnimeStatusDialog from '@/components/ui/UpdateAnimeStatusDialog';
-
+import WatchNoteDialog from '@/components/ui/WatchNoteDialog';
 
 type AnimeMaster ={
     id: number;
@@ -18,6 +18,7 @@ type UserAnime = {
     status: string;
     statusLabel: string;
     created_at: string | null;
+    attachedEmotionTagIds: number[];
     anime_master: AnimeMaster;
 };
 
@@ -320,6 +321,14 @@ export default function Dashboard({
                                         <UpdateAnimeStatusDialog
                                             userAnimeId={userAnime.id}
                                             currentStatus={userAnime.status}
+                                        />
+
+                                        <WatchNoteDialog
+                                            userAnimeId={userAnime.id}
+                                            emotionTags={emotionTags}
+                                            attachedEmotionTagIds={
+                                                userAnime.attachedEmotionTagIds
+                                            }
                                         />
                                     </div>
                                 </article>
