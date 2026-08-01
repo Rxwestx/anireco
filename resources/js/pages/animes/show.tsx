@@ -5,7 +5,7 @@ import {
     useForm,
     usePage,
 } from '@inertiajs/react';
-
+import CreateEmotionTagDialog from '@/components/ui/CreateEmotionTagDialog';
 import EditWatchNoteDialog from '@/components/ui/EditWatchNoteDialog';
 import RegisterAnimeDialog from '@/components/ui/RegisterAnimeDialog';
 import UpdateAnimeStatusDialog from '@/components/ui/UpdateAnimeStatusDialog';
@@ -242,7 +242,7 @@ export default function Show({
                             </p>
                         ) : availableEmotionTags.length === 0 ? (
                             <p className="mt-4 text-sm text-muted-foreground">
-                                この作品には、以下の感情タグが付いています。
+                                登録済みの感情タグは、すべてこの作品に付いています。
                             </p>
                         ) : (
                             <div className="mt-4">
@@ -288,6 +288,12 @@ export default function Show({
                                 )}
                             </div>
                         )}
+                        <div className="mt-4">
+                            <CreateEmotionTagDialog
+                                buttonLabel="+ 新しい感情タグを作る"
+                                buttonClassName="cursor-pointer  rounded-md border bg-background px-3 py-2 text-sm font-medium hover:bd-muted"
+                            />
+                        </div>
                     </section>
                 )}
 
