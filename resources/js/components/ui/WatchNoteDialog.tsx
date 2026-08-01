@@ -2,6 +2,8 @@ import { useForm } from "@inertiajs/react";
 import { useState } from "react";
 import type { FormEvent } from "react";
 
+import CreateEmotionTagDialog from "@/components/ui/CreateEmotionTagDialog";
+
 import {
     Dialog,
     DialogContent,
@@ -153,7 +155,6 @@ export default function WatchNoteDialog({
                                     複数選択可
                                 </span>
                             </div>
-
                             {emotionTags.length === 0 ? (
                                 <p className="rounded-md border p-3 text-sm text-muted-foreground">
                                     感情タグが登録されていません。
@@ -167,37 +168,43 @@ export default function WatchNoteDialog({
                                             );
 
                                         return (
-                                        <button
-                                            key={emotionTag.id}
-                                            type="button"
-                                            onClick={() =>
-                                                toggleEmotionTag(emotionTag.id)
-                                            }
-                                            aria-pressed={isSelected}
-                                            className={
-                                                isSelected
-                                                    ? "cursor-pointer rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground"
-                                                    : "cursor-pointer rounded-md border bg-background px-3 py-2 text-sm text-medium hover:bg-muted"
-                                            }
-                                        >
-                                            {emotionTag.name}
-                                        </button>
-                                    );
-                                })}
+                                            <button
+                                                key={emotionTag.id}
+                                                type="button"
+                                                onClick={() =>
+                                                    toggleEmotionTag(emotionTag.id)
+                                                }
+                                                aria-pressed={isSelected}
+                                                className={
+                                                    isSelected
+                                                        ? "cursor-pointer rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground"
+                                                        : "cursor-pointer rounded-md border bg-background px-3 py-2 text-sm font-medium hover:bg-muted"
+                                                }
+                                            >
+                                                {emotionTag.name}
+                                            </button>
+                                        );
+                                    })}
                                 </div>
                             )}
-                        </div>
-
+                            <div className="mt-3">
+                                    <CreateEmotionTagDialog
+                                        buttonLabel="+ 新しい感情タグを作る"
+                                        buttonClassName="cursor-pointer text-sm text-muted-foreground hover:text-foreground hover:underline"
+                                    />
+                            </div>
                             {form.errors.emotion_tag_ids && (
                                 <p className="mt-1 text-sm text-red-600">
                                     {form.errors.emotion_tag_ids}
                                 </p>
                             )}
+                        </div>
+
 
                         <div>
                             <label
                                 htmlFor="content"
-                                className="mb-2 block text-sm text-medium"
+                                className="mb-2 block text-sm font-medium"
                             >
                                 メモ
                                 <span className="ml-1 text-red-600">
