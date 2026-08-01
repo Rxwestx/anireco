@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 
 class UserAnime extends Model
@@ -41,7 +42,12 @@ class UserAnime extends Model
     {
         return $this->hasMany(WatchNote::class);
     }
-    
+
+    public function review(): HasOne
+    {
+        return $this->hasOne(Review::class);
+    }
+
     public function userAnimeTags(): HasMany
     {
         return $this->hasMany(UserAnimeTag::class);
