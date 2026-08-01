@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -21,10 +22,6 @@ return new class extends Migration
             $table->smallInteger('evaluation')
                 ->nullable();
 
-            $table->check(
-                'evaluation IS NULL OR evaluation BETWEEN 1 AND 5',
-            );
-
             $table->text('comment')
                 ->nullable();
 
@@ -39,9 +36,18 @@ return new class extends Migration
 
             $table->boolean('is_hidden_by_admin')
                 ->default(false);
-                
+
             $table->timestamps();
         });
+
+        DB::statement(
+            'ALTER TABLE reviews
+            ADD CONSTRAINT reviews_evaluation_check
+            CHECK (
+                evaluation IS NULL
+                OR evaluation BETWEEN 1 AND 5
+            )'
+        );
     }
 
     /**
