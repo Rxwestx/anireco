@@ -130,6 +130,27 @@ export default function Show({
         );
     };
 
+    const handleDeleteReview = (reviewId: number) => {
+        if (anime.user_anime_id === null) {
+            return;
+        }
+
+        const shouldDelete = window.confirm(
+            'このレビューを削除しますか？'
+        );
+
+        if (!shouldDelete) {
+            return;
+        }
+
+        router.delete(
+            `/user-animes/${anime.user_anime_id}/reviews/${reviewId}`,
+            {
+                preserveScroll: true,
+            },
+        );
+    };
+
     return (
         <>
             <Head title={anime.title} />
@@ -471,10 +492,21 @@ export default function Show({
                                         )}
                                     </div>
 
+                                    <div className="flex items-center gap-3">
                                     <EditReviewDialog
                                         userAnimeId={anime.user_anime_id}
                                         review={review}
                                     />
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            handleDeleteReview(review.id)
+                                        }
+                                        className="cursor-pointer text-sm text-red-600 hover:underline"
+                                    >
+                                        削除
+                                    </button>
+                                    </div>
                                 </div>
 
                                     {review.recommend_category && (
