@@ -65,6 +65,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         [ReviewController::class, 'update']
     )->name('reviews.update');
 
+    // レビュー削除用route
+    Route::delete(
+        '/user-animes/{userAnime}/reviews/{review}',
+        [ReviewController::class, 'destroy']
+    )->name('reviews.destroy');
+
     // 感情タグ画面Route
     Route::get('/emotion-tags', [EmotionTagController::class, 'index'])
         ->name('emotion-tags.index');
