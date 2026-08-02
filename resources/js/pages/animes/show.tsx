@@ -7,8 +7,9 @@ import {
 } from '@inertiajs/react';
 
 import { useState } from 'react';
-import CreateReviewDialog from '@/components/ui/CreateReviewDialog';
 import CreateEmotionTagDialog from '@/components/ui/CreateEmotionTagDialog';
+import CreateReviewDialog from '@/components/ui/CreateReviewDialog';
+import EditReviewDialog from '@/components/ui/EditReviewDialog';
 import EditWatchNoteDialog from '@/components/ui/EditWatchNoteDialog';
 import RegisterAnimeDialog from '@/components/ui/RegisterAnimeDialog';
 import UpdateAnimeStatusDialog from '@/components/ui/UpdateAnimeStatusDialog';
@@ -426,13 +427,38 @@ export default function Show({
                                 </div>
                             ) : (
                                 <article className="mt-4 rounded-xl border p-6">
-                                    <div className="flex flex-wrap items-center gap-3">
-                                        <p className="text-sm font-medium">
-                                            総合評価:
-                                            {review.evaluation !== null
-                                                ? `${review.evaluation }/5`
-                                                : '未評価'}
-                                        </p>
+                                    <div className="flex items-start justify-between gap-4">
+                                        <div className="flex flex-wrap items-center gap-3">
+                                            <div className="flex items-center gap-2">
+                                            <span className="text-sm font-medium">
+                                                総合評価:
+                                            </span>
+
+                                            {review.evaluation !== null ? (
+                                                <div
+                                                    className="flex items-center gap-1"
+                                                    aria-label={`総合評価: ${review.evaluation}点`}
+                                                >
+
+                                                {[1,2,3,4,5].map((value) => (
+                                                    <span
+                                                        key={value}
+                                                        className={
+                                                            value <= review.evaluation!
+                                                                ? 'text-yellow-500'
+                                                                : 'text-muted-foreground/40'
+                                                        }
+                                                    >
+                                                        ★
+                                                    </span>
+                                                ))}
+                                                </div>
+                                            ) : (
+                                                <span className="text-sm text-muted-foreground">
+                                                    未評価
+                                                </span>
+                                            )}
+                                        </div>
 
                                         <span className="rounded-full bg-muted px-3 py-1 text-xs">
                                             {review.publish ? '公開' : '非公開'}
@@ -444,6 +470,12 @@ export default function Show({
                                             </span>
                                         )}
                                     </div>
+
+                                    <EditReviewDialog
+                                        userAnimeId={anime.user_anime_id}
+                                        review={review}
+                                    />
+                                </div>
 
                                     {review.recommend_category && (
                                         <p className="mt-4 text-sm">
