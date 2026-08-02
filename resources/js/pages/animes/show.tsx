@@ -61,12 +61,23 @@ type Review = {
     updated_at: string | null;
 };
 
+type PublicReview = {
+    id: number;
+    evaluation: number | null;
+    comment: string | null;
+    recommend_category: string | null;
+    spoiler: boolean;
+    reviewer_name: string;
+    created_at: string | null;
+};
+
 type ShowProps = {
     anime: Anime;
     emotionTags: EmotionTag[];
     attachedEmotionTagIds: number[];
     watchNotes: WatchNote[];
     review: Review | null;
+    publicReviews: PublicReview[];
 };
 
 const sourceLabels: Record<string, string> = {
@@ -90,6 +101,7 @@ export default function Show({
     attachedEmotionTagIds,
     watchNotes,
     review,
+    publicReviews,
 }: ShowProps) {
     const { auth } = usePage<{ auth: Auth }>().props;
 
