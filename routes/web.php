@@ -59,6 +59,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         [ReviewController::class, 'store']
     )->name('reviews.store');
 
+    // レビュー更新用route
+    Route::patch(
+        '/user-animes/{userAnime}/reviews/{review}',
+        [ReviewController::class, 'update']
+    )->name('reviews.update');
+
     // 感情タグ画面Route
     Route::get('/emotion-tags', [EmotionTagController::class, 'index'])
         ->name('emotion-tags.index');
