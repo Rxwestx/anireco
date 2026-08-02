@@ -55,7 +55,7 @@ export default function CreateReviewDialog({
         e.preventDefault();
 
         form.post(
-             `/user-animes/${userAnimeId}/reviews`,
+            `/user-animes/${userAnimeId}/reviews`,
             {
                 preserveScroll: true,
                 onSuccess: () => {
