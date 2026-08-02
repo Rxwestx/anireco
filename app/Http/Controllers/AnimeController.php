@@ -22,11 +22,13 @@ class AnimeController extends Controller
         $emotionTags = collect();
         $attachedEmotionTagIds = collect();
         $watchNotes = collect();
+        $review = null;
 
         if ($request->user()) {
             $userAnime = UserAnime::query()
                 ->with([
                     'emotionTags',
+                    'review',
                     'watchNotes' => function ($query) {
                         $query->latest();
                     },
@@ -61,6 +63,24 @@ class AnimeController extends Controller
                     ];
                 })
                 ?? collect();
+
+            $review = $userAnime?->review
+                ? [
+                    'id' => $userAnime->review->id,
+                    'evaluation' => $userAnime->review->evaluation,
+                    'comment' => $userAnime->review->comment,
+                    'recommend_category' => $userAnime->review->recommend_category,
+                    'publish' => $userAnime->review->publish,
+                    'spoiler' => $userAnime->review->spoiler,
+                    'is_hidden_by_admin' => $userAnime->review->is_hidden_by_admin,
+                    'created_at' => $userAnime->review->created_at?->format(
+                        'Y-m-d H:i:s'
+                    ),
+                    'updated_at' => $userAnime->review->updated_at?->format(
+                        'Y-m-d H:i:s'
+                    ),
+                ]
+                : null;
         }
 
         return Inertia::render('animes/show', [
@@ -72,6 +92,7 @@ class AnimeController extends Controller
             'emotionTags' => $emotionTags,
             'attachedEmotionTagIds' => $attachedEmotionTagIds,
             'watchNotes' => $watchNotes,
+            'review' => $review,
         ]);
     }
 }
