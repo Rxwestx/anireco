@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Review;
 use App\Models\UserAnime;
 use App\Services\MyAnimeListService;
 use Illuminate\Http\Request;
@@ -23,6 +24,37 @@ class AnimeController extends Controller
         $attachedEmotionTagIds = collect();
         $watchNotes = collect();
         $review = null;
+
+        $publicReview = Review::query()
+            ->with([
+                'userAnime.user:id,name',
+            ])
+            ->where('publish', true)
+            ->where('is_hidden_by_admin', false)
+            ->whereHas(
+                'userAnime.animeMaster',
+                function ($query) use ($malId) {
+                        $query->where('mal_id', $malId);
+                },
+            )
+            ->latest()
+            ->get()
+            ->map(function (Review $review) {
+                return [
+                    'id' => $review->id,
+                    'evaluation' => $review->evaluation,
+                    'comment' => $review->comment,
+                    'recommend_category' =>
+                        $review->recommend_category,
+                    'spoiler' => $review->spoiler,
+                    'reviewer_name' =>
+                        $review->userAnime->user->name,
+                    'created_at' =>
+                        $review->created_at?->format(
+                            'Y-m-d H:i:s',
+                        ),
+                ];
+            });
 
         if ($request->user()) {
             $userAnime = UserAnime::query()
@@ -93,6 +125,7 @@ class AnimeController extends Controller
             'attachedEmotionTagIds' => $attachedEmotionTagIds,
             'watchNotes' => $watchNotes,
             'review' => $review,
+            'publicReview' => $publicReview,
         ]);
     }
 }
