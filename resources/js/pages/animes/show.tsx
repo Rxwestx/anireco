@@ -45,11 +45,24 @@ type WatchNote = {
     created_at: string;
 };
 
+type Review = {
+    id: number;
+    evaluation: number | null;
+    comment: string | null;
+    recommend_category: string | null;
+    publish: boolean;
+    spoiler: boolean;
+    is_hidden_by_admin: boolean;
+    created_at: string | null;
+    updated_at: string | null;
+};
+
 type ShowProps = {
     anime: Anime;
     emotionTags: EmotionTag[];
     attachedEmotionTagIds: number[];
     watchNotes: WatchNote[];
+    review: Review | null;
 };
 
 const sourceLabels: Record<string, string> = {
@@ -72,6 +85,7 @@ export default function Show({
     emotionTags,
     attachedEmotionTagIds,
     watchNotes,
+    review,
 }: ShowProps) {
     const { auth } = usePage<{ auth: Auth }>().props;
 
