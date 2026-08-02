@@ -156,4 +156,28 @@ class ReviewController extends Controller
             'レビューを更新しました。',
         );
     }
+
+    public function destroy(
+        Request $request,
+        UserAnime $userAnime,
+        Review $review
+    ): RedirectResponse {
+        abort_unless(
+            $userAnime->user_id === $request->user()->id,
+            403,
+            'このレビューを削除する権限がありません。',
+        );
+
+        abort_unless(
+            $review->user_anime_id === $userAnime->id,
+            404,
+        );
+
+        $review->delete();
+
+        return back()->with(
+            'success',
+            'レビューを削除しました。',
+        );
+    }
 }
