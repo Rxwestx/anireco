@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\WatchNoteController;
 use App\Http\Controllers\UserAnimeTagController;
 use App\Http\Controllers\EmotionTagController;
@@ -45,12 +46,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
         '/user-animes/{userAnime}/watch-notes/{watchNote}',
         [WatchNoteController::class, 'update']
     )->name('watch-notes.update');
-    
+
     // 視聴メモ削除用route
     Route::delete(
         '/user-animes/{userAnime}/watch-notes/{watchNote}',
         [WatchNoteController::class, 'destroy']
     )->name('watch-notes.destroy');
+
+    // レビュー登録用route
+    Route::post(
+        '/user-animes/{userAnime}/reviews',
+        [ReviewController::class, 'store']
+    )->name('reviews.store');
 
     // 感情タグ画面Route
     Route::get('/emotion-tags', [EmotionTagController::class, 'index'])
@@ -91,9 +98,5 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //         ->name('reviews.index');
     // });
 
-
-
 require __DIR__.'/settings.php';
-
-
 
