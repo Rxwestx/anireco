@@ -21,7 +21,7 @@ class ReviewController extends Controller
             abort_unless(
                 $userAnime->status->value === 'completed',
                 403,
-                '視聴済み作品だけレビューを登録できます。',      'You can only review anime that you have completed.'
+                '視聴済み作品だけレビューを登録できます。',
             );
 
             $validated = $request->validate([
@@ -38,11 +38,12 @@ class ReviewController extends Controller
                     'nullable',
                     'string',
                     Rule::in([
-                        '泣きたい時',
-                        '熱くなりたい時',
-                        '癒されたい時',
-                        '人生に考えさせられたい時',
-                        '一気観推奨'
+                        '泣きたい時に泣ける',
+                        '熱くなりたい時に熱くなれる',
+                        'ほっこり癒される',
+                        '感慨深い',
+                        '笑える',
+                        '一気見推奨',
                     ]),
                 ],
                 'publish' => [
