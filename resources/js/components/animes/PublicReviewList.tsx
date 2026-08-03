@@ -10,11 +10,11 @@ type PublicReview = {
 };
 
 type PublicReviewListProps = {
-    publicReviews: PublicReview[];
+    publicReviews?: PublicReview[];
 };
 
 export default function PublicReviewList({
-    publicReviews,
+    publicReviews = [],
 }: PublicReviewListProps) {
     return (
         <section className="mt-12">
