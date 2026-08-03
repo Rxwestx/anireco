@@ -128,4 +128,56 @@ class AnimeController extends Controller
             'publicReviews' => $publicReviews,
         ]);
     }
+
+        public function reviews(
+            int $malId,
+            MyAnimeListService $myAnimeListService,
+        ): Response {
+            $anime = $myAnimeListService->getAnimeByMalId($malId);
+
+            $publicReviews = Review::query()
+                ->with([
+                    'userAnime.user:id,name',
+                ])
+                ->where('publish', true)
+                ->where('is_hidden_by_admin', false)
+                ->whereHas(
+                    'userAnime.animeMaster',
+                    function ($query) use ($malId) {
+                        $query->where('mal_id', $malId);
+                    },
+                )
+                ->latest()
+                ->paginate(10)
+                ->withQueryString();
+
+                $publicReviews->setCollection(
+                    $publicReviews->getCollection()
+                        ->map(function (Review $review) {
+                            return [
+                                'id' => $review->id,
+                                'evaluation' => $review->evaluation,
+                                'comment' => $review->comment,
+                                'recommend_category' =>
+                                    $review->recommend_category,
+                                'spoiler' => $review->spoiler,
+                                'reviewer_name' =>
+                                    $review->userAnime->user->name,
+                                'created_at' =>
+                                    $review->created_at?->format(
+                                        'Y-m-d H:i:s',
+                                    ),
+                            ];
+                        }),
+                );
+
+            return Inertia::render('animes/reviews/index', [
+                'anime' =>[
+                    'id' => $anime['id'],
+                    'title' => $anime['title'],
+                    'user_anime_id' => null,
+                    'main_picture' => $anime['main_picture'] ?? null,
+                ],
+                'publicReviews' => $publicReviews,
+            ]);
 }
