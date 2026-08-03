@@ -7,6 +7,7 @@ import {
 } from '@inertiajs/react';
 
 import { useState } from 'react';
+import PublicReviewList from '@/components/animes/PublicReviewList';
 import CreateEmotionTagDialog from '@/components/ui/CreateEmotionTagDialog';
 import CreateReviewDialog from '@/components/ui/CreateReviewDialog';
 import EditReviewDialog from '@/components/ui/EditReviewDialog';
@@ -77,7 +78,7 @@ type ShowProps = {
     attachedEmotionTagIds: number[];
     watchNotes: WatchNote[];
     review: Review | null;
-    publicReviews: PublicReview[];
+    publicReviews?: PublicReview[];
 };
 
 const sourceLabels: Record<string, string> = {
@@ -101,7 +102,7 @@ export default function Show({
     attachedEmotionTagIds,
     watchNotes,
     review,
-    publicReviews,
+    publicReviews = [],
 }: ShowProps) {
     const { auth } = usePage<{ auth: Auth }>().props;
 
@@ -550,6 +551,9 @@ export default function Show({
                         )}
                     </section>
                 )}
+                <PublicReviewList
+                    publicReviews={publicReviews}
+                />
             </main>
         </>
     );
