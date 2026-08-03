@@ -199,7 +199,7 @@ export default function Show({
                                 原作：
                                 {anime.source
                                     ? (sourceLabels[anime.source] ??
-                                      anime.source)
+                                        anime.source)
                                     : '情報なし'}
                             </p>
                             <p className="text-sm text-muted-foreground">
@@ -242,7 +242,7 @@ export default function Show({
                                     +登録する
                                 </Link>
                             ) : anime.registered_status &&
-                              anime.user_anime_id ? (
+                                    anime.user_anime_id ? (
                                 <UpdateAnimeStatusDialog
                                     userAnimeId={anime.user_anime_id}
                                     currentStatus={anime.registered_status}
@@ -354,7 +354,7 @@ export default function Show({
 
                 {auth.user && anime.user_anime_id && (
                     <section className="mt-10">
-                        <div className="flex items-center justify-between border-b">
+                        <div className="flex items-center border-b">
                             <div className="flex gap-8">
                                 <button
                                     type="button"
@@ -379,13 +379,8 @@ export default function Show({
                                     レビュー
                                 </button>
                             </div>
-                            <button
-                                type="button"
-                                className="cursor-pointer pb-2 text-sm text-muted-foreground hover:text-foreground"
-                            >
-                                すべて見る
-                            </button>
                         </div>
+
                         {activeTab === 'watchNotes' ? (
                             <>
                                 <WatchNoteDialog
@@ -536,7 +531,7 @@ export default function Show({
 
                                         <p className="mt-2 text-sm leading-6 whitespace-pre-wrap text-muted-foreground">
                                             {review.comment ??
-                                             'レビューはまだ投稿されていません。'}
+                                                'レビューはまだ投稿されていません。'}
                                         </p>
                                     </div>
 
@@ -551,9 +546,11 @@ export default function Show({
                         )}
                     </section>
                 )}
-                <PublicReviewList
-                    publicReviews={publicReviews}
-                />
+                {(!auth.user || !anime.user_anime_id  || activeTab === 'review') && (
+                    <PublicReviewList
+                        publicReviews={publicReviews}
+                    />
+                )}
             </main>
         </>
     );
