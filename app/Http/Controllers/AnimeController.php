@@ -25,7 +25,7 @@ class AnimeController extends Controller
         $watchNotes = collect();
         $review = null;
 
-        $publicReview = Review::query()
+        $publicReviews = Review::query()
             ->with([
                 'userAnime.user:id,name',
             ])
@@ -125,7 +125,7 @@ class AnimeController extends Controller
             'attachedEmotionTagIds' => $attachedEmotionTagIds,
             'watchNotes' => $watchNotes,
             'review' => $review,
-            'publicReview' => $publicReview,
+            'publicReviews' => $publicReviews,
         ]);
     }
 }
