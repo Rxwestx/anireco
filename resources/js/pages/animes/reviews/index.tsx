@@ -1,3 +1,4 @@
+import Pagination from '@/components/ui/Pagination';
 import { Head, Link } from '@inertiajs/react';
 
 type Anime = {
@@ -170,49 +171,12 @@ export default function ReviewsIndex({
                         ))}
                     </section>
                 )}
-
-            {publicReviews.last_page > 1 && (
-                <nav
-                    className="mt-8 flex flex-wrap justify-center gap-2"
-                    aria-label="レビュー一覧のページへ移動"
-                    >
-                        {publicReviews.links.map((link, index) => {
-                            const label = link.label
-                                .replace(/&laquo;/g, '≪')
-                                .replace(/&raquo;/g, '≫')
-                                .replace('Previous', '前へ')
-                                .replace('Next', '次へ');
-
-                        if (link.url === null) {
-                            return (
-                                <span
-                                    key={`${link.label}-${index}`}
-                                    className="rounded-md border px-3 py-2 text-sm text-muted-foreground opacity-50"
-                                >
-                                    {label}
-                                </span>
-                            );
-                        }
-
-                        return (
-                                <Link
-                                    key={`${link.label}-${index}`}
-                                    href={link.url}
-                                    preserveScroll
-                                    className={`rounded-md border px-3 py-2 text-sm ${
-                                        link.active
-                                        ? 'bg-foreground text-background'
-                                        : 'hover:bg-muted'
-                                    }`}
-                                >
-                                    {label}
-
-                                </Link>
-                            );
-                        })}
-                    </nav>
-                )}
-                </main>
-            </>
+                <Pagination
+                    links={publicReviews.links}
+                    lastPage={publicReviews.last_page}
+                    ariaLabel="公開レビューのページ移動"
+                />
+            </main>
+        </>
     );
 }
