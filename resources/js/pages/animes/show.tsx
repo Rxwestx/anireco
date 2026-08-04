@@ -547,9 +547,10 @@ export default function Show({
                     </section>
                 )}
                 {(!auth.user || !anime.user_anime_id  || activeTab === 'review') && (
-                    <PublicReviewList
-                        publicReviews={publicReviews}
-                    />
+                        <PublicReviewList
+                            malId={anime.id}
+                            publicReviews={publicReviews}
+                        />
                 )}
             </main>
         </>
