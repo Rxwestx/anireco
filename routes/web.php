@@ -20,6 +20,10 @@ Route::get('/search', [AnimeSearchController::class, 'index'])
 // 公開：アニメ詳細画面route
 Route::get('/animes/{malId}', [AnimeController::class, 'show'])
     ->name('anime.show');
+// 公開・作品ごとの公開レビュー一覧route
+Route::get('/animes/{malId}/reviews',
+    [AnimeController::class, 'reviews']
+    )->name('anime.reviews.index');
 
 // ログイン・メール認証済みユーザー用Route
 Route::middleware(['auth', 'verified'])->group(function () {
