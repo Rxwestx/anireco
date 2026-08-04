@@ -28,8 +28,10 @@ export default function Pagination( {
         >
             {links.map((link, index) => {
                 const label = link.label
-                    .replace(/&laquo;/g, '≪')
-                    .replace(/&raquo;/g, '≫')
+                    .replace(/&laquo;/g, '')
+                    .replace(/&raquo;/g, '')
+                    .replace('pagination.previous', ' ◀︎ ')
+                    .replace('pagination.next', ' ▶︎ ')
                     .replace('Previous', '前へ')
                     .replace('Next', '次へ');
 
