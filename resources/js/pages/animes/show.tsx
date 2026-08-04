@@ -6,15 +6,14 @@ import {
     usePage,
 } from '@inertiajs/react';
 
+import WatchNoteList from '@/components/ui/WatchNoteList';
 import { useState } from 'react';
 import PublicReviewList from '@/components/animes/PublicReviewList';
 import CreateEmotionTagDialog from '@/components/ui/CreateEmotionTagDialog';
 import CreateReviewDialog from '@/components/ui/CreateReviewDialog';
 import EditReviewDialog from '@/components/ui/EditReviewDialog';
-import EditWatchNoteDialog from '@/components/ui/EditWatchNoteDialog';
 import RegisterAnimeDialog from '@/components/ui/RegisterAnimeDialog';
 import UpdateAnimeStatusDialog from '@/components/ui/UpdateAnimeStatusDialog';
-import WatchNoteDialog from '@/components/ui/WatchNoteDialog';
 import type { Auth } from '@/types';
 
 type WatchingStatus = 'want_to_watch' | 'watching' | 'completed' | 'dropped';
@@ -121,27 +120,6 @@ export default function Show({
     const availableEmotionTags = emotionTags.filter(
         (emotionTag) => !attachedEmotionTagIds.includes(emotionTag.id),
     );
-
-    const handleDeleteWatchNote = (watchNoteId: number) => {
-        if (anime.user_anime_id === null) {
-            return;
-        }
-
-        const shouldDelete = window.confirm(
-            'この視聴メモを削除しますか？'
-        );
-
-        if (!shouldDelete) {
-            return;
-        }
-
-        router.delete(
-            `/user-animes/${anime.user_anime_id}/watch-notes/${watchNoteId}`,
-            {
-                preserveScroll: true,
-            },
-        );
-    };
 
     const handleDeleteReview = (reviewId: number) => {
         if (anime.user_anime_id === null) {
@@ -382,64 +360,12 @@ export default function Show({
                         </div>
 
                         {activeTab === 'watchNotes' ? (
-                            <>
-                                <WatchNoteDialog
-                                    userAnimeId={anime.user_anime_id}
-                                    emotionTags={emotionTags}
-                                    attachedEmotionTagIds={attachedEmotionTagIds}
-                                />
-                                {watchNotes.length === 0 ? (
-                                    <div className="mt-4 rounded-xl border p-6">
-                                        <p className="text-sm text-muted-foreground">
-                                            視聴メモはまだ登録されていません。
-                                        </p>
-                                    </div>
-                                ) : (
-                                    <div className="mt-4 space-y-4">
-                                        {watchNotes.map((watchNote) => (
-                                            <article
-                                                key={watchNote.id}
-                                                className="rounded-xl border p-4"
-                                            >
-                                            <div className="flex flex-wrap items-center justify-between gap-2">
-                                                <p className="text-sm font-medium">
-                                                    { watchNote.episode !== null &&
-                                                    watchNote.episode !== undefined
-                                                        ? `第${watchNote.episode}話`
-                                                        : '話数未設定'}
-                                                </p>
-                                                <div className="flex items-center gap-3">
-                                                    <time className="text-xs text-muted-foreground">
-                                                        {new Date(
-                                                            watchNote.created_at,
-                                                        ).toLocaleDateString('ja-JP')}
-                                                    </time>
-                                                    <EditWatchNoteDialog
-                                                        userAnimeId={anime.user_anime_id}
-                                                        watchNote={watchNote}
-                                                    />
-
-                                                    <button
-                                                        type="button"
-                                                        onClick={() =>
-                                                            handleDeleteWatchNote(
-                                                                watchNote.id
-                                                            )
-                                                        }
-                                                        className="cursor-pointer text-xs text-red-600 hover:underline"
-                                                    >
-                                                        削除
-                                                    </button>
-                                                </div>
-                                            </div>
-                                                <p className="mt-3 text-sm leading-6 whitespace-pre-wrap">
-                                                    {watchNote.content}
-                                                </p>
-                                            </article>
-                                        ))}
-                                    </div>
-                                )}
-                            </>
+                            <WatchNoteList
+                                userAnimeId={anime.user_anime_id}
+                                watchNotes={watchNotes}
+                                emotionTags={emotionTags}
+                                attachedEmotionTagsIds={attachedEmotionTagIds}
+                            />
                         ): (
                         <>
                             {anime.registered_status !== 'completed' ? (
