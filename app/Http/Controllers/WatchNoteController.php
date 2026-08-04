@@ -6,9 +6,61 @@ use App\Models\UserAnime;
 use App\Models\WatchNote;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class WatchNoteController extends Controller
 {
+    public function index(
+        Request $request,
+        UserAnime $userAnime,
+    ): Response{
+        abort_unless(
+            $userAnime->user_id === $request->user()->id,
+            403,
+        );
+        $userAnime->load(
+            'animeMaster');
+
+        $watchNotes = $userAnime
+            ->watchNotes()
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
+        $watchNotes->setCollection(
+            $watchNotes->getCollection()
+                ->map(function (WatchNote $watchNote) {
+                    return [
+                        'id' => $watchNote->id,
+                        'episode' => $watchNote->episode,
+                        'content' => $watchNote->content,
+                        'created_at' =>$watchNote->created_at?->format(
+                                'Y-m-d H:i:s',
+                            ),
+                        'updated_at' =>$watchNote->updated_at?->format(
+                                'Y-m-d H:i:s',
+                            ),
+                    ];
+            }),
+        );
+
+        return Inertia::render(
+            'user-animes/watch-notes/index',
+            [
+                'anime' => [
+                    'id' => $userAnime->animeMaster->id,
+                    'mal_id' => $userAnime->animeMaster->mal_id,
+                    'title' => $userAnime->animeMaster->title,
+                    'cover_image' =>
+                        $userAnime->animeMaster->cover_image,
+                    'user_anime_id' => $userAnime->id,
+                ],
+                'watchNotes' => $watchNotes,
+            ],
+        );
+    }
+
     public function store(
         Request $request,
         UserAnime $userAnime,
