@@ -39,6 +39,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         [UserAnimeController::class, 'update']
     )->name('user-animes.update');
 
+    // 視聴メモ一覧様のroute
+    Route::get(
+        '/user-animes/{userAnime}/watch-notes',
+        [WatchNoteController::class, 'index']
+    )->name('watch-notes.index');
+
     // 視聴メモ登録用route
     Route::post(
         '/user-animes/{userAnime}/watch-notes',
