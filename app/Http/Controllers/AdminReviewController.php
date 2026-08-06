@@ -54,4 +54,5 @@ class AdminReviewController extends Controller
             'レビューを非表示にしました。',
         );
     }
+
 }
