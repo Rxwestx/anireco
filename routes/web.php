@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminReviewController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\WatchNoteController;
 use App\Http\Controllers\UserAnimeTagController;
@@ -112,13 +113,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
     // 管理者用route
-    // Route::prefix('admin')
-    // ->name('admin.')
-    // ->middleware(['auth', 'verified', 'admin'])
-    // ->group(function () {
-    //     Route::get('/dashboard', [AdminReviewController::class, 'index'])
-    //         ->name('reviews.index');
-    // });
+    Route::prefix('admin')
+    ->name('admin.')
+    ->middleware(['auth', 'verified', 'admin'])
+    ->group(function () {
+        Route::get('/reviews', [AdminReviewController::class, 'index'])
+            ->name('reviews.index');
+            // 管理者用レビュー非表示処理route
+            Route::patch(
+                '/reviews/{review}/hide',
+                [AdminReviewController::class, 'hide']
+            )->name('reviews.hide');
+    });
+
 
 require __DIR__.'/settings.php';
 
