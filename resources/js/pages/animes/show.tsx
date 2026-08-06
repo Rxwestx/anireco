@@ -332,7 +332,7 @@ export default function Show({
 
                 {auth.user && anime.user_anime_id && (
                     <section className="mt-10">
-                        <div className="flex items-center border-b">
+                        <div className="flex items-center justify-between border-b">
                             <div className="flex gap-8">
                                 <button
                                     type="button"
@@ -345,18 +345,28 @@ export default function Show({
                                 >
                                     視聴メモ
                                 </button>
+
+
                                 <button
                                     type="button"
                                     onClick={() => setActiveTab('review')}
                                     className={`cursor-pointer pb-2 text-sm ${
                                         activeTab === 'review'
-                                            ? 'border-b-2 border-foreground font-semibold'
-                                            : 'text-muted-foreground'
-                                    }`}
-                                >
+                                        ? 'border-b-2 border-foreground font-semibold'
+                                        : 'text-muted-foreground'
+                                        }`}
+                                        >
                                     レビュー
                                 </button>
                             </div>
+                                {activeTab === 'watchNotes' && watchNotes.length > 0 && (
+                                    <Link
+                                        href={`/user-animes/${anime.user_anime_id}/watch-notes`}
+                                        className="pb-2 text-sm text-muted-foreground transition hover:text-foreground hover:underline"
+                                    >
+                                        すべての視聴メモを見る
+                                    </Link>
+                                )}
                         </div>
 
                         {activeTab === 'watchNotes' ? (
