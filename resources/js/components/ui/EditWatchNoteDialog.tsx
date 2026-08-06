@@ -198,7 +198,7 @@ export default function EditWatchNoteDialog({
                         type="button"
                         onClick={handleClose}
                         disabled={form.processing}
-                        className="cursor-pointer rounded-md border px-4 py-2 text-sm font-medium disabled:cursor-not-allowed disabed:opacity-50"
+                        className="cursor-pointer rounded-md border px-4 py-2 text-sm font-medium disabled:cursor-not-allowed disabled:opacity-50"
                     >
                         キャンセル
                     </button>
