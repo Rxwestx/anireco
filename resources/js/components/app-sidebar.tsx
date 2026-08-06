@@ -1,7 +1,9 @@
 import { Link, usePage } from '@inertiajs/react';
 import {
     Home,
-    Search, Tag
+    Search,
+    ShieldCheck,
+    Tag,
 } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 // import { NavFooter } from '@/components/nav-footer';
@@ -23,6 +25,7 @@ type AuthUser ={
     id: number;
     name: string;
     email: string;
+    role: 'user' | 'admin';
 };
 
 type PageProps ={
@@ -52,6 +55,14 @@ export function AppSidebar() {
             icon: Tag,
         },
     ];
+    
+    if (auth.user ?.role === 'admin') {
+        mainNavItems.push({
+            title: '管理者用ページ',
+            href: '/admin/reviews',
+            icon: ShieldCheck,
+        });
+    }
 
 // const footerNavItems: NavItem[] = [];
 
