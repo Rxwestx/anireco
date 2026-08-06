@@ -6,9 +6,9 @@ import {
     usePage,
 } from '@inertiajs/react';
 
-import WatchNoteList from '@/components/ui/WatchNoteList';
 import { useState } from 'react';
 import PublicReviewList from '@/components/animes/PublicReviewList';
+import WatchNoteList from '@/components/animes/WatchNoteList';
 import CreateEmotionTagDialog from '@/components/ui/CreateEmotionTagDialog';
 import CreateReviewDialog from '@/components/ui/CreateReviewDialog';
 import EditReviewDialog from '@/components/ui/EditReviewDialog';
