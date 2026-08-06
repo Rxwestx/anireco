@@ -47,7 +47,7 @@ export default function WatchNoteList({
 
   return (
     <>
-        <div className="mt-4 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-4 flex items-center justify-between">
             <WatchNoteDialog
                 userAnimeId={userAnimeId}
                 emotionTags={emotionTags}
@@ -74,16 +74,16 @@ export default function WatchNoteList({
                 {watchNotes.map((watchNote) => (
                     <article
                         key={watchNote.id}
-                        className="rounded-xl border p-4 sm:p-5"
+                        className="rounded-xl border p-5"
                     >
-                    <div>
-                        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between ">
+                        <div className="flex items-center justify-between gap-4">
                             <p className="text-sm font-medium">
                                 {watchNote.episode !== null &&
                                 watchNote.episode !== undefined
                                     ? `第 ${watchNote.episode}話`
                                     : '話数未設定'}
                             </p>
+                        <div className="flex shrink-0 items-center gap-3">
                         {watchNote.created_at && (
                             <time className="mt-1 block text-xs text-muted-foreground">
                                 {new Date(
@@ -91,9 +91,6 @@ export default function WatchNoteList({
                                 ).toLocaleDateString('ja-JP')}
                             </time>
                         )}
-                        </div>
-
-                        <div className="flex items-center gap-3 self-end sm:self-auto">
                             <EditWatchNoteDialog
                                 userAnimeId={userAnimeId}
                                 watchNote={watchNote}
