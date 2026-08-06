@@ -1,22 +1,8 @@
 import { Head, Link, router } from "@inertiajs/react";
 import Pagination from "@/components/ui/Pagination";
-
-
-type AdminReview = {
-    id: number;
-    evaluation: number | null;
-    comment: string | null;
-    recommend_category: string | null;
-    publish: boolean;
-    spoiler: boolean;
-    is_hidden_by_admin: boolean;
-    reviewer_name: string;
-    anime: {
-        mal_id: number;
-        title: string;
-    };
-    created_at: string | null;
-};
+import AdminReviewDetailDialog, {
+    type AdminReview,
+} from "@/components/admin/AdminReviewDetailDialog";
 
 type PaginationLink = {
     url: string | null;
@@ -43,22 +29,6 @@ export default function AdminReviewsIndex({
     reviews,
 }: AdminReviewsIndexProps) {
 
-    const handleHideReview = (reviewId: number) => {
-        const shouldHide = window.confirm(
-            'このレビューを非表示にしてもよろしいですか？'
-        );
-        if (!shouldHide) {
-            return;
-        }
-        router.patch(
-            `/admin/reviews/${reviewId}/hide`,
-            {},
-            {
-                preserveScroll: true,
-            },
-        );
-    };
-
     return (
         <>
             <Head title="管理者レビュー管理" />
@@ -84,106 +54,93 @@ export default function AdminReviewsIndex({
                         </p>
                     </section>
                 ) : (
-                    <section className="mt-8 space-y-4">
-                        {reviews.data.map((review) => (
-                            <article
-                                key={review.id}
-                                className="rounded-xl border p-6"
-                            >
-                                <div className="flex items-start justify-between gap-6">
-                                    <div>
-                                        <Link
-                                            href={`/animes/${review.anime.mal_id}`}
-                                            className="font-medium hover:underline"
-                                        >
-                                            {review.anime.title}
-                                        </Link>
-                                        <p className="mt-1 text-sm text-muted-foreground">
-                                            投稿者：{review.reviewer_name}
-                                        </p>
+                    <section className="mt-8 overflow-hidden rounded border">
+                        <table className="w-full table-fixed border-collapse text-left text-sm">
+                            <thead className="bg-muted">
+                                <tr className="border-b">
+                                    <th className="w-1/4 border-b px-4 py-2 text-sm">
+                                        投稿者名
+                                    </th>
 
-                                        {review.created_at && (
-                                            <time className="mt-1 block text-xs text-muted-foreground">
-                                                {new Date(
+                                    <th className="px-4 py-2 font-semibold">
+                                        レビュー内容
+                                    </th>
+
+                                    <th className="w-[120px] px-4 py-4 font-semibold">
+                                        投稿日
+                                    </th>
+
+                                    <th className="w-[100px] px-4 py-4 font-semibold">
+                                        公開状態
+                                    </th>
+
+                                    <th className="w-[80px] px-4 py-4  text-center font-semibold">
+                                        詳細
+                                    </th>
+                                </tr>
+                            </thead>
+
+
+                            <tbody>
+                                {reviews.data.map((review) => {
+                                    const isPublic =
+                                        review.publish &&
+                                        !review.is_hidden_by_admin;
+
+                                        return (
+                                        <tr
+                                            key={review.id}
+                                            className="border-b last:border-b-0"
+                                            >
+                                            <td className="px-4 py-4 align-middle">
+                                                <p className="truncate">
+                                                    {review.reviewer_name}
+                                                </p>
+                                            </td>
+
+                                            <td className="px-4 py-2 align-middle">
+                                                <p className="truncate text-muted-foreground">
+                                                {review.comment ??
+                                                    'レビュー内容はありません。'}
+                                                </p>
+                                            </td>
+
+                                            <td className="px-4 py-4 align-middle">
+                                                {review.created_at
+                                                ? new Date(
                                                     review.created_at,
-                                                    ).toLocaleString('ja-JP')}
-                                            </time>
-                                        )}
-                                    </div>
-                                    {review.evaluation !== null ? (
-                                        <div
-                                            className="flex shrink-0 items-center gap-1"
-                                            aria-label={`総合評価: ${review.evaluation} / 5`}
-                                        >
-                                            {[1,2,3,4,5].map(
-                                                (value) => (
-                                                    <span
-                                                        key={value}
-                                                        className={
-                                                            value <=
-                                                            review.evaluation!
-                                                                ? 'text-yellow-500'
-                                                                : 'text-muted-foreground/40'
-                                                        }
-                                                    >
-                                                        ★
-                                                    </span>
-                                                ),
-                                            )}
-                                        </div>
-                                    ) :(
-                                        <span className="shrink-0 text-sm text-muted-foreground">
-                                            評価なし
-                                        </span>
-                                    )}
-                                </div>
-                                <div className="mt-4 flex -items-center gap-2 text-xs">
-                                    <span className="rounded-full border px-3 py-1">
-                                        {review.publish
-                                            ? '公開'
-                                            : '非公開'}
-                                    </span>
+                                                ).toLocaleDateString(
+                                                    'ja-JP',
+                                                )
+                                                : '投稿日不明'}
+                                            </td>
 
-                                    {review.spoiler && (
-                                        <span className="rounded-full border px-3 py-1">
-                                            ネタバレあり
-                                        </span>
-                                    )}
+                                            <td className="px-4 py-4 align-middle">
+                                                <span
+                                                    className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
+                                                        isPublic
+                                                            ? "bg-green-100 text-green-700"
+                                                            : "bg-muted text-muted-foreground"
+                                                    }`}
+                                                >
+                                                    {isPublic
+                                                        ? "公開"
+                                                        : "非公開"}
+                                                </span>
+                                            </td>
 
-                                    {review.is_hidden_by_admin && (
-                                        <span className="rounded-full border border-red-300 px-3 py-1 text-red-600">
-                                            管理者非表示
-                                        </span>
-                                    )}
-                                </div>
-
-                                {!review.is_hidden_by_admin && (
-                                    <button
-                                        type="button"
-                                        onClick={() =>
-                                            handleHideReview(review.id)}
-                                        className="mt-4 rounded-md border border-red-300 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50"
-                                    >
-                                        非表示にする
-                                    </button>
-                                )}
-
-                                {review.recommend_category && (
-                                    <p className="mt-4 text-sm">
-                                        おすすめカテゴリ:
-                                        {review.recommend_category}
-                                    </p>
-                                )}
-
-                                <p className="mt-4 text-sm leading-6 whitespace-pre-wrap text-muted-foreground">
-                                    {review.comment ??
-                                        'レビュー本文はありません。'}
-                                </p>
-                            </article>
-                        ))}
+                                            <td className="px-4 py-4 text-center align-middle">
+                                                <AdminReviewDetailDialog
+                                                    review={review}
+                                                />
+                                            </td>
+                                        </tr>
+                                    );
+                                })}
+                            </tbody>
+                        </table>
                     </section>
                 )}
-
                 <Pagination
                     links={reviews.links}
                     lastPage={reviews.last_page}
