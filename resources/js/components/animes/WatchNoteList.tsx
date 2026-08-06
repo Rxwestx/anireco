@@ -103,9 +103,27 @@ export default function WatchNoteList({
                                         watchNote.id,
                                     )
                                 }
-                                className="cursor-pointer text-xs text-red-600 hover:underline"
+                                aria-label="視聴メモを削除"
+                                title="削除"
+                                className="cursor-pointer text-xs text-red-600 transition"
                             >
-                                削除
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    strokeWidth="2"
+                                    stroke="currentColor"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    className="size-4"
+                                    aria-hidden="true"
+                                >
+                                    <path d="M3 6h18" />
+                                    <path d="M8 6V4h8v2" />
+                                    <path d="M19 6l-1 14H6L5 6" />
+                                    <path d="M10 11v5" />
+                                    <path d="M14 11v5" />
+                                </svg>
                             </button>
                         </div>
                     </div>
