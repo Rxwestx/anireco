@@ -1,4 +1,4 @@
-import { Link, router } from '@inertiajs/react';
+import { router } from '@inertiajs/react';
 import EditWatchNoteDialog from '@/components/ui/EditWatchNoteDialog';
 import WatchNoteDialog from '@/components/ui/WatchNoteDialog';
 
@@ -47,20 +47,12 @@ export default function WatchNoteList({
 
   return (
     <>
-        <div className="mt-4 flex items-center justify-between">
+        <div className="mt-4">
             <WatchNoteDialog
                 userAnimeId={userAnimeId}
                 emotionTags={emotionTags}
                 attachedEmotionTagsIds={attachedEmotionTagsIds}
             />
-            {watchNotes.length > 0 && (
-                <Link
-                    href={`/user-animes/${userAnimeId}/watch-notes`}
-                    className="text-sm text-muted-foreground transition hover:text-foreground hover:underline"
-                >
-                    すべての視聴メモを見る
-                </Link>
-            )}
         </div>
 
         {watchNotes.length === 0 ? (
