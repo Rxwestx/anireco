@@ -4,15 +4,30 @@ namespace App\Http\Controllers;
 
 use App\Models\Review;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class AdminReviewController extends Controller
 {
     // 管理者用のレビュー一覧画面
-    public function index(): Response
+    public function index(Request $request): Response
     {
-        $reviews = Review::query()
+        $validated = $request->validate([
+            'visibility' => [
+                'nullable',
+                Rule::in([
+                    'all',
+                    'public',
+                    'hidden',
+                ]),
+            ],
+        ]);
+
+        $visibility = $validated['visibility'] ?? 'all';
+
+        $reviewsQuery = Review::query()
             ->with([
                 'userAnime.user:id,name',
                 'userAnime.animeMaster:id,title,mal_id',
@@ -21,8 +36,20 @@ class AdminReviewController extends Controller
                 $query
                     ->where('publish', true)
                     ->orWhere('is_hidden_by_admin', true);
-            })
+            });
+
+            if ($visibility === 'public') {
+                $reviewsQuery
+                    ->where('publish', true)
+                    ->where('is_hidden_by_admin', false);
+            } elseif ($visibility === 'hidden') {
+                $reviewsQuery
+                ->where('is_hidden_by_admin', true);
+            }
+
+        $reviews = $reviewsQuery
             ->paginate(10)
+            ->withQueryString()
             ->through(fn (Review $review):array => [
                 'id' => $review->id,
                 'evaluation' => $review->evaluation,
@@ -41,6 +68,7 @@ class AdminReviewController extends Controller
 
         return Inertia::render('admin/reviews/index', [
             'reviews' => $reviews,
+            'selectedVisibility' => $visibility,
         ]);
 
     }
