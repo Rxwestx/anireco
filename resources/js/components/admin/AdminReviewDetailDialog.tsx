@@ -68,17 +68,28 @@ return (
         <button
             type="button"
             onClick={() => setOpen(true)}
-            className="cursor-pointer text-sm text-blue-600 hover:underline"
+            className="cursor-pointer whitespace-nowrap rounded-md border px-3 py-1.5 text-sm font-medium hover:bg-muted"
         >
             詳細
         </button>
 
-        <DialogContent className="w-[520px] max-w-[520px] p-0">
+        <DialogContent className="max-h-[85vh] w-[520px] max-w-[520px] overflow-y-auto p-0">
             <DialogHeader className="border-b px-6 py-5">
                 <DialogTitle className="text-xl">
                     レビュー詳細
                 </DialogTitle>
             </DialogHeader>
+
+            <div>
+                <p className="mb-2 text-sm font-semibold">
+                    作品名
+                </p>
+
+                <div className="min-h-10 rounded border px-3 py-2 text-sm font-medium">
+                    {review.anime.title}
+                </div>
+            </div>
+
             <div className="space-y-6 px-6 py-5">
                 <div>
                     <p className="mb-2 text-sm font-semibold">
@@ -94,7 +105,7 @@ return (
                         レビュー内容
                     </p>
 
-                    <div className="min-h-24 rounded border px-3 py-2 text-sm leading-6 whitespace-pre-wrap">
+                    <div className="max-h-64 min-h-24 overflow-y-auto rounded border px-3 py-2 text-sm leading-6 whitespace-pre-wrap">
                         {review.comment ?? 'レビュー内容はありません。'}
                     </div>
                 </div>
@@ -164,7 +175,7 @@ return (
                 </p>
             </div>
 
-            <DialogFooter className="border-t bg-muted/40 px-6 py-4">
+            <DialogFooter className="sticky bottom-0 border-t  px-6 py-4">
                 <button
                     type="button"
                     onClick={() => setOpen(false)}
