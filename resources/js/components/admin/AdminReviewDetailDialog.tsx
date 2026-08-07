@@ -173,21 +173,21 @@ return (
                     キャンセル
                 </button>
 
-                {!review.is_hidden_by_admin ? (
-                    <button
-                        type="button"
-                        onClick={handleRestoreReview}
-                        className="cursor-pointer rounded bg-foreground px-6 py-2 text-sm font-semibold text-background"
-                    >
-                        公開状態に戻す
-                    </button>
-                ): (
+                {isPublic ? (
                     <button
                         type="button"
                         onClick={handleHideReview}
                         className="cursor-pointer rounded bg-foreground px-6 py-2 text-sm font-semibold text-background"
                     >
-                        公開にする
+                        非公開にする
+                    </button>
+                ): (
+                    <button
+                        type="button"
+                        onClick={handleRestoreReview}
+                        className="cursor-pointer rounded bg-foreground px-6 py-2 text-sm font-semibold text-background"
+                    >
+                        公開に戻す
                     </button>
                 )}
             </DialogFooter>
