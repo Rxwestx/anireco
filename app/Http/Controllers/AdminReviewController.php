@@ -55,4 +55,17 @@ class AdminReviewController extends Controller
         );
     }
 
+    //管理者によるレビューの非表示解除処理
+    public function restore(Review $review): RedirectResponse
+    {
+        $review->update([
+            'publish'=> true,
+            'is_hidden_by_admin' => false,
+        ]);
+
+        return back()->with(
+            'success',
+            'レビューを公開状態に戻しました。',
+        );
+    }
 }
