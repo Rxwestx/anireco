@@ -42,7 +42,11 @@ type DashboardProps = {
     selectedStatus: string | null;
     keyword: string | null;
     hasRegisteredAnimes: boolean;
-    selectedSort: 'newest' | 'oldest';
+    selectedSort:
+        |'newest'
+        |'oldest'
+        |'evaluation_desc'
+        |'evaluation_asc';
     emotionTags: EmotionTag[];
     selectedEmotionTagIds: number[];
     selectedRecommendCategory: string | null;
@@ -136,7 +140,13 @@ export default function Dashboard({
         );
     };
 
-    const handleSortChange = (sort: 'newest' | 'oldest') => {
+    const handleSortChange = (
+        sort:
+            |'newest'
+            | 'oldest'
+            |'evaluation_desc'
+            |'evaluation_asc',
+        ) => {
         router.get(
             '/dashboard',
             {
@@ -154,6 +164,43 @@ export default function Dashboard({
                     preserveState: true,
                     preserveScroll: true,
             },
+        );
+    };
+
+    const handleRecommendCategoryFilter = (
+        recommendCategory: string | null,
+    ) => {
+        router.get(
+            '/dashboard',
+            {
+                ...(selectedStatus ? { status: selectedStatus } : {}),
+                ...(searchKeyword ? { keyword: searchKeyword } : {}),
+                ...(selectedEmotionTagIds.length > 0
+                    ? { emotion_tag_ids: selectedEmotionTagIds }
+                    : {}),
+                ...(recommendCategory
+                    ? { recommend_category: recommendCategory }
+                    : {}),
+                sort: selectedSort,
+            },
+            {
+                preserveState: true,
+                preserveScroll: true,
+            }
+        );
+    };
+
+    const handleClearFilters = () => {
+        setSearchKeyword('');
+        router.get(
+            '/dashboard',
+            {
+                sort: 'newest',
+            },
+            {
+                preserveState: true,
+                preserveScroll: true,
+            }
         );
     };
 
@@ -188,20 +235,35 @@ export default function Dashboard({
                     </button>
                 </form>
 
-                <div className="mb-4 flex justify-end">
+                <div className="mb-4 flex justify-end gap-2">
+                    <button
+                        type="button"
+                        onClick={handleClearFilters}
+                        className="cursor-pointer rounded-md border bg-muted px-4 py-2 text-sm hover:bg-muted"
+                    >
+                        条件をクリア
+                    </button>
+
                     <select
                         value={selectedSort}
                         onChange={(e) =>
                             handleSortChange(
-                                e.target.value as 'newest' | 'oldest'
+                                e.target.value as
+                                    |'newest'
+                                    | 'oldest'
+                                    | 'evaluation_desc'
+                                    | 'evaluation_asc'
                             )
                         }
                         className="cursor-pointer rounded-md border bg-background px-3 py-2 text-sm"
                     >
                         <option value="newest">新しく登録した順</option>
                         <option value="oldest">古く登録した順</option>
+                        <option value="evaluation_desc">評価の高い順</option>
+                        <option value="evaluation_asc">評価の低い順</option>
                     </select>
                 </div>
+
                 {emotionTags.length > 0 && (
                     <div className="mb-4">
                         <p className="mb-2 font-medium text-sm">
@@ -274,7 +336,7 @@ export default function Dashboard({
                         ))}
                     </div>
                 </div>
-                
+
                 <div className="mb-4 flex flex-wrap gap-2">
                     <button
                         type="button"
