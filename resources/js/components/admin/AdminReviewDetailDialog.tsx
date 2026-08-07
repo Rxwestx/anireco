@@ -50,7 +50,20 @@ export default function AdminReviewDetailDialog({
         );
     };
 
-  return (
+    const handleRestoreReview = () => {
+        router.patch(
+            `/admin/reviews/${review.id}/restore`,
+            {},
+            {
+                preserveScroll: true,
+                onSuccess: () => {
+                    setOpen(false);
+                },
+            },
+        );
+    };
+
+return (
     <Dialog open={open} onOpenChange={setOpen}>
         <button
             type="button"
@@ -160,13 +173,21 @@ export default function AdminReviewDetailDialog({
                     キャンセル
                 </button>
 
-                {!review.is_hidden_by_admin && (
+                {!review.is_hidden_by_admin ? (
+                    <button
+                        type="button"
+                        onClick={handleRestoreReview}
+                        className="cursor-pointer rounded bg-foreground px-6 py-2 text-sm font-semibold text-background"
+                    >
+                        公開状態に戻す
+                    </button>
+                ): (
                     <button
                         type="button"
                         onClick={handleHideReview}
                         className="cursor-pointer rounded bg-foreground px-6 py-2 text-sm font-semibold text-background"
                     >
-                        非公開にする
+                        公開にする
                     </button>
                 )}
             </DialogFooter>
