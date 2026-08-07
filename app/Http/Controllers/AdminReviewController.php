@@ -18,7 +18,8 @@ class AdminReviewController extends Controller
                 'userAnime.animeMaster:id,title,mal_id',
             ])
                 ->where(function ($query) {
-                $query->where('publish', true)
+                $query
+                    ->where('publish', true)
                     ->orWhere('is_hidden_by_admin', true);
             })
             ->paginate(10)
