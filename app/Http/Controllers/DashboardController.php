@@ -36,12 +36,18 @@ class DashboardController extends Controller
             'emotion_tag_ids.*' => [
                 'integer',
             ],
+            'recommend_category' => [
+                'nullable',
+                'string',
+                'max:255',
+            ],
         ]);
 
         $status = $validated['status'] ?? null;
         $keyword = $validated['keyword'] ?? null;
         $sort = $validated['sort'] ?? 'newest';
         $emotionTagIds = $validated['emotion_tag_ids'] ?? [];
+        $recommendCategory = $validated['recommend_category'] ?? null;
         // 感情タグIDが指定されている場合は、ログインユーザーが所有している感情タグかどうかを確認
         if ($emotionTagIds !== []) {
             $ownedEmotionTagCount = $request->user()
@@ -127,6 +133,18 @@ class DashboardController extends Controller
             );
         }
 
+        if($recommendCategory) {
+            $userAnimesQuery->whereHas(
+                'review',
+                function ($query) use ($recommendCategory) {
+                    $query->where(
+                        'recommend_category',
+                        $recommendCategory,
+                    );
+                },
+            );
+        }
+
         if( $sort === 'oldest' ) {
             $userAnimesQuery->oldest();
         } else {
@@ -168,6 +186,7 @@ class DashboardController extends Controller
             'keyword' => $keyword,
             'hasRegisteredAnimes' => $hasRegisteredAnimes,
             'selectedSort' => $sort,
+            'selectedRecommendCategory' => $recommendCategory,
             'emotionTags'=> $request->user()
                 ->emotionTags()
                 ->orderBy('name')
