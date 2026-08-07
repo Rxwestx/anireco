@@ -35,7 +35,7 @@ export default function AdminReviewsIndex({
             <main className="mx-auto w-full max-w-6xl px-4 py-8">
                 <header>
                     <h1 className="text-2xl font-bold">
-                        公開レビュー管理
+                        レビュー管理
                     </h1>
 
                     <p className="mt-2 text-sm text-muted-foreground">
@@ -50,7 +50,7 @@ export default function AdminReviewsIndex({
                 {reviews.data.length === 0 ? (
                     <section className="mt-8 rounded-xl border p-6">
                         <p className="text-sm text-muted-foreground">
-                            公開レビューはまだありません。
+                            レビューはまだありません。
                         </p>
                     </section>
                 ) : (
