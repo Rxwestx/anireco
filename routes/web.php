@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\AdminReviewController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\WatchNoteController;
@@ -12,7 +13,8 @@ use App\Http\Controllers\UserAnimeController;
 // use App\Http\Controllers\Admin\AdminDashboardController;
 use Illuminate\Support\Facades\Route;
 
-Route::inertia('/', 'welcome')->name('home');
+Route::get('/', [WelcomeController::class, 'index'])
+    ->name('home');
 
 // 公開：検索用route
 Route::get('/search', [AnimeSearchController::class, 'index'])
