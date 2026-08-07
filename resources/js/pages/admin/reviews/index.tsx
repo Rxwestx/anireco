@@ -1,8 +1,8 @@
 import { Head, Link, router } from "@inertiajs/react";
-import Pagination from "@/components/ui/Pagination";
 import AdminReviewDetailDialog, {
     type AdminReview,
 } from "@/components/admin/AdminReviewDetailDialog";
+import Pagination from "@/components/ui/Pagination";
 
 type PaginationLink = {
     url: string | null;
@@ -23,11 +23,27 @@ type PaginatedAdminReviews = {
 
 type AdminReviewsIndexProps = {
     reviews: PaginatedAdminReviews;
+    selectedVisibility: 'all' | 'public' | 'hidden';
 };
 
 export default function AdminReviewsIndex({
     reviews,
+    selectedVisibility,
 }: AdminReviewsIndexProps) {
+    const handleVisibilityFilter = (
+        visibility: 'all' | 'public' | 'hidden',
+    ) => {
+        router.get(
+            '/admin/reviews',
+            {
+                visibility,
+            },
+            {
+                preserveState: true,
+                preserveScroll: true,
+            },
+        );
+    };
 
     return (
         <>
@@ -39,10 +55,45 @@ export default function AdminReviewsIndex({
                     </h1>
 
                     <p className="mt-2 text-sm text-muted-foreground">
-                        公開設定になっているレビューを確認できます。
+                        公開中レビューと管理者が非公開レビューを確認できます。
                     </p>
+                    <div className="mt-6 flex border-b">
+                        <button
+                            type="button"
+                            onClick={() => handleVisibilityFilter('all')}
+                            className={`cursor-pointer border-b-2 px-4 py-2 text-sm font-medium transition ${
+                                selectedVisibility === 'all'
+                                    ? 'border-primary text-primary'
+                                    : 'border-transparent text-muted-foreground hover:text-foreground'
+                            }`}
+                        >
+                            すべて
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => handleVisibilityFilter('public')}
+                            className={`cursor-pointer border-b-2 px-4 py-2 text-sm font-medium transition ${
+                                selectedVisibility === 'public'
+                                    ? 'border-primary text-primary'
+                                    : 'border-transparent text-muted-foreground hover:text-foreground'
+                            }`}
+                        >
+                            公開中
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => handleVisibilityFilter('hidden')}
+                            className={`cursor-pointer border-b-2 px-4 py-2 text-sm font-medium transition ${
+                                selectedVisibility === 'hidden'
+                                    ? 'border-primary text-primary'
+                                    : 'border-transparent text-muted-foreground hover:text-foreground'
+                            }`}
+                        >
+                            非公開
+                        </button>
+                    </div>
 
-                    <p className="mt-1 text-sm text-muted- foreground">
+                    <p className="mt-4 text-sm text-muted-foreground">
                         全{reviews.total}件中 {reviews.from}件目 〜 {reviews.to}件目を表示
                     </p>
                 </header>
@@ -58,23 +109,27 @@ export default function AdminReviewsIndex({
                         <table className="w-full table-fixed border-collapse text-left text-sm">
                             <thead className="bg-muted">
                                 <tr className="border-b">
-                                    <th className="w-1/4 border-b px-4 py-2 text-sm">
+                                    <th className="w-[140px] px-4 py-3 text-sm">
                                         投稿者名
                                     </th>
 
-                                    <th className="px-4 py-2 font-semibold">
+                                    <th className="w-[260px] px-4 py-3 font-semibold">
+                                        作品名
+                                    </th>
+
+                                    <th className="px-4 py-3 font-semibold">
                                         レビュー内容
                                     </th>
 
-                                    <th className="w-[120px] px-4 py-4 font-semibold">
+                                    <th className="w-[120px] px-4 py-3 font-semibold">
                                         投稿日
                                     </th>
 
-                                    <th className="w-[100px] px-4 py-4 font-semibold">
+                                    <th className="w-[100px] px-4 py-3 font-semibold">
                                         公開状態
                                     </th>
 
-                                    <th className="w-[80px] px-4 py-4  text-center font-semibold">
+                                    <th className="w-[80px] px-4 py-3  text-center font-semibold">
                                         詳細
                                     </th>
                                 </tr>
@@ -92,20 +147,30 @@ export default function AdminReviewsIndex({
                                             key={review.id}
                                             className="border-b last:border-b-0"
                                             >
-                                            <td className="px-4 py-4 align-middle">
-                                                <p className="truncate">
+                                            <td className="px-4 py-3 align-middle">
+                                                <p className="block truncate">
                                                     {review.reviewer_name}
                                                 </p>
                                             </td>
 
-                                            <td className="px-4 py-2 align-middle">
-                                                <p className="truncate text-muted-foreground">
+                                            <td className="px-4 py-3 align-middle">
+                                                <Link
+                                                    href={`/admin/anime/${review.anime.mal_id}`}
+                                                    className="block truncate hover:underline"
+                                                >
+                                                    {review.anime.title}
+                                                </Link>
+                                            </td>
+
+                                            <td className="px-4 py-3 align-middle">
+                                                <p className="truncate text-muted-foreground"
+                                                title={review.comment ?? 'レビュー内容はありません。'}>
                                                 {review.comment ??
                                                     'レビュー内容はありません。'}
                                                 </p>
                                             </td>
 
-                                            <td className="px-4 py-4 align-middle">
+                                            <td className="px-4 py-3 align-middle">
                                                 {review.created_at
                                                 ? new Date(
                                                     review.created_at,
@@ -115,12 +180,12 @@ export default function AdminReviewsIndex({
                                                 : '投稿日不明'}
                                             </td>
 
-                                            <td className="px-4 py-4 align-middle">
+                                            <td className="px-4 py-3 align-middle">
                                                 <span
                                                     className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
                                                         isPublic
                                                             ? "bg-green-100 text-green-700"
-                                                            : "bg-muted text-muted-foreground"
+                                                            : "bg-red-100 text-red-700"
                                                     }`}
                                                 >
                                                     {isPublic
@@ -129,7 +194,7 @@ export default function AdminReviewsIndex({
                                                 </span>
                                             </td>
 
-                                            <td className="px-4 py-4 text-center align-middle">
+                                            <td className="px-4 py-3 text-center align-middle">
                                                 <AdminReviewDetailDialog
                                                     review={review}
                                                 />
