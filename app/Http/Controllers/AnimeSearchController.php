@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Services\MyAnimeListService;
-use App\Models\AnimeMaster;
 use App\Models\UserAnime;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -27,8 +26,38 @@ class AnimeSearchController extends Controller
 
         $registeredUserAnimes = collect();
 
-        if ($request->user() && $animes !== []) {
-            $malIds = collect($animes)->pluck('id');
+        $year = now()->year;
+        $month = now()->month;
+
+        [$season,$seasonLabel] = match (true) {
+            $month <= 3 => ['winter', '冬'],
+            $month <= 6 => ['spring', '春'],
+            $month <= 9 => ['summer', '夏'],
+            $month <= 12 => ['fall', '秋'],
+        };
+
+        $seasonalAnime = $myAnimeListService
+            ->getSeasonalAnime(
+                $year,
+                $season,
+                50,
+            );
+
+        $seasonalAnime = array_slice(
+            $seasonalAnime,
+            0,
+            10,
+        );
+
+        if ($request->user()) {
+            $malIds = collect($animes)
+            ->pluck('id')
+            ->merge(
+                collect($seasonalAnime)
+                ->pluck('id')
+            )
+            ->unique()
+            ->values();
 
             $registeredUserAnimes = UserAnime::query()
                 ->join(
@@ -37,7 +66,10 @@ class AnimeSearchController extends Controller
                     '=',
                     'anime_masters.id',
                 )
-                ->where('user_animes.user_id', $request->user()->id)
+                ->where(
+                    'user_animes.user_id',
+                    $request->user()->id
+                )
                 ->whereIn('anime_masters.mal_id', $malIds)
                 ->get([
                 'user_animes.id',
@@ -46,7 +78,7 @@ class AnimeSearchController extends Controller
                 ])
                 ->keyBy('mal_id');
         }
-
+        // 検索結果のアニメリストに登録状態を追加
         $animes = collect($animes)
             ->map(function (array $anime) use ($registeredUserAnimes) {
                 $registeredUserAnime = $registeredUserAnimes->get($anime['id']);
@@ -60,11 +92,27 @@ class AnimeSearchController extends Controller
             ->values()
             ->all();
 
+        // 今季アニメのリストに登録状態を追加
+        $seasonalAnime = collect($seasonalAnime)
+            ->map(function (array $anime) use ($registeredUserAnimes) {
+                $registeredUserAnime = $registeredUserAnimes->get($anime['id']);
+
+                return [
+                    ...$anime,
+                    'user_anime_id' => $registeredUserAnime?->id,
+                    'registered_status' => $registeredUserAnime?->status->value,
+                ];
+            })
+            ->values()
+            ->all();
 
         return Inertia::render('search', [
             'keyword' => $keyword,
             'animes' => $animes,
             'registeredStatus' => $registeredUserAnimes,
+            'seasonalAnime' => $seasonalAnime,
+            'seasonYear' => $year,
+            'seasonLabel' => $seasonLabel,
         ]);
     }
 }
