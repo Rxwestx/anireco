@@ -27,6 +27,15 @@ type EmotionTag = {
     name: string;
 };
 
+const recommendCategories = [
+    '泣きたい時に泣ける',
+    '熱くなりたい時に熱くなれる',
+    'ほっこり癒される',
+    '感慨深い',
+    '笑える',
+    '一気見推奨',
+];
+
 type DashboardProps = {
     userAnimes: UserAnime[];
     recentlyAdded: UserAnime[];
@@ -36,6 +45,7 @@ type DashboardProps = {
     selectedSort: 'newest' | 'oldest';
     emotionTags: EmotionTag[];
     selectedEmotionTagIds: number[];
+    selectedRecommendCategory: string | null;
 };
 
 export default function Dashboard({
@@ -47,6 +57,7 @@ export default function Dashboard({
         selectedSort,
         emotionTags,
         selectedEmotionTagIds,
+        selectedRecommendCategory,
 }: DashboardProps) {
 
     const [searchKeyword, setSearchKeyword] = useState(keyword ?? '');
@@ -70,6 +81,9 @@ export default function Dashboard({
                 ...(nextEmotionTagIds.length > 0
                     ? { emotion_tag_ids: nextEmotionTagIds }
                     : {}),
+                ...(selectedRecommendCategory
+                    ? { recommend_category: selectedRecommendCategory }
+                    : {}),
                 sort: selectedSort,
             },
             {
@@ -87,6 +101,9 @@ export default function Dashboard({
                     ...(searchKeyword ? { keyword: searchKeyword } : {}),
                     ...(selectedEmotionTagIds.length > 0
                         ? { emotion_tag_ids: selectedEmotionTagIds }
+                        : {}),
+                    ...(selectedRecommendCategory
+                        ? { recommend_category: selectedRecommendCategory }
                         : {}),
                     sort: selectedSort,
                 },
@@ -107,6 +124,9 @@ export default function Dashboard({
                 ...(selectedEmotionTagIds.length > 0
                     ? { emotion_tag_ids: selectedEmotionTagIds }
                     : {}),
+                ...(selectedRecommendCategory
+                    ? { recommend_category: selectedRecommendCategory }
+                    : {}),
                 sort: selectedSort,
             },
             {
@@ -124,6 +144,9 @@ export default function Dashboard({
                 ...(searchKeyword ? { keyword: searchKeyword } : {}),
                 ...(selectedEmotionTagIds.length > 0
                     ? { emotion_tag_ids: selectedEmotionTagIds }
+                    : {}),
+                ...(selectedRecommendCategory
+                    ? { recommend_category: selectedRecommendCategory }
                     : {}),
                 sort,
             },
@@ -216,6 +239,42 @@ export default function Dashboard({
                     </div>
                 </div>
                 )}
+
+                <div className="mb-4">
+                    <p className="mb-2 font-medium">
+                        おすすめカテゴリで絞り込み
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                        <button
+                            type="button"
+                            onClick={() => handleRecommendCategoryFilter(null)}
+                            className={`cursor-pointer rounded-full border px-3 py-1.5 text-sm ${
+                                selectedRecommendCategory === null
+                                    ? 'bg-primary text-primary-foreground'
+                                    : 'hover:bg-muted'
+                            }`}
+                        >
+                            すべてのカテゴリ
+                        </button>
+
+                        {recommendCategories.map((recommendCategory) => (
+                            <button
+                                key={recommendCategory}
+                                onClick={() =>
+                                    handleRecommendCategoryFilter(recommendCategory)
+                                }
+                                className={`cursor-pointer rounded-full border px-3 py-1.5 text-sm ${
+                                    selectedRecommendCategory === recommendCategory
+                                        ? 'bg-primary text-primary-foreground'
+                                        : 'hover:bg-muted'
+                                }`}
+                            >
+                                {recommendCategory}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+                
                 <div className="mb-4 flex flex-wrap gap-2">
                     <button
                         type="button"
