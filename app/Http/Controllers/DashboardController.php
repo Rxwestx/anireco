@@ -41,6 +41,15 @@ class DashboardController extends Controller
                 'string',
                 'max:255',
             ],
+            'sort' =>[
+                'nullable',
+                Rule::in([
+                    'newest',
+                    'oldest',
+                    'evaluation_desc',
+                    'evaluation_asc',
+                ]),
+            ]
         ]);
 
         $status = $validated['status'] ?? null;
@@ -48,6 +57,7 @@ class DashboardController extends Controller
         $sort = $validated['sort'] ?? 'newest';
         $emotionTagIds = $validated['emotion_tag_ids'] ?? [];
         $recommendCategory = $validated['recommend_category'] ?? null;
+
         // 感情タグIDが指定されている場合は、ログインユーザーが所有している感情タグかどうかを確認
         if ($emotionTagIds !== []) {
             $ownedEmotionTagCount = $request->user()
@@ -147,7 +157,18 @@ class DashboardController extends Controller
 
         if( $sort === 'oldest' ) {
             $userAnimesQuery->oldest();
-        } else {
+        } else if( $sort === 'evaluation_desc' ) {
+            $userAnimesQuery
+                ->leftJoin('reviews', 'reviews.user_anime_id', '=', 'user_animes.id')
+                ->orderByRaw('reviews.evaluation DESC NULLS LAST')
+                ->select('user_animes.*');
+        } else if( $sort === 'evaluation_asc') {
+            $userAnimesQuery
+                ->leftJoin('reviews', 'reviews.user_anime_id', '=', 'user_animes.id')
+                ->orderByRaw('reviews.evaluation ASC NULLS LAST')
+                ->select('user_animes.*');
+        }
+        else {
             $userAnimesQuery->latest();
         }
 
