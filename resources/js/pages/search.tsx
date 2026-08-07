@@ -1,6 +1,8 @@
 import { Head, Link,router,usePage } from '@inertiajs/react';
 import type { SubmitEventHandler } from 'react';
 import { useState } from 'react';
+import SeasonalAnimeCard from '@/components/animes/SeasonalAnimeCard';
+import type { SeasonalAnime } from '@/components/animes/SeasonalAnimeCard';
 import { Input } from '@/components/ui/input';
 import RegisterAnimeDialog from '@/components/ui/RegisterAnimeDialog';
 import UpdateAnimeStatusDialog from '@/components/ui/UpdateAnimeStatusDialog';
@@ -31,20 +33,19 @@ type Anime = {
 type SearchProps = {
     keyword: string;
     animes: Anime[];
+    seasonalAnime: SeasonalAnime[];
+    seasonYear: number;
+    seasonLabel: string;
 }
 
-const statusLabels = {
-want_to_watch: '見たい',
-watching: '視聴中',
-completed: '視聴済み',
-dropped: '断念',
-} as const;
 // Laravel側から受け取った keywordを初期値として設定するために、propsでinitialKeywordとして受け取る。
 export default function Search({
     keyword: initialKeyword,
     animes,
+    seasonalAnime,
+    seasonYear,
+    seasonLabel,
 }: SearchProps) {
-
 
     const [keyword, setKeyword] = useState(initialKeyword);
 
@@ -162,16 +163,25 @@ export default function Search({
                         )}
                 </section>
             )}
+
+            {initialKeyword === '' && (
+                <section className="mt-12">
+                    <div className="mb-6 flex items-center justify-between">
+                        <h2 className="text-2xl font-semibold">
+                            {seasonYear}年 {seasonLabel}アニメ
+                        </h2>
+                    </div>
+
+                    <div className="grid grid-cols-5 gap-6">
+                        {seasonalAnime.map(anime => (
+                            <SeasonalAnimeCard
+                                key={anime.id}
+                                anime={anime}
+                            />
+                        ))}
+                    </div>
+                </section>
+            )}
         </>
     );
 }
-
-// Search.layout = {
-//     breadcrumbs: [
-//         {
-//             title: '検索',
-//             href: search(),
-//         },
-//     ],
-// // };
-
