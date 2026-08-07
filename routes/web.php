@@ -124,8 +124,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 '/reviews/{review}/hide',
                 [AdminReviewController::class, 'hide']
             )->name('reviews.hide');
-    });
 
+            Route::patch(
+                '/reviews/{review}/restore',
+                [AdminReviewController::class, 'restore']
+            )->name('reviews.restore');
+    });
 
 require __DIR__.'/settings.php';
 
