@@ -46,6 +46,7 @@ class AdminReviewController extends Controller
     {
 
         $review->update([
+            'publish'=> false,
             'is_hidden_by_admin' => true,
         ]);
 
