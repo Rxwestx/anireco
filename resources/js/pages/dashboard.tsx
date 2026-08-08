@@ -1,5 +1,7 @@
 import { Head, Link, router } from '@inertiajs/react';
 import { useState } from 'react';
+import CreateReviewDialog from '@/components/ui/CreateReviewDialog';
+import EditReviewDialog from '@/components/ui/EditReviewDialog';
 import UpdateAnimeStatusDialog from '@/components/ui/UpdateAnimeStatusDialog';
 import WatchNoteDialog from '@/components/ui/WatchNoteDialog';
 
@@ -19,12 +21,23 @@ type WachingStatus =
     | 'completed'
     | 'dropped';
 
+type Review = {
+    id: number;
+    evaluation: number | null;
+    comment: string | null;
+    recommend_category: string | null;
+    publish: boolean;
+    spoiler: boolean;
+    is_hidden_by_admin: boolean;
+};
+
 type UserAnime = {
     id : number;
     status: WachingStatus;
     statusLabel: string;
     created_at: string | null;
     attachedEmotionTagIds: number[];
+    review: Review | null;
     anime_master: AnimeMaster;
 };
 
@@ -442,35 +455,36 @@ export default function Dashboard({
                                 {userAnimes.map((userAnime) => (
                                     <article
                                         key={userAnime.id}
-                                        className="rounded-xl border p-4">
+                                        className="flex h-full flex-col rounded-xl border p-4">
                                         <Link
                                             href={`/animes/${userAnime.anime_master.mal_id}`}
-                                            className="block p-4 transition hover:bg-muted/50">
+                                            className="flex flex-1 flex-col p-4 transition hover:bg-muted/50">
                                             {userAnime.anime_master.cover_image ? (
                                                 <img
                                                     src={userAnime.anime_master.cover_image}
                                                     alt={userAnime.anime_master.title}
-                                                    className="w-full rounded-lg object-cover"
+                                                    className="aspect-[3/4] w-full rounded-lg object-cover"
                                                 />
 
                                             ) : (
-                                                <div className="flex items-center justify-center rounded-lg bg-muted-foreground">
+                                                <div className="flex aspect-[3/4] items-center justify-center rounded-lg bg-muted-foreground">
                                                     <span className="text-sm text-muted-foreground">
                                                         No Image
                                                     </span>
                                                 </div>
                                             )}
                                             <div className="mt-4">
-                                                <h3 className="text-lg font-semibold">
+                                                <h3 className="line-clamp-2 min-h-12 text-base font-semibold">
                                                     {userAnime.anime_master.title}
                                                 </h3>
                                             </div>
 
                                         </Link>
-                                        <div className="px-4 pb-4" >
+                                        <div className="mt-auto flex flex-col gap-3 px-4 pb-4">
                                             <UpdateAnimeStatusDialog
                                                 userAnimeId={userAnime.id}
                                                 currentStatus={userAnime.status}
+                                                triggerClassName="h-10 w-full cursor-pointer"
                                             />
 
                                             <WatchNoteDialog
@@ -479,8 +493,23 @@ export default function Dashboard({
                                                 attachedEmotionTagIds={
                                                     userAnime.attachedEmotionTagIds
                                                 }
+                                                triggerClassName="h-10 w-full cursor-pointer rounded-md text-sm font-semibold hover:bg-muted"
                                             />
                                         </div>
+
+                                        {userAnime.review ? (
+                                                <EditReviewDialog
+                                                    userAnimeId={userAnime.id}
+                                                    review={userAnime.review}
+                                                    triggerLabel="レビュー編集"
+                                                    triggerClassName="h-10 w-full cursor-pointer rounded-md border text-sm font-medium hover:bg-muted"
+                                                />
+                                        ) : (
+                                            <CreateReviewDialog
+                                                userAnimeId={userAnime.id}
+                                                triggerClassName="h-10 w-full cursor-pointer rounded-md border text-sm font-medium hover:bg-muted"
+                                            />
+                                        )}
                                     </article>
                                 ))}
                             </div>
