@@ -49,7 +49,7 @@ export default function SeasonalAnimeCard({
 
     return (
 
-    <div className="rounded-lg border border-gray-300 bg-white p-4 transition hover:bg-muted/30">
+    <div className="flex h-full flex-col rounded-lg border border-gray-300 bg-white p-4 transition hover:bg-muted/30">
         <Link
             href={`/animes/${anime.id}`}>
             {imageUrl ? (
@@ -99,7 +99,7 @@ export default function SeasonalAnimeCard({
                 </div>
             </div>
         </Link>
-                <div className="mt-4">
+                <div className="mt-auto pt-4">
                 {!auth.user ? (
                     <Link
                         href="/login"
