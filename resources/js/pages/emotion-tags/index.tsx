@@ -1,4 +1,3 @@
-import { edit } from "@/routes/appearance";
 import { Head, useForm } from "@inertiajs/react";
 import { useState } from "react";
 import type { SubmitEvent } from "react";
