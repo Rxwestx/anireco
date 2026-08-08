@@ -70,12 +70,12 @@ export default function Welcome({
                             {seasonYear}年 {seasonLabel}アニメ
                         </h2>
 
-                        <button
-                            type="button"
-                            className="text-sm font-semibold underline"
+                        <Link
+                            href="/search"
+                            className="text-sm underline"
                         >
                             もっと見る
-                        </button>
+                        </Link>
                     </div>
                     <div className="mt-10 grid grid-cols-5 gap-6">
                         {seasonalAnime.map((anime) => (

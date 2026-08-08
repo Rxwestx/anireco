@@ -67,7 +67,7 @@ export default function RegisterAnimeDialog({
                     setErrorMessage(null);
                     setOpen(true);
                 }}
-                className="mx-4 mb-4 w-[calc(100%-2rem)] cursor-pointer rounded-md px-4 py-2 hover:bg-muted">
+                className="h-10 w-full cursor-pointer rounded-md px-4 py-2 hover:bg-muted">
                     +登録する
             </button>
 
