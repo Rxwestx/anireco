@@ -88,7 +88,7 @@ class MyAnimeListService
             ),
             'source' => $anime['source'] ?? null,
             'num_episodes' => $anime['num_episodes'] ?? null,
-            'broadcast_year' => $anime['start_date']
+            'broadcast_year' => ($anime['start_date'] ?? null)
                 ? (int)substr($anime['start_date'], 0, 4)
                 : null,
         ];
