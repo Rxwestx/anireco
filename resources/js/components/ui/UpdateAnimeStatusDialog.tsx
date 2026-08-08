@@ -30,6 +30,7 @@ type WatchingStatus =
 type UpdateAnimeStatusDialogProps = {
     userAnimeId: number;
     currentStatus: WatchingStatus;
+    triggerClassName?: string;
 };
 
 const statusLabels: Record<WatchingStatus, string> = {
@@ -42,6 +43,7 @@ const statusLabels: Record<WatchingStatus, string> = {
 export default function UpdateAnimeStatusDialog({
     userAnimeId,
     currentStatus,
+    triggerClassName,
 }: UpdateAnimeStatusDialogProps) {
     const [open, setOpen] = useState(false);
     const [selectedStatus, setSelectedStatus] =
@@ -73,7 +75,13 @@ export default function UpdateAnimeStatusDialog({
         }}
         >
             <DialogTrigger asChild>
-                <Button type="button" variant="outline" className="w-full cursor-pointer">
+                <Button
+                    type="button"
+                    variant="outline"
+                    className={
+                        triggerClassName ??
+                        "w-full cursor-pointer"}
+                        >
                     {statusLabels[currentStatus]}
                 </Button>
             </DialogTrigger>
