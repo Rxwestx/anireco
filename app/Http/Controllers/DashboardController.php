@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Review;
+use App\Models\WatchNote;
 use App\Enums\WatchingStatus;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -15,19 +17,12 @@ class DashboardController extends Controller
         $validated = $request->validate([
             'status' => [
                 'nullable',
-                 Rule::enum(WatchingStatus::class)
+                Rule::enum(WatchingStatus::class)
             ],
             'keyword' => [
                 'nullable',
                 'string',
                 'max:100',
-            ],
-            'sort' => [
-                'nullable',
-                Rule::in([
-                    'newest',
-                    'oldest',
-                    ]),
             ],
             'emotion_tag_ids' => [
                 'nullable',
@@ -100,6 +95,82 @@ class DashboardController extends Controller
                         'broadcast_year' => $userAnime
                             ->animeMaster
                             ->broadcast_year,
+                    ],
+                ];
+            })
+            ->values();
+
+        // ログインユーザーの最新の視聴メモを3件取得
+
+        $recentWatchNotes = WatchNote::query()
+            ->with([
+                'userAnime.animeMaster',
+            ])
+            ->whereHas(
+                'userAnime',
+                function ($query) use ($request) {
+                    $query->where(
+                        'user_id',
+                        $request->user()->id,
+                    );
+                },
+            )
+            ->latest()
+            ->take(3)
+            ->get()
+            ->map(function ($watchNote) {
+                return [
+                    'id' => $watchNote->id,
+                    'content' => $watchNote->content,
+                    'created_at' => $watchNote->created_at?->format(
+                        'Y-m-d H:i:s',
+                    ),
+                    'anime' => [
+                        'mal_id' => $watchNote
+                            ->userAnime
+                            ->animeMaster
+                            ->mal_id,
+                        'title' => $watchNote
+                            ->userAnime
+                            ->animeMaster
+                            ->title,
+                    ],
+                ];
+            })
+            ->values();
+
+        // ログインユーザーの最近レジューした作品を3件取得
+        $recentReviews = Review::query()
+            ->with([
+                'userAnime.animeMaster',
+            ])
+            ->whereHas(
+                'userAnime',
+                function ($query) use ($request) {
+                    $query->where(
+                        'user_id',
+                        $request->user()->id,
+                    );
+                },
+            )
+            ->latest('updated_at')
+            ->take(3)
+            ->get()
+            ->map(function ($review) {
+                return [
+                    'id' => $review->id,
+                    'evaluation' => $review->evaluation,
+                    'updated_at' => $review->updated_at?->format('Y-m-d H:i:s'),
+                    'anime' => [
+                        'mal_id' => $review->userAnime
+                        ->animeMaster
+                        ->mal_id,
+                        'title' => $review->userAnime
+                        ->animeMaster
+                        ->title,
+                    'cover_image' => $review->userAnime
+                        ->animeMaster
+                        ->cover_image,
                     ],
                 ];
             })
@@ -203,6 +274,8 @@ class DashboardController extends Controller
         return Inertia::render('dashboard', [
             'userAnimes' => $userAnimes,
             'recentlyAdded' => $recentlyAdded,
+            'recentWatchNotes' => $recentWatchNotes,
+            'recentReviews' => $recentReviews,
             'selectedStatus' => $status,
             'keyword' => $keyword,
             'hasRegisteredAnimes' => $hasRegisteredAnimes,
