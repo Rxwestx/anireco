@@ -139,7 +139,7 @@ class DashboardController extends Controller
             })
             ->values();
 
-        // ログインユーザーの最近レジューした作品を3件取得
+        // ログインユーザーの最近レビューした作品を3件取得
         $recentReviews = Review::query()
             ->with([
                 'userAnime.animeMaster',
@@ -182,6 +182,7 @@ class DashboardController extends Controller
         ->with([
             'animeMaster',
             'emotionTags:id',
+            'review',
             ]);
 
         // キーワードが指定されている場合だけ検索を実行
@@ -256,6 +257,17 @@ class DashboardController extends Controller
                     ->pluck('id')
                     ->values()
                     ->all(),
+                'review' => $userAnime->review
+                    ? [
+                        'id' => $userAnime->review->id,
+                        'evaluation' => $userAnime->review->evaluation,
+                        'comment' => $userAnime->review->comment,
+                        'recommend_category' => $userAnime->review->recommend_category,
+                        'publish' => $userAnime->review->publish,
+                        'spoiler' => $userAnime->review->spoiler,
+                        'is_hidden_by_admin' => $userAnime->review->is_hidden_by_admin,
+                    ]
+                    : null,
                 'anime_master' =>[
                     'id' => $userAnime->animeMaster->id,
                     'mal_id' => $userAnime->animeMaster->mal_id,
