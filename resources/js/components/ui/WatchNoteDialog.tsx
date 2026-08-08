@@ -21,13 +21,15 @@ type WatchNoteDialogProps = {
     userAnimeId: number;
     emotionTags: EmotionTag[];
     attachedEmotionTagIds: number[];
+    triggerClassName?: string;
 };
 
 
 export default function WatchNoteDialog({
-     userAnimeId,
-     emotionTags,
-     attachedEmotionTagIds,
+    userAnimeId,
+    emotionTags,
+    attachedEmotionTagIds,
+    triggerClassName,
 }: WatchNoteDialogProps) {
     const [open, setOpen] = useState(false);
 
@@ -103,7 +105,9 @@ export default function WatchNoteDialog({
             <button
                 type="button"
                 onClick={handleOpen}
-                className="mt-6 h-10 w-52 cursor-pointer rounded border-foreground text-sm font-semibold hover:bg-muted"
+                className={
+                    triggerClassName ??
+                    "mt-6 h-10 w-52 cursor-pointer rounded border-foreground text-sm font-semibold hover:bg-muted"}
             >
                 + 視聴メモを追加
             </button>
