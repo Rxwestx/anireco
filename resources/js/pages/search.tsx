@@ -75,7 +75,7 @@ export default function Search({
                         placeholder="作品タイトルで検索"
                     />
                     <button type="submit"
-                    className="mt-4 rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">
+                    className="mt-4 rounded-md bg-gray-500 px-4 py-2 text-white hover:bg-gray-700">
                         検索
                     </button>
                 </section>
@@ -92,10 +92,10 @@ export default function Search({
                                 {animes.map(anime => (
                                 <article
                                     key={anime.id}
-                                    className="group block overflow-hidden rounded-xl border bg-background transition hover:-translate-y-1 hover:shadow-lg">
+                                    className="group flex h-full flex-col overflow-hidden rounded-xl border bg-background transition hover:-translate-y-1 hover:shadow-lg">
                                         <Link
                                             href={`/animes/${anime.id}`}
-                                            className="block focus:outline-none focus:ring-2 focus:ring-ring"
+                                            className="flex flex-1 flex-col focus:outline-none focus:ring-2 focus:ring-ring"
                                         >
                                             <div className="aspect-[16/9] w-full overflow-hidden bg-muted">
                                                     {anime.main_picture ? (
@@ -137,21 +137,23 @@ export default function Search({
                                                 </div>
                                             </div>
                                         </Link>
-                                        <div className="p-4 pt-0">
-                                            {!auth.user ? (
-                                                <Link
-                                                    href="/login"
-                                                    className="block w-full rounded-md px-4 py-2 text-sm text-center font-medium hover:bg-muted">
-                                                        +登録する
-                                                </Link>
-                                            ) : anime.registered_status && anime.user_anime_id ? (
-                                                <UpdateAnimeStatusDialog
-                                                    userAnimeId={anime.user_anime_id}
-                                                    currentStatus={anime.registered_status}
-                                                />
-                                            ) : (
-                                                <RegisterAnimeDialog anime={anime} />
-                                            )}
+                                        <div className="mt-auto flex min-h-14 items-end justify-center p-4 pt-0">
+                                            <div className="flex w-full justify-center">
+                                                {!auth.user ? (
+                                                    <Link
+                                                        href="/login"
+                                                        className="block w-full rounded-md px-4 py-2 text-sm text-center font-medium hover:bg-muted">
+                                                            +登録する
+                                                    </Link>
+                                                ) : anime.registered_status && anime.user_anime_id ? (
+                                                    <UpdateAnimeStatusDialog
+                                                        userAnimeId={anime.user_anime_id}
+                                                        currentStatus={anime.registered_status}
+                                                    />
+                                                ) : (
+                                                    <RegisterAnimeDialog anime={anime} />
+                                                )}
+                                            </div>
                                         </div>
                                 </article>
                                 ))}
