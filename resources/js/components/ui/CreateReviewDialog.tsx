@@ -21,10 +21,12 @@ const recommendCategories = [
 
 type  CreateReviewDialogProps = {
     userAnimeId: number;
+    triggerClassName?: string;
 };
 
 export default function CreateReviewDialog({
     userAnimeId,
+    triggerClassName,
 }: CreateReviewDialogProps) {
     const [open, setOpen] = useState(false);
 
@@ -81,7 +83,10 @@ export default function CreateReviewDialog({
             <button
                 type="button"
                 onClick={handleOpen}
-                className="cursor-pointer rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+                className={
+                    triggerClassName ??
+                    "cursor-pointer rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/70"
+                }
             >
                 レビューを書く
             </button>
