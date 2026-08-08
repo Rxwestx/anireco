@@ -32,11 +32,15 @@ import {
  type EditReviewDialogProps = {
     userAnimeId: number;
     review: Review;
+    triggerLabel?: string;
+    triggerClassName?: string;
  };
 
  export default function EditReviewDialog({
     userAnimeId,
     review,
+    triggerLabel,
+    triggerClassName,
  }: EditReviewDialogProps) {
     const [Open, setOpen] = useState(false);
 
@@ -116,8 +120,12 @@ import {
                 onClick={handleOpen}
                 aria-label="レビューの編集"
                 title="編集"
-                className="cursor-pointer text-sm text-muted-foreground transition hover:text-foreground"
+                className={
+                    triggerClassName ??
+                    "cursor-pointer text-sm text-muted-foreground transition hover:text-foreground"
+                }
             >
+                {triggerLabel ??(
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
@@ -134,6 +142,7 @@ import {
                         d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"
                     />
                 </svg>
+                )}
             </button>
 
             <DialogContent className="sm:max-w-xl">
