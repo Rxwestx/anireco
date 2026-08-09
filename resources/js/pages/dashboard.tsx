@@ -1,4 +1,5 @@
 import { Head, Link, router } from '@inertiajs/react';
+import { Search } from 'lucide-react';
 import { useState } from 'react';
 import CreateReviewDialog from '@/components/ui/CreateReviewDialog';
 import EditReviewDialog from '@/components/ui/EditReviewDialog';
@@ -108,6 +109,8 @@ export default function Dashboard({
 }: DashboardProps) {
 
     const [searchKeyword, setSearchKeyword] = useState(keyword ?? '');
+    // 検索条件が存在する場合の開閉状態を管理するフラグ
+    const [isSearchOpen, setIsSearchOpen] = useState(keyword !== null);
 
     // 感情タグの絞り込み処理
     const handleEmotionTagFilter = (emotionTagId: number | null) => {
@@ -260,24 +263,46 @@ export default function Dashboard({
                     </section>
 
                     <section>
-                    <h2 className="mb-4 text-xl font-semibold">登録アニメ作品
-                    </h2>
+                        <div className="mb-4 flex items-center gap-4">
+                            <h2 className="mb-4 text-xl font-semibold">
+                                登録アニメ検索
+                            </h2>
 
-                    <form onSubmit={handleSearch} className="mb-4 flex gap-2">
-                        <input
-                            type="text"
-                            value={searchKeyword}
-                            onChange={(e) => setSearchKeyword(e.target.value)}
-                            placeholder="登録作品タイトルで検索"
-                            className="min-w-0 flex-1 rounded-md border bg-background px-3 py-2 text-sm"
-                        />
-                        <button
-                            type="submit"
-                            className="cursor-pointer rounded-md border bg-primary px-4 py-2 text-sm text-primary-foreground hover:bg-primary/80"
-                        >
-                            検索
-                        </button>
-                    </form>
+                            <form onSubmit={handleSearch}
+                                className="flex items-center"
+                                >
+                                <div className={`flex h-10 items-center overflow-hidden rounded-md border bg-background transition-all duration-300 ${
+                                    isSearchOpen ? 'w-80' : 'w-10'}`}>
+                                    <button
+                                        type="button"
+                                        onClick={() => setIsSearchOpen((prev) => !prev)}
+                                        className="flex h-10 w-10 items-center justify-center"
+                                        aria-label="検索欄を開く"
+                                    >
+                                        <Search className="h-4 w-4"/>
+                                    </button>
+                                    <input
+                                        type="text"
+                                        value={searchKeyword}
+                                        onChange={(e) => setSearchKeyword(e.target.value)}
+                                        placeholder="登録作品タイトルで検索"
+                                        className={`h-full min-w-0 flex-1 bg-transparent  text-sm outline-none transition-opacity duration-200 ${
+                                            isSearchOpen
+                                                ? 'opacity-100'
+                                                : 'opacity-0'
+                                        }`}
+                                    />
+                                    {isSearchOpen && (
+                                    <button
+                                        type="submit"
+                                        className="mr-1 shrink-0 cursor-pointer rounded-md bg-primary px-3 py-1.5 text-sm text-primary-foreground hover:bg-primary/80"
+                                    >
+                                        検索
+                                    </button>
+                                    )}
+                                </div>
+                            </form>
+                        </div>
 
                     <div className="mb-4 flex justify-end gap-2">
                         <button
@@ -381,14 +406,17 @@ export default function Dashboard({
                         </div>
                     </div>
 
-                    <div className="mb-4 flex flex-wrap gap-2">
+                    <h2 className="mb-4 text-xl font-semibold">登録アニメ作品一覧
+                    </h2>
+
+                    <div className="mb-4 flex items-center gap-6 border-b">
                         <button
                             type="button"
                             onClick={() => handleStatusFilter(null)}
-                            className={`rounded-md border px-3 py-2 text-sm ${
+                            className={`border-b-2 px-3 pb-3 text-sm font-medium transition-colors ${
                                 selectedStatus === null
-                                    ? 'bg-primary text-primary-foreground'
-                                    : 'hover:bg-muted'
+                                    ? 'border-foreground text-foreground'
+                                    : 'border-transparent text-muted-foreground hover:text-foreground'
                             }`}
                         >
                             すべて
@@ -396,10 +424,10 @@ export default function Dashboard({
                         <button
                             type="button"
                             onClick={() => handleStatusFilter('want_to_watch')}
-                            className={`rounded-md border px-3 py-2 text-sm ${
+                            className={` border-b-2 px-3 pb-3 text-sm font-medium transition-colors ${
                                 selectedStatus === 'want_to_watch'
-                                    ? 'bg-primary text-primary-foreground'
-                                    : 'hover:bg-muted'
+                                    ? 'border-foreground text-foreground'
+                                    : 'border-transparent text-muted-foreground hover:text-foreground'
                             }`}
                         >
                             見たい
@@ -407,10 +435,10 @@ export default function Dashboard({
                         <button
                             type="button"
                             onClick={() => handleStatusFilter('watching')}
-                            className={`rounded-md border px-3 py-2 text-sm ${
+                            className={`border-b-2 px-3 pb-3 text-sm font-medium transition-colors ${
                                 selectedStatus === 'watching'
-                                    ? 'bg-primary text-primary-foreground'
-                                    : 'hover:bg-muted'
+                                    ? 'border-foreground text-foreground'
+                                    : 'border-transparent text-muted-foreground hover:text-foreground'
                             }`}
                         >
                             視聴中
@@ -418,10 +446,10 @@ export default function Dashboard({
                         <button
                             type="button"
                             onClick={() => handleStatusFilter('completed')}
-                            className={`rounded-md border px-3 py-2 text-sm ${
+                            className={`border-b-2 px-3 pb-3 text-sm font-medium transition-colors ${
                                 selectedStatus === 'completed'
-                                    ? 'bg-primary text-primary-foreground'
-                                    : 'hover:bg-muted'
+                                    ? 'border-foreground text-foreground'
+                                    : 'border-transparent text-muted-foreground hover:text-foreground'
                             }`}
                         >
                             視聴済み
@@ -429,10 +457,10 @@ export default function Dashboard({
                         <button
                             type="button"
                             onClick={() => handleStatusFilter('dropped')}
-                            className={`rounded-md border px-3 py-2 text-sm ${
+                            className={`border-b-2 px-3 pb-3 text-sm font-medium transition-colors ${
                                 selectedStatus === 'dropped'
-                                    ? 'bg-primary text-primary-foreground'
-                                    : 'hover:bg-muted'
+                                    ? 'border-foreground text-foreground'
+                                    : 'border-transparent text-muted-foreground hover:text-foreground'
                             }`}
                         >
                             断念
