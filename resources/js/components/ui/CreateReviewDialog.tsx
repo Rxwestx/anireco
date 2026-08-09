@@ -278,12 +278,6 @@ export default function CreateReviewDialog({
                                 </p>
                             )}
                         </div>
-
-                        {form.errors.review && (
-                            <p className="mt-1 text-sm text-red-600">
-                                {form.errors.review}
-                            </p>
-                        )}
                     </div>
 
                     <DialogFooter className="mt-6">
