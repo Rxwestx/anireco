@@ -257,80 +257,68 @@ export default function Dashboard({
                 <div className="min-w-0 flex-1">
                     <section>
                         <h1 className="text-2xl font-bold">マイページ</h1>
-                        <p className="mt-1 text-sm text-muted-foreground">
+                        <p className="m-4 text-sm text-muted-foreground">
                             登録したアニメの管理や、最近追加したアニメの確認ができます。
                         </p>
                     </section>
 
                     <section>
-                        <div className="mb-4 flex items-center gap-4">
-                            <h2 className="mb-4 text-xl font-semibold">
-                                登録アニメ検索
-                            </h2>
-
-                            <form onSubmit={handleSearch}
-                                className="flex items-center"
-                                >
-                                <div className={`flex h-10 items-center overflow-hidden rounded-md border bg-background transition-all duration-300 ${
-                                    isSearchOpen ? 'w-80' : 'w-10'}`}>
-                                    <button
-                                        type="button"
-                                        onClick={() => setIsSearchOpen((prev) => !prev)}
-                                        className="flex h-10 w-10 items-center justify-center"
-                                        aria-label="検索欄を開く"
-                                    >
-                                        <Search className="h-4 w-4"/>
-                                    </button>
-                                    <input
-                                        type="text"
-                                        value={searchKeyword}
-                                        onChange={(e) => setSearchKeyword(e.target.value)}
-                                        placeholder="登録作品タイトルで検索"
-                                        className={`h-full min-w-0 flex-1 bg-transparent  text-sm outline-none transition-opacity duration-200 ${
-                                            isSearchOpen
-                                                ? 'opacity-100'
-                                                : 'opacity-0'
-                                        }`}
-                                    />
-                                    {isSearchOpen && (
-                                    <button
-                                        type="submit"
-                                        className="mr-1 shrink-0 cursor-pointer rounded-md bg-primary px-3 py-1.5 text-sm text-primary-foreground hover:bg-primary/80"
-                                    >
-                                        検索
-                                    </button>
-                                    )}
-                                </div>
-                            </form>
-                        </div>
-
-                    <div className="mb-4 flex justify-end gap-2">
+                    <div className="m-6 flex items-center gap-6 border-b">
                         <button
                             type="button"
-                            onClick={handleClearFilters}
-                            className="cursor-pointer rounded-md border bg-muted px-4 py-2 text-sm hover:bg-muted"
+                            onClick={() => handleStatusFilter(null)}
+                            className={`cursor-pointer border-b-2 px-3 pb-3 text-sm font-medium transition-colors ${
+                                selectedStatus === null
+                                    ? 'border-foreground text-foreground'
+                                    : 'border-transparent text-muted-foreground hover:text-foreground'
+                            }`}
                         >
-                            条件をクリア
+                            すべて
                         </button>
-
-                        <select
-                            value={selectedSort}
-                            onChange={(e) =>
-                                handleSortChange(
-                                    e.target.value as
-                                        |'newest'
-                                        | 'oldest'
-                                        | 'evaluation_desc'
-                                        | 'evaluation_asc'
-                                )
-                            }
-                            className="cursor-pointer rounded-md border bg-background px-3 py-2 text-sm"
+                        <button
+                            type="button"
+                            onClick={() => handleStatusFilter('want_to_watch')}
+                            className={`cursor-pointer border-b-2 px-3 pb-3 text-sm font-medium transition-colors ${
+                                selectedStatus === 'want_to_watch'
+                                    ? 'border-foreground text-foreground'
+                                    : 'border-transparent text-muted-foreground hover:text-foreground'
+                            }`}
                         >
-                            <option value="newest">新しく登録した順</option>
-                            <option value="oldest">古く登録した順</option>
-                            <option value="evaluation_desc">評価の高い順</option>
-                            <option value="evaluation_asc">評価の低い順</option>
-                        </select>
+                            見たい
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => handleStatusFilter('watching')}
+                            className={`cursor-pointer border-b-2 px-3 pb-3 text-sm font-medium transition-colors ${
+                                selectedStatus === 'watching'
+                                    ? 'border-foreground text-foreground'
+                                    : 'border-transparent text-muted-foreground hover:text-foreground'
+                            }`}
+                        >
+                            視聴中
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => handleStatusFilter('completed')}
+                            className={`cursor-pointer border-b-2 px-3 pb-3 text-sm font-medium transition-colors ${
+                                selectedStatus === 'completed'
+                                    ? 'border-foreground text-foreground'
+                                    : 'border-transparent text-muted-foreground hover:text-foreground'
+                            }`}
+                        >
+                            視聴済み
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => handleStatusFilter('dropped')}
+                            className={`cursor-pointer border-b-2 px-3 pb-3 text-sm font-medium transition-colors ${
+                                selectedStatus === 'dropped'
+                                    ? 'border-foreground text-foreground'
+                                    : 'border-transparent text-muted-foreground hover:text-foreground'
+                            }`}
+                        >
+                            断念
+                        </button>
                     </div>
 
                     {emotionTags.length > 0 && (
@@ -406,66 +394,71 @@ export default function Dashboard({
                         </div>
                     </div>
 
+                    <div className="mb-4 flex items-center justify-end gap-2">
+                        <form onSubmit={handleSearch}
+                            className="flex items-center"
+                            >
+                            <div className={`flex h-10 items-center overflow-hidden rounded-md border bg-background transition-all duration-300 ${
+                                isSearchOpen ? 'w-80' : 'w-10'}`}>
+                                <button
+                                    type="button"
+                                    onClick={() => setIsSearchOpen((prev) => !prev)}
+                                    className="cursor-pointer flex h-10 w-10 items-center justify-center"
+                                    aria-label="検索欄を開く"
+                                >
+                                    <Search className="h-4 w-4"/>
+                                </button>
+                                <input
+                                    type="text"
+                                    value={searchKeyword}
+                                    onChange={(e) => setSearchKeyword(e.target.value)}
+                                    placeholder="登録作品タイトルで検索"
+                                    className={`h-full min-w-0 flex-1 bg-transparent  text-sm outline-none transition-opacity duration-200 ${
+                                        isSearchOpen
+                                            ? 'opacity-100'
+                                            : 'opacity-0'
+                                    }`}
+                                />
+                                {isSearchOpen && (
+                                <button
+                                    type="submit"
+                                    className="mr-1 shrink-0 cursor-pointer rounded-md bg-primary px-3 py-1.5 text-sm text-primary-foreground hover:bg-primary/80"
+                                >
+                                    検索
+                                </button>
+                                )}
+                            </div>
+                        </form>
+                        <button
+                            type="button"
+                            onClick={handleClearFilters}
+                            className="cursor-pointer rounded-md border bg-muted px-4 py-2 text-sm hover:bg-muted"
+                        >
+                            条件をクリア
+                        </button>
+                        <select
+                            value={selectedSort}
+                            onChange={(e) =>
+                                handleSortChange(
+                                    e.target.value as
+                                        |'newest'
+                                        | 'oldest'
+                                        | 'evaluation_desc'
+                                        | 'evaluation_asc'
+                                )
+                            }
+                            className="cursor-pointer rounded-md border bg-background px-3 py-2 text-sm"
+                        >
+                            <option value="newest">新しく登録した順</option>
+                            <option value="oldest">古く登録した順</option>
+                            <option value="evaluation_desc">評価の高い順</option>
+                            <option value="evaluation_asc">評価の低い順</option>
+                        </select>
+                    </div>
+
                     <h2 className="mb-4 text-xl font-semibold">登録アニメ作品一覧
                     </h2>
 
-                    <div className="mb-4 flex items-center gap-6 border-b">
-                        <button
-                            type="button"
-                            onClick={() => handleStatusFilter(null)}
-                            className={`border-b-2 px-3 pb-3 text-sm font-medium transition-colors ${
-                                selectedStatus === null
-                                    ? 'border-foreground text-foreground'
-                                    : 'border-transparent text-muted-foreground hover:text-foreground'
-                            }`}
-                        >
-                            すべて
-                        </button>
-                        <button
-                            type="button"
-                            onClick={() => handleStatusFilter('want_to_watch')}
-                            className={` border-b-2 px-3 pb-3 text-sm font-medium transition-colors ${
-                                selectedStatus === 'want_to_watch'
-                                    ? 'border-foreground text-foreground'
-                                    : 'border-transparent text-muted-foreground hover:text-foreground'
-                            }`}
-                        >
-                            見たい
-                        </button>
-                        <button
-                            type="button"
-                            onClick={() => handleStatusFilter('watching')}
-                            className={`border-b-2 px-3 pb-3 text-sm font-medium transition-colors ${
-                                selectedStatus === 'watching'
-                                    ? 'border-foreground text-foreground'
-                                    : 'border-transparent text-muted-foreground hover:text-foreground'
-                            }`}
-                        >
-                            視聴中
-                        </button>
-                        <button
-                            type="button"
-                            onClick={() => handleStatusFilter('completed')}
-                            className={`border-b-2 px-3 pb-3 text-sm font-medium transition-colors ${
-                                selectedStatus === 'completed'
-                                    ? 'border-foreground text-foreground'
-                                    : 'border-transparent text-muted-foreground hover:text-foreground'
-                            }`}
-                        >
-                            視聴済み
-                        </button>
-                        <button
-                            type="button"
-                            onClick={() => handleStatusFilter('dropped')}
-                            className={`border-b-2 px-3 pb-3 text-sm font-medium transition-colors ${
-                                selectedStatus === 'dropped'
-                                    ? 'border-foreground text-foreground'
-                                    : 'border-transparent text-muted-foreground hover:text-foreground'
-                            }`}
-                        >
-                            断念
-                        </button>
-                    </div>
 
                     {userAnimes.length === 0 ? (
                         <div className="rounded-xl border p-6">
