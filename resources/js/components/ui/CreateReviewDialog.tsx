@@ -160,8 +160,6 @@ export default function CreateReviewDialog({
                                 </p>
                             )}
                         </div>
-
-
                         <div>
                             <label
                                 htmlFor="review-comment"
