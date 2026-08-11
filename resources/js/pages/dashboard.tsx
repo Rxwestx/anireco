@@ -42,6 +42,17 @@ type UserAnime = {
     anime_master: AnimeMaster;
 };
 
+type PaginetedUrerAnimes = {
+    data: UserAnime[];
+    current_page: number;
+    last_page: number;
+    per_page: number;
+    total: number;
+    prev_page_url: string | null;
+    next_page_url: string | null;
+
+};
+
 type EmotionTag = {
     id: number;
     name: string;
@@ -54,6 +65,7 @@ type RecentWatchNote = {
     anime:{
         mal_id: number;
         title: string;
+        cover_image: string | null;
     };
 };
 type RecentReview = {
@@ -77,7 +89,7 @@ const recommendCategories = [
 ];
 
 type DashboardProps = {
-    userAnimes: UserAnime[];
+    userAnimes: PaginetedUrerAnimes;
     recentlyAdded: UserAnime[];
     recentWatchNotes: RecentWatchNote[];
     recentReviews: RecentReview[];
@@ -250,6 +262,28 @@ export default function Dashboard({
         );
     };
 
+    const handlePageChange = (page: number) =>{
+        router.get(
+            '/dashboard',
+            {
+                ...(selectedStatus ? { status: selectedStatus } : {}),
+                ...(searchKeyword ? { keyword: searchKeyword } : {}),
+                ...(selectedEmotionTagIds.length > 0
+                    ? {emotion_tag_ids: selectedEmotionTagIds}
+                    : {}),
+                ...(selectedRecommendCategory
+                    ? {recommend_category: selectedRecommendCategory}
+                    : {}),
+                sort: selectedSort,
+                page,
+            },
+            {
+                preserveState: true,
+                preserveScroll: true,
+            },
+        );
+    };
+
     return (
         <>
             <Head title="マイページ" />
@@ -262,7 +296,7 @@ export default function Dashboard({
                         </p>
                     </section>
 
-                    <section>
+                <section>
                     <div className="m-6 flex items-center gap-6 border-b">
                         <button
                             type="button"
@@ -322,15 +356,15 @@ export default function Dashboard({
                     </div>
 
                     {emotionTags.length > 0 && (
-                        <div className="mb-4">
-                            <p className="mb-2 font-medium text-sm">
+                        <div className="mb-6 border-b px-4 pb-6">
+                            <p className="mb-3 font-medium text-sm text-foreground">
                                 感情タグで絞り込み
                             </p>
                             <div className="flex flex-wrap gap-2">
                                 <button
                                     type="button"
                                     onClick={() => handleEmotionTagFilter(null)}
-                                    className={`cursor-pointer rounded-full border px-3 py-1.5 text-sm ${
+                                    className={`cursor-pointer rounded-full border px-3 py-1.5 text-sm transition-colors ${
                                         selectedEmotionTagIds.length === 0
                                             ? 'bg-primary text-primary-foreground'
                                             : 'hover:bg-muted'
@@ -346,7 +380,7 @@ export default function Dashboard({
                                     onClick={() =>
                                         handleEmotionTagFilter(emotionTag.id)
                                     }
-                                    className={`cursor-pointer rounded-full border px-3 py-1.5 text-sm ${
+                                    className={`cursor-pointer rounded-full border px-3 py-1.5 text-sm transitions-colors ${
                                         selectedEmotionTagIds.includes(emotionTag.id)
                                             ? 'bg-primary text-primary-foreground'
                                             : 'hover:bg-muted'
@@ -359,8 +393,8 @@ export default function Dashboard({
                     </div>
                     )}
 
-                    <div className="mb-4">
-                        <p className="mb-2 font-medium">
+                    <div className="mb-6 border-b px-4 pb-6">
+                        <p className="mb-3 text-sm font-medium text-foreground">
                             おすすめカテゴリで絞り込み
                         </p>
                         <div className="flex flex-wrap gap-2">
@@ -379,6 +413,7 @@ export default function Dashboard({
                             {recommendCategories.map((recommendCategory) => (
                                 <button
                                     key={recommendCategory}
+                                    type="button"
                                     onClick={() =>
                                         handleRecommendCategoryFilter(recommendCategory)
                                     }
@@ -432,7 +467,7 @@ export default function Dashboard({
                         <button
                             type="button"
                             onClick={handleClearFilters}
-                            className="cursor-pointer rounded-md border bg-muted px-4 py-2 text-sm hover:bg-muted"
+                            className="h-10 cursor-pointer rounded-md border bg-muted px-4 py-2 text-sm hover:bg-muted"
                         >
                             条件をクリア
                         </button>
@@ -447,7 +482,7 @@ export default function Dashboard({
                                         | 'evaluation_asc'
                                 )
                             }
-                            className="cursor-pointer rounded-md border bg-background px-3 py-2 text-sm"
+                            className="h-10 cursor-pointer rounded-md border bg-background px-3 py-2 text-sm"
                         >
                             <option value="newest">新しく登録した順</option>
                             <option value="oldest">古く登録した順</option>
@@ -456,11 +491,11 @@ export default function Dashboard({
                         </select>
                     </div>
 
-                    <h2 className="mb-4 text-xl font-semibold">登録アニメ作品一覧
+                    <h2 className="mb-4 text-xl font-semibold">
+                        登録アニメ作品一覧
                     </h2>
 
-
-                    {userAnimes.length === 0 ? (
+                    {userAnimes.data.length === 0 ? (
                         <div className="rounded-xl border p-6">
                             <p className="text-muted-foreground">
                                 {!hasRegisteredAnimes
@@ -472,8 +507,9 @@ export default function Dashboard({
                             </p>
                         </div>
                     ) : (
+                        <div>
                         <div className="grid grid-cols-5 gap-4">
-                                {userAnimes.map((userAnime) => (
+                                {userAnimes.data.map((userAnime) => (
                                     <article
                                         key={userAnime.id}
                                         className="flex h-full flex-col rounded-xl border p-4">
@@ -499,8 +535,8 @@ export default function Dashboard({
                                                     {userAnime.anime_master.title}
                                                 </h3>
                                             </div>
-
                                         </Link>
+
                                         <div className="mt-auto flex flex-col gap-3 px-4 pb-4">
                                             <UpdateAnimeStatusDialog
                                                 userAnimeId={userAnime.id}
@@ -516,30 +552,80 @@ export default function Dashboard({
                                                 }
                                                 triggerClassName="h-10 w-full cursor-pointer rounded-md text-sm font-semibold hover:bg-muted"
                                             />
-                                        </div>
 
-                                        {userAnime.review ? (
-                                                <EditReviewDialog
+                                            {userAnime.review ? (
+                                                    <EditReviewDialog
+                                                        userAnimeId={userAnime.id}
+                                                        review={userAnime.review}
+                                                        triggerLabel="レビュー編集"
+                                                        triggerClassName="h-10 w-full cursor-pointer rounded-md border text-sm font-medium hover:bg-muted"
+                                                    />
+                                            ) : (
+                                                <CreateReviewDialog
                                                     userAnimeId={userAnime.id}
-                                                    review={userAnime.review}
-                                                    triggerLabel="レビュー編集"
                                                     triggerClassName="h-10 w-full cursor-pointer rounded-md border text-sm font-medium hover:bg-muted"
                                                 />
-                                        ) : (
-                                            <CreateReviewDialog
-                                                userAnimeId={userAnime.id}
-                                                triggerClassName="h-10 w-full cursor-pointer rounded-md border text-sm font-medium hover:bg-muted"
-                                            />
-                                        )}
+                                            )}
+                                        </div>
                                     </article>
                                 ))}
                             </div>
-                        )}
+
+                            {userAnimes.last_page > 1 && (
+                                <div className="mt-6 flex items-center justify-center gap-2">
+
+                                    <button
+                                        type="button"
+                                        disabled={userAnimes.current_page === 1}
+                                        onClick={() => handlePageChange(userAnimes.current_page - 1)}
+                                        className="flex h-10 min-w-10 cursor-pointer items-center justify-center rounded-md border px-3 text-sm disabled:cursor-not-allowed disabled:opacity-40"
+                                    >
+                                        前へ
+                                    </button>
+
+                                    {Array.from(
+                                        { length: userAnimes.last_page },
+                                        (_, i) => i + 1,
+                                    ).map((page) => (
+                                        <button
+                                            key={page}
+                                            type="button"
+                                            onClick={() => handlePageChange(page)}
+                                            className={`flex h-10 min-w-10 cursor-pointer items-center justify-center rounded-md border px-3 text-sm ${
+                                                page === userAnimes.current_page
+                                                ? 'bg-primary text-primary-foreground'
+                                                : 'hover:bg-muted'
+                                            }`}
+                                        >
+                                            {page}
+                                        </button>
+                                    ))}
+                                    <button
+                                        type="button"
+                                        disabled={
+                                            userAnimes.current_page === userAnimes.last_page
+                                        }
+                                        onClick={() =>
+                                            handlePageChange(userAnimes.current_page + 1)
+                                        }
+                                        className={`flex h-10 min-w-10 cursor-pointer items-center justify-center rounded-md border px-3 text-sm disabled:cursor-not-allowed disabled:opacity-40 ${
+                                            userAnimes.current_page === userAnimes.last_page
+                                                ? 'bg-primary text-primary-foreground'
+                                                : 'hover:bg-muted'
+                                        }`}
+                                    >
+                                        次へ
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+                    )}   
                     </section>
                 </div>
+
                 <aside className="flex w-[320px] shrink-0 flex-col gap-4">
                     <div className="rounded-xl border bg-white p-5">
-                        <h2 className="mb-4 text-sm font-extrabold text-muted-foreground">
+                        <h2 className="mb-4 text-sm font-extrabold text-[#333]">
                             最近追加したアニメ作品
                             </h2>
                         <div className="flex flex-col gap-3">
@@ -553,7 +639,7 @@ export default function Dashboard({
                                         <img
                                             src={userAnime.anime_master.cover_image}
                                             alt={userAnime.anime_master.title}
-                                            className="w-16 h-12 shrink-0 rounded-lg object-cover"
+                                            className="h-16 w-12 shrink-0 rounded-lg object-cover"
                                         />
                                     ) : (
                                         <div className="h-16 w-12 rounded-lg bg-muted"/>
@@ -584,17 +670,30 @@ export default function Dashboard({
                                     <Link
                                         key={watchNote.id}
                                         href={`/animes/${watchNote.anime.mal_id}`}
-                                        className="block"
+                                        className="flex items-center gap-3"
                                     >
-                                        <p className="truncate text-sm font-bold text-[#333]"
-                                            title={watchNote.anime.title}
-                                        >
-                                            {watchNote.anime.title}
-                                        </p>
+                                        {watchNote.anime.cover_image ? (
+                                        <img
+                                            src={watchNote.anime.cover_image}
+                                            alt={watchNote.anime.title}
+                                            className="h-16 w-12 shrink-0 rounded-lg object-cover"
+                                        />
+                                    ) : (
+                                        <div className="h-16 w-12 shrink-0 rounded-lg bg-muted"/>
+                                    )}
 
-                                        <p className="mt-1 text-sm text-[#666]">
-                                            {watchNote.content}
-                                        </p>
+                                        <div className="min-w-0">
+
+                                            <p className="truncate text-sm font-bold text-[#333]"
+                                                title={watchNote.anime.title}
+                                            >
+                                                {watchNote.anime.title}
+                                            </p>
+
+                                            <p className="mt-1 line-clamp-2 text-sm text-[#666]">
+                                                {watchNote.content}
+                                            </p>
+                                        </div>
                                     </Link>
                                 ))}
                             </div>
