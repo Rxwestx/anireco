@@ -134,6 +134,10 @@ class DashboardController extends Controller
                             ->userAnime
                             ->animeMaster
                             ->title,
+                        'cover_image' => $watchNote
+                            ->userAnime
+                            ->animeMaster
+                            ->cover_image,
                     ],
                 ];
             })
@@ -245,8 +249,9 @@ class DashboardController extends Controller
         }
 
         $userAnimes = $userAnimesQuery
-            ->get()
-            ->map(function ($userAnime) {
+            ->paginate(15)
+            ->withQueryString()
+            ->through(function ($userAnime) {
             return [
                 'id' => $userAnime->id,
                 'status' => $userAnime->status->value,
@@ -280,8 +285,7 @@ class DashboardController extends Controller
                         ->broadcast_year,
                 ],
             ];
-        })
-        ->values();
+        });
 
         return Inertia::render('dashboard', [
             'userAnimes' => $userAnimes,
