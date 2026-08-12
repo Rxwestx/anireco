@@ -16,7 +16,7 @@ type AnimeMaster ={
     broadcast_year: string | null;
 };
 
-type WachingStatus =
+type WatchingStatus =
     | 'want_to_watch'
     | 'watching'
     | 'completed'
@@ -34,7 +34,7 @@ type Review = {
 
 type UserAnime = {
     id : number;
-    status: WachingStatus;
+    status: WatchingStatus;
     statusLabel: string;
     created_at: string | null;
     attachedEmotionTagIds: number[];
@@ -42,7 +42,7 @@ type UserAnime = {
     anime_master: AnimeMaster;
 };
 
-type PaginetedUrerAnimes = {
+type PaginatedUserAnimes = {
     data: UserAnime[];
     current_page: number;
     last_page: number;
@@ -89,7 +89,7 @@ const recommendCategories = [
 ];
 
 type DashboardProps = {
-    userAnimes: PaginetedUrerAnimes;
+    userAnimes: PaginatedUserAnimes;
     recentlyAdded: UserAnime[];
     recentWatchNotes: RecentWatchNote[];
     recentReviews: RecentReview[];
@@ -380,7 +380,7 @@ export default function Dashboard({
                                     onClick={() =>
                                         handleEmotionTagFilter(emotionTag.id)
                                     }
-                                    className={`cursor-pointer rounded-full border px-3 py-1.5 text-sm transitions-colors ${
+                                    className={`cursor-pointer rounded-full border px-3 py-1.5 text-sm transition-colors ${
                                         selectedEmotionTagIds.includes(emotionTag.id)
                                             ? 'bg-primary text-primary-foreground'
                                             : 'hover:bg-muted'
