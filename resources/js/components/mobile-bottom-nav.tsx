@@ -1,6 +1,6 @@
 import { Link, usePage } from '@inertiajs/react';
 import { Home, Search, Tag, User } from 'lucide-react';
-import { use } from 'react';
+
 
 export function MobileBottomNav() {
     const { auth } = usePage().props;
@@ -10,7 +10,7 @@ export function MobileBottomNav() {
     }
 
     return (
-        <nav className="fixed inset-x-0 bottom-0 z-50 border-t bg-background md:hidden">
+        <nav className="fixed inset-x-0 bottom-0 z-50 border-t bg-background min-[680px]:hidden">
             <div className="grid grid-cols-3">
                 <Link
                     href="/dashboard"
