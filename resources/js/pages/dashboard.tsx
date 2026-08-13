@@ -287,7 +287,7 @@ export default function Dashboard({
     return (
         <>
             <Head title="マイページ" />
-            <div className="flex items-start gap-6">
+            <div className="flex w-full flex-col gap-6 min-[1100px]:flex-row min-[1100px]:shrink-0">
                 <div className="min-w-0 flex-1">
                     <section>
                         <h1 className="text-2xl font-bold">マイページ</h1>
@@ -297,7 +297,7 @@ export default function Dashboard({
                     </section>
 
                 <section>
-                    <div className="m-6 flex items-center gap-6 border-b">
+                    <div className="mx-2 my-4 flex items-center gap-4 overflow-x-auto border-b whitespace-nowrap min-[680px]:m-6 min-[680px]:gap-6">
                         <button
                             type="button"
                             onClick={() => handleStatusFilter(null)}
@@ -364,7 +364,7 @@ export default function Dashboard({
                                 <button
                                     type="button"
                                     onClick={() => handleEmotionTagFilter(null)}
-                                    className={`cursor-pointer rounded-full border px-3 py-1.5 text-sm transition-colors ${
+                                    className={`cursor-pointer rounded-full border px-2.5 py-1 text-xs transition-colors min-[680px]:px-3 min-[680px]:py-1.5 min-[680px]:text-sm ${
                                         selectedEmotionTagIds.length === 0
                                             ? 'bg-primary text-primary-foreground'
                                             : 'hover:bg-muted'
@@ -380,7 +380,7 @@ export default function Dashboard({
                                     onClick={() =>
                                         handleEmotionTagFilter(emotionTag.id)
                                     }
-                                    className={`cursor-pointer rounded-full border px-3 py-1.5 text-sm transition-colors ${
+                                    className={`cursor-pointer rounded-full border px-3 py-1.5 text-xs transition-colors min-[680px]:px-3 min-[680px]:py-1.5 min-[680px]:text-sm ${
                                         selectedEmotionTagIds.includes(emotionTag.id)
                                             ? 'bg-primary text-primary-foreground'
                                             : 'hover:bg-muted'
@@ -401,7 +401,7 @@ export default function Dashboard({
                             <button
                                 type="button"
                                 onClick={() => handleRecommendCategoryFilter(null)}
-                                className={`cursor-pointer rounded-full border px-3 py-1.5 text-sm ${
+                                className={`cursor-pointer rounded-full border px-2.5 py-1 text-xs transition-colors min-[680px]:px-3 min-[680px]:py-1.5 min-[680px]:text-sm ${
                                     selectedRecommendCategory === null
                                         ? 'bg-primary text-primary-foreground'
                                         : 'hover:bg-muted'
@@ -417,7 +417,7 @@ export default function Dashboard({
                                     onClick={() =>
                                         handleRecommendCategoryFilter(recommendCategory)
                                     }
-                                    className={`cursor-pointer rounded-full border px-3 py-1.5 text-sm ${
+                                    className={`cursor-pointer rounded-full border px-3 py-1.5 text-xs transition-colors　min-[680px]:px-3 min-[680px]:py-1.5 min-[680px]:text-sm ${
                                         selectedRecommendCategory === recommendCategory
                                             ? 'bg-primary text-primary-foreground'
                                             : 'hover:bg-muted'
@@ -429,12 +429,16 @@ export default function Dashboard({
                         </div>
                     </div>
 
-                    <div className="mb-4 flex items-center justify-end gap-2">
+                    <div className="mb-4 flex flex-col gap-2 min-[680px]:flex-row min-[680px]:items-center min-[680px]:justify-end">
                         <form onSubmit={handleSearch}
-                            className="flex items-center"
+                            className="flex w-full items-center min-[680px]:w-auto"
                             >
                             <div className={`flex h-10 items-center overflow-hidden rounded-md border bg-background transition-all duration-300 ${
-                                isSearchOpen ? 'w-80' : 'w-10'}`}>
+                                isSearchOpen
+                                    ? 'w-full min-[680px]:w-80'
+                                    : 'w-10'
+                                    }`}
+                                >
                                 <button
                                     type="button"
                                     onClick={() => setIsSearchOpen((prev) => !prev)}
@@ -467,7 +471,7 @@ export default function Dashboard({
                         <button
                             type="button"
                             onClick={handleClearFilters}
-                            className="h-10 cursor-pointer rounded-md border bg-muted px-4 py-2 text-sm hover:bg-muted"
+                            className="h-10 w-full cursor-pointer rounded-md border bg-muted px-3 text-sm min-[680px]:w-auto"
                         >
                             条件をクリア
                         </button>
@@ -508,14 +512,14 @@ export default function Dashboard({
                         </div>
                     ) : (
                         <div>
-                        <div className="grid grid-cols-5 gap-4">
+                        <div className="grid grid-cols-2 gap-4 min-[680px]:grid-cols-4 xl:grid-cols-5">
                                 {userAnimes.data.map((userAnime) => (
                                     <article
                                         key={userAnime.id}
-                                        className="flex h-full flex-col rounded-xl border p-4">
+                                        className="flex h-full flex-col rounded-xl border p-2.5 min-[680px]:p-4">
                                         <Link
                                             href={`/animes/${userAnime.anime_master.mal_id}`}
-                                            className="flex flex-1 flex-col p-4 transition hover:bg-muted/50">
+                                            className="flex flex-1 flex-col p-2 min-[680px]:p-4 transition hover:bg-muted/50">
                                             {userAnime.anime_master.cover_image ? (
                                                 <img
                                                     src={userAnime.anime_master.cover_image}
@@ -531,13 +535,13 @@ export default function Dashboard({
                                                 </div>
                                             )}
                                             <div className="mt-4">
-                                                <h3 className="line-clamp-2 min-h-12 text-base font-semibold">
+                                                <h3 className="line-clamp-2 min-h-10 text-sm font-semibold min-[680px]:min-h-12 min-[680px]:text-base">
                                                     {userAnime.anime_master.title}
                                                 </h3>
                                             </div>
                                         </Link>
 
-                                        <div className="mt-auto flex flex-col gap-3 px-4 pb-4">
+                                        <div className="mt-auto flex flex-col gap-2 px-2 pb-2 min-[680px]:gap-3 min-[680px]:px-4 min-[680px]:pb-4">
                                             <UpdateAnimeStatusDialog
                                                 userAnimeId={userAnime.id}
                                                 currentStatus={userAnime.status}
@@ -619,11 +623,11 @@ export default function Dashboard({
                                 </div>
                             )}
                         </div>
-                    )}   
+                    )}
                     </section>
                 </div>
 
-                <aside className="flex w-[320px] shrink-0 flex-col gap-4">
+                <aside className="mt-6 grid w-full grid-cols-1 gap-4 min-[680px]:grid-cols-3 min-[1100px]:mt-0  min-[1100px]:flex min-[1100px]:w-[320px] min-[1100px]:shrink-0 min-[1100px]:flex-col">
                     <div className="rounded-xl border bg-white p-5">
                         <h2 className="mb-4 text-sm font-extrabold text-[#333]">
                             最近追加したアニメ作品
