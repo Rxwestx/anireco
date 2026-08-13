@@ -20,9 +20,9 @@ export default function Welcome({
         <>
             <Head title="Anireco" />
 
-            <main className="min-h-screen bg-white text-gray-900">
-                <section className="flex flex-col items-center justify-center gap-6 border border-[#e5e5e5] bg-[#f5f5f5]px-20 py-20 text-center">
-                    <h1 className="text-5xl font-bold">
+            <main className="min-h-screen">
+                <section className="flex flex-col items-center justify-center gap-6 border border-[#e5e5e5] px-4 py-16 text-center min-[680px]:px-20 min-[680px]:py-20">
+                    <h1 className="text-3xl font-bold leading-tight min-[680px]:text-5xl">
                         あなたのオタクライフを、
                         <span className="text-[#666]">
                             ログ
@@ -30,17 +30,17 @@ export default function Welcome({
                         に残そう。
                     </h1>
 
-                    <p className="w-[600px] text-lg text-[#666]">
+                    <p className="w-full max-w-[600px] text-base text-[#666] min-680px]:text-lg">
                         視聴したアニメの感想、感情タグ、評価を記録。
                         自分だけのアニメログを作成して、
                         オタクライフをより充実させましょう。
                     </p>
 
-                    <div className="flex gap-4">
+                    <div className="flex w-full max-w-sm flex-col gap-3 min-[680px]:w-auto min-[680px]:max-w-none min-[680px]:flex-row min-[680px]:gap-4">
                         {auth.user ? (
                             <Link
-                                href={dashboard()
-}                               className="cursor-pointer rounded-lg  bg-black px-8 py-4 text-lg font-semibold text-white px-6 py-3 text-white"
+                                href={dashboard()}
+                                className="cursor-pointer rounded-lg bg-primary px-8 py-4 text-center text-base font-semibold text-primary-foreground transition hover:bg-primary/90 min-[680px]:text-lg"
                             >
                                 マイページへ
                             </Link>
@@ -48,14 +48,14 @@ export default function Welcome({
                             <>
                                 <Link
                                     href={register()}
-                                    className="cursor-pointer rounded-lg bg-black px-8 py-4 text-lg font-semibold text-white"
+                                    className="cursor-pointer rounded-lg bg-primary px-8 py-4 text-center text-base font-semibold text-primary-foreground transition hover:bg-primary/90 min-[680px]:text-lg"
                                 >
                                     新規登録
                                 </Link>
 
                                 <Link
                                     href={login()}
-                                    className="cursor-pointer rounded-lg bg-black px-8 py-4 text-lg font-semibold text-white"
+                                    className="cursor-pointer rounded-lg bg-primary px-8 py-4 text-center text-base font-semibold text-primary-foreground transition hover:bg-primary/90 min-[680px]:text-lg"
                                 >
                                     ログイン
                                 </Link>
@@ -64,7 +64,7 @@ export default function Welcome({
                     </div>
                 </section>
 
-                <section className="px-20 py-20">
+                <section className="px-4 py-12 min-[680px]:px-20 min-[680px]:py-20">
                     <div className="flex item-center justify-between">
                         <h2 className="text-2xl font-bold">
                             {seasonYear}年 {seasonLabel}アニメ
@@ -77,7 +77,7 @@ export default function Welcome({
                             もっと見る
                         </Link>
                     </div>
-                    <div className="mt-10 grid grid-cols-5 gap-6">
+                    <div className="mt-10 grid grid-cols-2 gap-4 min-[680px]:grid-cols-3 min-[1100px]:grid-cols-5 min-[1100px]:gap-6">
                         {seasonalAnime.map((anime) => (
                             <SeasonalAnimeCard
                                 key={anime.id}
