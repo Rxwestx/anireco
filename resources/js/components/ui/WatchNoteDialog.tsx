@@ -112,7 +112,7 @@ export default function WatchNoteDialog({
                 + 視聴メモを追加
             </button>
 
-            <DialogContent className="sm:max-w-xl">
+            <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-xl">
                 <form onSubmit={handleSubmit}>
                     <DialogHeader>
                         <DialogTitle>
