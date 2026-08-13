@@ -68,19 +68,19 @@ export default function SeasonalAnimeCard({
             <div className="mt-3 space-y-2">
                 <div className="flex items-start justify-between gap-2">
                 <p
-                    className="truncate text-sm font-semibold"
+                    className="truncate text-sm font-semibold text-foreground"
                     title={anime.title}
                 >
                     {anime.title}
                 </p>
 
                 {anime.status && (
-                    <span className="shrink-0 rounded border px-2 py-1 text-xs">
+                    <span className="shrink-0 rounded border px-2 py-1 text-xs text-foreground">
                         {statusLabel}
                     </span>
                 )}
                 </div>
-                <p className="text-sm">
+                <p className="text-sm text-foreground">
                     評価：
                     {anime.mean !== null
                         ? anime.mean.toFixed(2)
@@ -103,7 +103,7 @@ export default function SeasonalAnimeCard({
                 {!auth.user ? (
                     <Link
                         href="/login"
-                        className="block w-full rounded-md px-4 py-2 text-sm text-center font-medium hover:bg-muted">
+                        className="block w-full rounded-md px-4 py-2 bg-primary text-primary-foreground text-sm text-center font-medium hover:bg-primary/90">
                             +登録する
                     </Link>
                 ) : anime.registered_status && anime.user_anime_id ? (
