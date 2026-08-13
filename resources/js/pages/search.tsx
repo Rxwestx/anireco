@@ -88,7 +88,10 @@ export default function Search({
                         </h2>
                     </div>
                         {animes.length > 0 ? (
-                            <div className="grid grid-cols-2 gap-4 min-[680px]:grid-cols-4 min-[1100px]:grid-cols-5">
+                            <div className="grid grid-cols-2 gap-4 min-[680px]:grid-cols-3 min-[1100px]:grid-cols-5
+
+
+                            ">
                                 {animes.map(anime => (
                                 <article
                                     key={anime.id}
