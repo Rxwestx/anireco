@@ -78,6 +78,7 @@ type ShowProps = {
     watchNotes: WatchNote[];
     review: Review | null;
     publicReviews?: PublicReview[];
+    keyword?: string;
 };
 
 const sourceLabels: Record<string, string> = {
@@ -102,6 +103,7 @@ export default function Show({
     watchNotes,
     review,
     publicReviews = [],
+    keyword = '',
 }: ShowProps) {
     const { auth } = usePage<{ auth: Auth }>().props;
 
@@ -146,13 +148,12 @@ export default function Show({
         <>
             <Head title={anime.title} />
             <main className="mx-auto w-full max-w-6xl px-4 py-8">
-                <button
-                    type="button"
-                    onClick={() => window.history.back()}
+                <Link
+                    href={keyword ? `/search?keyword=${encodeURIComponent(keyword)}` : '/search'}
                     className="mb-6 inline-flex items-center text-sm text-muted-foreground transition hover:text-foreground hover:underline"
                 >
                     ◀︎ 検索に戻る
-                </button>
+                </Link>
 
                 <div className="grid gap-8 md:grid-cols-[300px_1fr]">
                     <section>
@@ -512,6 +513,7 @@ export default function Show({
                         <PublicReviewList
                             malId={anime.id}
                             publicReviews={publicReviews}
+                            keyword={keyword}
                         />
                 )}
             </main>
