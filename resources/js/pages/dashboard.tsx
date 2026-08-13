@@ -279,8 +279,16 @@ export default function Dashboard({
             },
             {
                 preserveState: true,
-                preserveScroll: true,
-            },
+                preserveScroll: false,
+                onSuccess: () => {
+                    document
+                        .getElementById('anime-list')
+                        ?.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start',
+                        });
+                },
+            }
         );
     };
 
@@ -498,7 +506,6 @@ export default function Dashboard({
                     <h2 className="mb-4 text-xl font-semibold">
                         登録アニメ作品一覧
                     </h2>
-
                     {userAnimes.data.length === 0 ? (
                         <div className="rounded-xl border p-6">
                             <p className="text-muted-foreground">
@@ -512,7 +519,9 @@ export default function Dashboard({
                         </div>
                     ) : (
                         <div>
-                        <div className="grid grid-cols-2 gap-4 min-[680px]:grid-cols-4 xl:grid-cols-5">
+                            <div
+                                id="anime-list"
+                                className="grid grid-cols-2 gap-4 min-[680px]:grid-cols-3 min-[1100px]:grid-cols-5">
                                 {userAnimes.data.map((userAnime) => (
                                     <article
                                         key={userAnime.id}
@@ -547,7 +556,6 @@ export default function Dashboard({
                                                 currentStatus={userAnime.status}
                                                 triggerClassName="h-10 w-full cursor-pointer"
                                             />
-
                                             <WatchNoteDialog
                                                 userAnimeId={userAnime.id}
                                                 emotionTags={emotionTags}
@@ -556,7 +564,6 @@ export default function Dashboard({
                                                 }
                                                 triggerClassName="h-10 w-full cursor-pointer rounded-md text-sm font-semibold hover:bg-muted"
                                             />
-
                                             {userAnime.review ? (
                                                     <EditReviewDialog
                                                         userAnimeId={userAnime.id}
@@ -571,6 +578,7 @@ export default function Dashboard({
                                                 />
                                             )}
                                         </div>
+
                                     </article>
                                 ))}
                             </div>
