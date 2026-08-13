@@ -13,11 +13,13 @@ type PublicReview = {
 type PublicReviewListProps = {
     malId: number;
     publicReviews?: PublicReview[];
+    keyword?: string;
 };
 
 export default function PublicReviewList({
     malId,
     publicReviews = [],
+    keyword = '',
 }: PublicReviewListProps) {
     return (
         <section className="mt-12">
@@ -127,7 +129,11 @@ export default function PublicReviewList({
 
                     <div className="mt-6 flex justify-center">
                         <Link
-                            href={`/animes/${malId}/reviews`}
+                            href={
+                                keyword
+                                ? `/animes/${malId}/reviews?keyword=${encodeURIComponent(keyword)}`
+                                : `/animes/${malId}/reviews`
+                            }
                             className="rounded-md border px-4 py-2 text-sm font-medium transition hover:bg-muted"
                         >
                             すべてのレビューを見る
