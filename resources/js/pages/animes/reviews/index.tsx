@@ -1,5 +1,5 @@
-import Pagination from '@/components/ui/Pagination';
 import { Head, Link } from '@inertiajs/react';
+import Pagination from '@/components/ui/Pagination';
 
 type Anime = {
     id: number;
