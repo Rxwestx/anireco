@@ -117,7 +117,7 @@ export default function EmotionTagsIndex({
                                 value={data.name}
                                 onChange={(e) => setData("name", e.target.value)}
                                 placeholder="新しい感情タグを追加 例：感動した"
-                                className="w-full rounded-md border bg-ground px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
+                                className="w-full rounded-md border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
                             />
                         {errors.name &&(
                             <p className="mt-1 text-sm text-red-600">
@@ -129,7 +129,7 @@ export default function EmotionTagsIndex({
                         <button
                             type="submit"
                             disabled={processing}
-                            className="cursor-pointer rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                            className="w-full cursor-pointer rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:cursor-not-allowed disabled:opacity-50 min-[680px]:w-auto"
                         >
                             {processing ? "登録中..." : "登録する"}
                         </button>
@@ -154,7 +154,7 @@ export default function EmotionTagsIndex({
                                             onSubmit={(e) =>
                                                 handleUpdate(e, emotionTag.id)
                                             }
-                                            className="flex flex-wrap items-start gap-2 rounded-lg border p-3"
+                                            className="flex w-full flex-col gap-2 rounded-lg border p-3 min-[680px]:flex-row min-[680px]:flex-wrap min-[680px]:items-start"
                                         >
                                             <div>
                                                 <input
@@ -165,7 +165,7 @@ export default function EmotionTagsIndex({
                                                         e.target.value
                                                     )
                                                 }
-                                                    className="rounded-md border bg-ground px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
+                                                    className="w-full rounded-md border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
                                                 />
                                                 {editForm.errors.name && (
                                                     <p className="mt-1 text-sm text-red-600">
