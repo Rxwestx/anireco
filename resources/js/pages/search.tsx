@@ -177,7 +177,7 @@ export default function Search({
                         </h2>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4 min-[680px]:grid-cols-4 min-[1100px]:grid-cols-5">
+                    <div className="grid grid-cols-2 gap-4 min-[680px]:grid-cols-3 min-[1100px]:grid-cols-5">
                         {seasonalAnime.map(anime => (
                             <SeasonalAnimeCard
                                 key={anime.id}
