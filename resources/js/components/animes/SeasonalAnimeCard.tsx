@@ -49,7 +49,7 @@ export default function SeasonalAnimeCard({
 
     return (
 
-    <div className="flex h-full flex-col rounded-lg border border-gray-300 bg-white p-4 transition hover:bg-muted/30">
+    <div className="group flex h-full flex-col overflow-hidden rounded-xl border bg-background transition hover:-translate-y-1 hover:shadow-lg">
         <Link
             href={`/animes/${anime.id}`}>
             {imageUrl ? (
@@ -67,12 +67,12 @@ export default function SeasonalAnimeCard({
             )}
             <div className="mt-3 space-y-2">
                 <div className="flex items-start justify-between gap-2">
-                <h3
+                <p
                     className="truncate text-sm font-semibold"
                     title={anime.title}
                 >
                     {anime.title}
-                </h3>
+                </p>
 
                 {anime.status && (
                     <span className="shrink-0 rounded border px-2 py-1 text-xs">
