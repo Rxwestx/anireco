@@ -94,7 +94,7 @@ export default function Search({
                                     key={anime.id}
                                     className="group flex h-full flex-col overflow-hidden rounded-xl border bg-background transition hover:-translate-y-1 hover:shadow-lg">
                                         <Link
-                                            href={`/animes/${anime.id}`}
+                                            href={`/animes/${anime.id}?keyword=${encodeURIComponent(initialKeyword)}`}
                                             className="flex flex-1 flex-col focus:outline-none focus:ring-2 focus:ring-ring"
                                         >
                                             <div className="aspect-[16/9] w-full overflow-hidden bg-muted">
