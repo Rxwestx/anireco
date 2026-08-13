@@ -127,10 +127,12 @@ class AnimeController extends Controller
             'watchNotes' => $watchNotes,
             'review' => $review,
             'publicReviews' => $publicReviews,
+            'keyword' => $request->query('keyword', ''),
         ]);
     }
 
     public function reviews(
+        Request $request,
         int $malId,
         MyAnimeListService $myAnimeListService,
     ): Response {
@@ -177,6 +179,7 @@ class AnimeController extends Controller
                 'main_picture' => $anime['main_picture'] ?? null,
             ],
             'publicReviews' => $publicReviews,
+            'keyword' => $request->query('keyword', ''),
         ]);
     }
 }
