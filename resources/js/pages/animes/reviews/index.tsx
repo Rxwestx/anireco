@@ -40,11 +40,13 @@ type PaginatedPublicReviews = {
 type ReviewsPageProps = {
     anime: Anime;
     publicReviews: PaginatedPublicReviews;
+    keyword?: string;
 };
 
 export default function ReviewsIndex({
     anime,
-    publicReviews
+    publicReviews,
+    keyword = '',
 }: ReviewsPageProps) {
     return (
         <>
@@ -52,7 +54,11 @@ export default function ReviewsIndex({
 
             <main className="mx-auto w-full max-w-4xl px-4 py-8">
                 <Link
-                    href={`/animes/${anime.id}`}
+                    href={
+                        keyword
+                        ? `/animes/${anime.id}?keyword=${encodeURIComponent(keyword)}`
+                        : `/animes/${anime.id}`
+                    }
                     className="text-sm text-muted-foreground hover:text-foreground"
                 >
                     ◀︎ アニメ作品詳細に戻る
