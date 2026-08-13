@@ -146,6 +146,14 @@ export default function Show({
         <>
             <Head title={anime.title} />
             <main className="mx-auto w-full max-w-6xl px-4 py-8">
+                <button
+                    type="button"
+                    onClick={() => window.history.back()}
+                    className="mb-6 inline-flex items-center text-sm text-muted-foreground transition hover:text-foreground hover:underline"
+                >
+                    ◀︎ 検索に戻る
+                </button>
+
                 <div className="grid gap-8 md:grid-cols-[300px_1fr]">
                     <section>
                         <div className="aspect-[2/3] w-full overflow-hidden rounded-xl bg-muted">
