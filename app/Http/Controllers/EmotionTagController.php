@@ -28,13 +28,20 @@ class EmotionTagController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'name' => [
-                'required',
-                'string',
-                'max:50',
+        $validated = $request->validate(
+            [
+                'name' => [
+                    'required',
+                    'string',
+                    'max:50',
+                ],
             ],
-        ]);
+            [
+                'name.required' => 'タグ名を入力してください。',
+                'name.string' => 'タグ名は文字列で入力してください。',
+                'name.max' => 'タグ名は50文字以内で入力してください。',
+            ]
+        );
 
         $alreadyExists = $request->user()
             ->emotionTags()
@@ -68,13 +75,20 @@ class EmotionTagController extends Controller
             403
         );
 
-        $validated = $request->validate([
-            'name' => [
-                'required',
-                'string',
-                'max:50',
+        $validated = $request->validate(
+            [
+                'name' => [
+                    'required',
+                    'string',
+                    'max:50',
+                ],
             ],
-        ]);
+                [
+                    'name.required' => 'タグ名を入力してください。',
+                    'name.string' => 'タグ名は文字列で入力してください。',
+                    'name.max' => 'タグ名は50文字以内で入力してください。',
+                ],
+        );
 
         $alreadyExists = $request->user()
             ->emotionTags()
