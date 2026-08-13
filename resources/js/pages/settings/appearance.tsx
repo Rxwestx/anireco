@@ -6,15 +6,15 @@ import { edit as editAppearance } from '@/routes/appearance';
 export default function Appearance() {
     return (
         <>
-            <Head title="Appearance settings" />
-
-            <h1 className="sr-only">Appearance settings</h1>
+            <Head title="テーマ設定" />
+        
+            <h1 className="sr-only">外観設定</h1>
 
             <div className="space-y-6">
                 <Heading
                     variant="small"
-                    title="Appearance settings"
-                    description="Update the appearance settings for your account"
+                    title="テーマ設定"
+                    description="表示テーマを更新できます"
                 />
                 <AppearanceTabs />
             </div>
@@ -25,7 +25,7 @@ export default function Appearance() {
 Appearance.layout = {
     breadcrumbs: [
         {
-            title: 'Appearance settings',
+            title: 'テーマ設定',
             href: editAppearance(),
         },
     ],
