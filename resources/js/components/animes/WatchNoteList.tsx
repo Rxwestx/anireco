@@ -51,7 +51,7 @@ export default function WatchNoteList({
             <WatchNoteDialog
                 userAnimeId={userAnimeId}
                 emotionTags={emotionTags}
-                attachedEmotionTagsIds={attachedEmotionTagsIds}
+                attachedEmotionTagIds={attachedEmotionTagsIds}
             />
         </div>
 
