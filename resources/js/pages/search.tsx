@@ -75,7 +75,7 @@ export default function Search({
                         placeholder="作品タイトルで検索"
                     />
                     <button type="submit"
-                    className="mt-4 rounded-md bg-gray-500 px-4 py-2 text-white hover:bg-gray-700">
+                    className="mt-4 rounded-md bg-gray-500 px-4 py-2 text-white hover:bg-gray-700 min-[680px]:w-auto">
                         検索
                     </button>
                 </section>
@@ -88,7 +88,7 @@ export default function Search({
                         </h2>
                     </div>
                         {animes.length > 0 ? (
-                            <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
+                            <div className="grid grid-cols-2 gap-4 min-[680px]:grid-cols-4 min-[1100px]:grid-cols-5">
                                 {animes.map(anime => (
                                 <article
                                     key={anime.id}
@@ -114,8 +114,8 @@ export default function Search({
                                                         </div>
                                                     )}
                                             </div>
-                                            <div className="space-y-2 p-4">
-                                                <h3 className="text-lg font-semibold">
+                                            <div className="p-3 space-y-2 min-[680px]:p-4">
+                                                <h3 className="text-sm font-semibold min-[680px]:text-lg">
                                                     {anime.title}
                                                 </h3>
                                                 <p className="text-sm text-muted-foreground">
@@ -174,7 +174,7 @@ export default function Search({
                         </h2>
                     </div>
 
-                    <div className="grid grid-cols-5 gap-6">
+                    <div className="grid grid-cols-2 gap-4 min-[680px]:grid-cols-4 min-[1100px]:grid-cols-5">
                         {seasonalAnime.map(anime => (
                             <SeasonalAnimeCard
                                 key={anime.id}
