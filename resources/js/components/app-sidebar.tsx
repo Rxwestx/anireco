@@ -18,7 +18,6 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { dashboard } from '@/routes';
 import type { NavItem } from '@/types';
 
 type AuthUser ={
@@ -87,7 +86,7 @@ export function AppSidebar() {
             <SidebarFooter>
                 {/* <NavFooter items={footerNavItems} className="mt-auto" /> */}
                 {auth.user ? (
-                <NavUser user={auth.user} />
+                <NavUser />
                 ) : (
                 <div className="flex flex-col gap-2 p-2">
                     <Link

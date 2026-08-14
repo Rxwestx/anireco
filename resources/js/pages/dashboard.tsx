@@ -425,7 +425,7 @@ export default function Dashboard({
                                     onClick={() =>
                                         handleRecommendCategoryFilter(recommendCategory)
                                     }
-                                    className={`cursor-pointer rounded-full border px-3 py-1.5 text-xs transition-colors　min-[680px]:px-3 min-[680px]:py-1.5 min-[680px]:text-sm ${
+                                    className={`cursor-pointer rounded-full border px-3 py-1.5 text-xs transition-colors min-[680px]:px-3 min-[680px]:py-1.5 min-[680px]:text-sm ${
                                         selectedRecommendCategory === recommendCategory
                                             ? 'bg-primary text-primary-foreground'
                                             : 'hover:bg-muted'

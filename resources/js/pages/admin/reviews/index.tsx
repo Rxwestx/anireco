@@ -1,8 +1,8 @@
-import { Head, Link, router } from "@inertiajs/react";
-import AdminReviewDetailDialog, {
-    type AdminReview,
-} from "@/components/admin/AdminReviewDetailDialog";
-import Pagination from "@/components/ui/Pagination";
+
+import { Head, Link, router, } from '@inertiajs/react';
+import AdminReviewDetailDialog from '@/components/admin/AdminReviewDetailDialog';
+import type { AdminReview } from '@/components/admin/AdminReviewDetailDialog';
+import Pagination from '@/components/ui/Pagination';
 
 type PaginationLink = {
     url: string | null;

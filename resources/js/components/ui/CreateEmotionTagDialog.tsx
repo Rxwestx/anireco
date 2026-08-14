@@ -8,7 +8,7 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
-} from '@/Components/ui/dialog';
+} from '@/components/ui/dialog';
 
 type CreateEmotionTagDialogProps = {
     buttonLabel: string;
