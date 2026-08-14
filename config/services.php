@@ -40,4 +40,12 @@ return [
         'client_secret' => env('MYANIMELIST_CLIENT_SECRET'),
     ],
 
+    'deepl' => [
+        'auth_key' => env('DEEPL_AUTH_KEY'),
+        'base_url' => env(
+            'DEEPL_BASE_URL',
+            'https://api-free.deepl.com'
+        ),
+    ],
+
 ];
