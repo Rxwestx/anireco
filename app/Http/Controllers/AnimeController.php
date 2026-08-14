@@ -21,7 +21,7 @@ class AnimeController extends Controller
         ): Response{
         $anime = $myAnimeListService->getAnimeByMalId($malId);
 
-        $anime['synopsis'] = $deepLService->translate($anime['synopsis'] ?? ''
+        $anime['synopsis'] = $deepLService->translateToJapanese($anime['synopsis'] ?? ''
         );
 
         $userAnime = null;
@@ -61,10 +61,6 @@ class AnimeController extends Controller
                         ),
                 ];
             });
-
-        $anime = $myAnimeListService->getAnimeByMalId($malId);
-
-        $anime['synopsis'] = $anime['synopsis'] ?? '';
 
         if ($request->user()) {
             $userAnime = UserAnime::query()
