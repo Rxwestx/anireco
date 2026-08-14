@@ -19,10 +19,30 @@ class AnimeController extends Controller
         MyAnimeListService $myAnimeListService,
         DeepLService $deepLService,
         ): Response{
+
         $anime = $myAnimeListService->getAnimeByMalId($malId);
 
-        $anime['synopsis'] = $deepLService->translateToJapanese($anime['synopsis'] ?? ''
+        $anime['synopsis'] = $deepLService->translateToJapanese(
+            $anime['synopsis'] ?? '',
         );
+
+        $genreNames = collect($anime['genres'] ?? [])
+            ->pluck('name')
+            ->all();
+        
+        $translatedGenreNames = $deepLService->translateManyToJapanese(
+            $genreNames,
+        );
+
+        $anime['genres'] = collect($anime['genres'] ?? [])
+            ->map(function (array $genre, int $index) use ($translatedGenreNames) {
+                return [
+                    ...$genre,
+                    'name' => $translatedGenreNames[$index]
+                        ?? $genre['name'],
+                ];
+            })
+            ->all();
 
         $userAnime = null;
         $emotionTags = collect();
