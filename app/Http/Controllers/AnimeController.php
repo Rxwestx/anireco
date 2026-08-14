@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Review;
 use App\Models\UserAnime;
+use App\Services\DeepLService;
 use App\Services\MyAnimeListService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -15,9 +16,13 @@ class AnimeController extends Controller
     public function show(
         Request $request,
         int $malId,
-         MyAnimeListService $myAnimeListService,
-         ): Response{
+        MyAnimeListService $myAnimeListService,
+        DeepLService $deepLService,
+        ): Response{
         $anime = $myAnimeListService->getAnimeByMalId($malId);
+
+        $anime['synopsis'] = $deepLService->translate($anime['synopsis'] ?? ''
+        );
 
         $userAnime = null;
         $emotionTags = collect();
@@ -56,6 +61,10 @@ class AnimeController extends Controller
                         ),
                 ];
             });
+
+        $anime = $myAnimeListService->getAnimeByMalId($malId);
+
+        $anime['synopsis'] = $anime['synopsis'] ?? '';
 
         if ($request->user()) {
             $userAnime = UserAnime::query()
