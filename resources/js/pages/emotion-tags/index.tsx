@@ -74,6 +74,7 @@ export default function EmotionTagsIndex({
         const shouldDelete = window.confirm(
             `本当に「${emotionTag.name}」を削除しますか？`,
         );
+        
         if (shouldDelete) {
             // 削除処理をここに追加
             editForm.delete(`/emotion-tags/${emotionTag.id}`, {
