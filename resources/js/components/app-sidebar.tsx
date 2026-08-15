@@ -6,7 +6,6 @@ import {
     Tag,
 } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
-// import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
 import {
@@ -17,6 +16,7 @@ import {
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
+    useSidebar,
 } from '@/components/ui/sidebar';
 import type { NavItem } from '@/types';
 
@@ -36,6 +36,7 @@ type PageProps ={
 
 export function AppSidebar() {
     const { auth } = usePage<PageProps>().props;
+    const { state } = useSidebar();
 
     const mainNavItems: NavItem[] = [
         {
@@ -87,8 +88,8 @@ export function AppSidebar() {
                 {/* <NavFooter items={footerNavItems} className="mt-auto" /> */}
                 {auth.user ? (
                 <NavUser />
-                ) : (
-                <div className="flex flex-col gap-2 p-2">
+                ) : state === 'expanded' ? (
+                <div className="flex flex-col gap-2 p-2 group-data[collapsible=icon]:hidden">
                     <Link
                         href="/register"
                         className="w-full items-center justify-center rounded-full bg-primary px-4 py-2.5 text-center text-sm font-medium text-primary-foreground shadow-sm hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none"
@@ -102,7 +103,7 @@ export function AppSidebar() {
                         ログイン
                     </Link>
                 </div>
-                )}
+                ) : null}
 
             </SidebarFooter>
         </Sidebar>
