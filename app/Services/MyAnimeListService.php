@@ -97,30 +97,32 @@ class MyAnimeListService
     public function getSeasonalAnime(
         int $year,
         string $season,
-        int $limit =10
+        int $limit =10,
     ): array{
         $response = Http::withHeaders([
             'X-MAL-CLIENT-ID' => config('services.myanimelist.client_id'),
         ])->get("https://api.myanimelist.net/v2/anime/season/{$year}/{$season}",
-        [
-            'limit' => $limit,
-            'sort' => 'anime_num_list_users',
-            'fields' => implode(',', [
-                'id',
-                'title',
-                'alternative_titles',
-                'main_picture',
-                'start_date',
-                'genres',
-                'mean',
-                'status',
-            ]),
-        ]);
+            [
+                'limit' => $limit,
+                'sort' => 'anime_num_list_users',
+                'fields' => implode(',', [
+                    'id',
+                    'title',
+                    'alternative_titles',
+                    'main_picture',
+                    'start_date',
+                    'genres',
+                    'mean',
+                    'status',
+                ]),
+            ],
+        );
 
         if ($response->status() === 400) {
             return [];
         }
         $response->throw();
+
         $animeList = $response->json('data', []);
 
         $animeMonths = match($season) {
@@ -161,7 +163,7 @@ class MyAnimeListService
                     'mean' => $anime['mean'] ?? null,
                     'status' => $anime['status'] ?? null,
                 ];
-            }, $animeList)
+            }, $animeList),
         );
     }
 }
