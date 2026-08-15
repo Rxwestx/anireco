@@ -40,14 +40,9 @@ class AnimeSearchController extends Controller
             ->getSeasonalAnime(
                 $year,
                 $season,
-                50,
+                100,
             );
-
-        $seasonalAnime = array_slice(
-            $seasonalAnime,
-            0,
-            10,
-        );
+        
 
         if ($request->user()) {
             $malIds = collect($animes)
@@ -68,7 +63,7 @@ class AnimeSearchController extends Controller
                 )
                 ->where(
                     'user_animes.user_id',
-                    $request->user()->id
+                    $request->user()->id,
                 )
                 ->whereIn('anime_masters.mal_id', $malIds)
                 ->get([
