@@ -49,6 +49,19 @@ export default function Search({
 
     const [keyword, setKeyword] = useState(initialKeyword);
 
+    const [seasonPage, setSeasonPage] = useState(1);
+
+    const seasonalAnimePerPage = 20;
+
+    const seasonalAnimeTotalPages = Math.ceil(
+            seasonalAnime.length / seasonalAnimePerPage,
+    );
+
+    const displayedSeasonalAnime = seasonalAnime.slice(
+            (seasonPage - 1) * seasonalAnimePerPage,
+            seasonPage * seasonalAnimePerPage,
+    );
+    
     const { auth } = usePage<{ auth: Auth }>().props;
     // 検索結果のアニメリストを格納する配列
 
@@ -178,13 +191,63 @@ export default function Search({
                     </div>
 
                     <div className="grid grid-cols-2 gap-4 min-[680px]:grid-cols-3 min-[1100px]:grid-cols-5">
-                        {seasonalAnime.map(anime => (
+                        {displayedSeasonalAnime.map(anime => (
                             <SeasonalAnimeCard
                                 key={anime.id}
                                 anime={anime}
                             />
                         ))}
                     </div>
+
+                    {seasonalAnimeTotalPages > 1 && (
+                        <div className="mt-8 flex flex-wrap justify-center gap-2">
+                            <button
+                                type="button"
+                                onClick={() => setSeasonPage((page) => Math.max(page - 1, 1))}
+                                disabled={seasonPage === 1}
+                                className="rounded-md border px-3 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-50"
+                            >
+                                前へ
+                            </button>
+
+                            {Array.from(
+                                { length: seasonalAnimeTotalPages },
+                                (_, index) => index + 1,
+                                ).map((page) => (
+                                    <button
+                                        key={page}
+                                        type="button"
+                                        onClick={() => {
+                                            setSeasonPage(page);
+                                            window.scrollTo({
+                                                top: 0,
+                                                behavior: 'smooth',
+                                            });
+                                        }}
+                                        className={`rounded-md border px-3 py-2 text-sm ${
+                                            seasonPage === page
+                                                ? 'bg-primary text-primary-foreground'
+                                                : 'hover:bg-muted text-foreground'
+                                        }`}
+                                    >
+                                        {page}
+                                    </button>
+                                ))}
+                            
+                            <button
+                                type="button"
+                                onClick={() =>
+                                    setSeasonPage((page) =>
+                                        Math.min(page + 1, seasonalAnimeTotalPages),
+                                    )
+                                }
+                                disabled={seasonPage === seasonalAnimeTotalPages}
+                                className="rounded-md border px-3 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-50"
+                            >
+                                次へ
+                            </button>
+                        </div>
+                        )}
                 </section>
             )}
         </>
