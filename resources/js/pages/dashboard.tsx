@@ -564,6 +564,8 @@ export default function Dashboard({
                                                 }
                                                 triggerClassName="h-10 w-full cursor-pointer rounded-md text-sm font-semibold hover:bg-muted"
                                             />
+                                        {userAnime.status === 'completed' && (
+                                            <>
                                             {userAnime.review ? (
                                                     <EditReviewDialog
                                                         userAnimeId={userAnime.id}
@@ -577,8 +579,9 @@ export default function Dashboard({
                                                     triggerClassName="h-10 w-full cursor-pointer rounded-md border text-sm font-medium hover:bg-muted"
                                                 />
                                             )}
+                                            </>
+                                        )}
                                         </div>
-
                                     </article>
                                 ))}
                             </div>
