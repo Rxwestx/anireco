@@ -55,7 +55,7 @@ export function AppSidebar() {
             icon: Tag,
         },
     ];
-    
+
     if (auth.user ?.role === 'admin') {
         mainNavItems.push({
             title: '管理者用ページ',
@@ -68,7 +68,7 @@ export function AppSidebar() {
 
     return (
         <Sidebar collapsible="icon" variant="inset">
-            <SidebarHeader>
+            <SidebarHeader className="px-3 py-3">
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" asChild>
