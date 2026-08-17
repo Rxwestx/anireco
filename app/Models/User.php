@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Models;
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use App\Notifications\ResetPasswordNotification;
 use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -31,12 +32,21 @@ class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
+    
+    public function sendPasswordResetNotification($token): void
+    {
+        $url = route('password.reset', [
+            'token' => $token,
+            'email' => $this->email,
+        ]);
+        $this->notify(new ResetPasswordNotification($url));
+    }
 
     public function userAnimes(): HasMany
     {
         return $this->hasMany(UserAnime::class);
     }
-    
+
     public function emotionTags(): HasMany
     {
         return $this->hasMany(EmotionTag::class);
@@ -53,5 +63,6 @@ class User extends Authenticatable implements MustVerifyEmail
             'password' => 'hashed',
         ];
     }
+
 
 }
