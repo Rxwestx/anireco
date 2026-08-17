@@ -21,16 +21,18 @@ export default function Welcome({
             <Head title="Anireco" />
 
             <main className="min-h-screen">
-                <section className="flex flex-col items-center justify-center gap-6 border border-[#e5e5e5] px-4 py-16 text-center min-[680px]:px-20 min-[680px]:py-20">
-                    <h1 className="text-3xl font-bold leading-tight min-[680px]:text-5xl">
-                        あなたのオタクライフを、
+                <section className="flex flex-col items-center justify-center gap-6 border border-[#e5e5e5] px-4 py-16 text-center min-[680px]:px-10 min-[680px]:py-20 min-[1100px]:px-20">
+                    <h1 className="max-w-4xl text-3xl font-bold leading-tight min-[680px]:text-4xl min-[1100px]:text-5xl">
+                        <span className="block">
+                            あなたのオタクライフを、
+                        </span>
                         <span className="text-[#666]">
                             ログ
                         </span>
                         に残そう。
                     </h1>
 
-                    <p className="w-full max-w-[600px] text-base text-[#666] min-680px]:text-lg">
+                    <p className="w-full max-w-[600px] text-base text-[#666] min-[680px]:text-lg">
                         視聴したアニメの感想、感情タグ、評価を記録。
                         自分だけのアニメログを作成して、
                         オタクライフをより充実させましょう。
