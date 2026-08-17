@@ -61,7 +61,7 @@ export default function Search({
             (seasonPage - 1) * seasonalAnimePerPage,
             seasonPage * seasonalAnimePerPage,
     );
-    
+
     const { auth } = usePage<{ auth: Auth }>().props;
     // 検索結果のアニメリストを格納する配列
 
@@ -77,179 +77,181 @@ export default function Search({
         <>
             <Head title="アニメ検索" />
 
-            <form onSubmit={handleSearch} className="mt-4 flex flex-col gap-2">
-                <section>
-                    <h1 className="text-2xl font-bold">アニメ検索</h1>
+                <div className="w-full px-4 min-[680px]:px-6 min-[1100px]:px-8">
+                    <form onSubmit={handleSearch} className="mt-4 flex flex-col gap-2">
+                        <section>
+                            <h1 className="text-2xl font-bold">アニメ検索</h1>
 
-                    <Input
-                        type="text"
-                        value={keyword}
-                        onChange={(e) => setKeyword(e.target.value)}
-                        placeholder="作品タイトルで検索"
-                    />
-                    <button type="submit"
-                    className="mt-4 rounded-md bg-gray-500 px-4 py-2 text-white hover:bg-gray-700 min-[680px]:w-auto">
-                        検索
-                    </button>
-                </section>
-            </form>
-            {initialKeyword !== '' && (
-                <section className="mt-8">
-                    <div className="mb-4 flex items-center justify-between">
-                        <h2 className="mb-4 text-xl font-semibold">
-                            検索結果：{animes.length}件
-                        </h2>
-                    </div>
-                        {animes.length > 0 ? (
-                            <div className="grid grid-cols-2 gap-4 min-[680px]:grid-cols-3 min-[1100px]:grid-cols-5
-
-
-                            ">
-                                {animes.map(anime => (
-                                <article
-                                    key={anime.id}
-                                    className="group flex h-full flex-col overflow-hidden rounded-xl border bg-background transition hover:-translate-y-1 hover:shadow-lg">
-                                        <Link
-                                            href={`/animes/${anime.id}?keyword=${encodeURIComponent(initialKeyword)}`}
-                                            className="flex flex-1 flex-col focus:outline-none focus:ring-2 focus:ring-ring"
-                                        >
-                                            <div className="aspect-[16/9] w-full overflow-hidden bg-muted">
-                                                    {anime.main_picture ? (
-                                                        <img
-                                                            src={
-                                                                anime.main_picture.large ??
-                                                                anime.main_picture.medium
-                                                            }
-                                                            alt={anime.title
-                                                            }
-                                                            className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
-                                                        />
-                                                    ) : (
-                                                        <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
-                                                        'No Image'
-                                                        </div>
-                                                    )}
-                                            </div>
-                                            <div className="p-3 space-y-2 min-[680px]:p-4">
-                                                <h3 className="text-sm font-semibold min-[680px]:text-lg">
-                                                    {anime.title}
-                                                </h3>
-                                                <p className="text-sm text-muted-foreground">
-                                                    放送年：{anime.start_date ?? '未定'}
-                                                </p>
-                                                <div className="flex flex-wrap gap-2">
-                                                    {anime.genres.length > 0 ? (
-                                                        anime.genres.map((genre) => (
-                                                            <span
-                                                                key={genre.id}
-                                                                className="rounded-full bg-muted px-2 py-1 text-xs text-muted-foreground"
-                                                            >
-                                                                {genre.name}
-                                                            </span>
-                                                        ))
-                                                    ) : (
-                                                        <span className="text-xs text-muted-foreground">ジャンル情報なし</span>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        </Link>
-                                        <div className="mt-auto flex min-h-14 items-end justify-center p-4 pt-0">
-                                            <div className="flex w-full justify-center">
-                                                {!auth.user ? (
-                                                    <Link
-                                                        href="/login"
-                                                        className="block w-full rounded-md px-4 py-2 text-sm text-center font-medium hover:bg-muted">
-                                                            +登録する
-                                                    </Link>
-                                                ) : anime.registered_status && anime.user_anime_id ? (
-                                                    <UpdateAnimeStatusDialog
-                                                        userAnimeId={anime.user_anime_id}
-                                                        currentStatus={anime.registered_status}
-                                                    />
-                                                ) : (
-                                                    <RegisterAnimeDialog anime={anime} />
-                                                )}
-                                            </div>
-                                        </div>
-                                </article>
-                                ))}
-                        </div>
-                        ) : (
-                            <p className="text-muted-foreground">
-                            検索結果はありません。
-                            </p>
-                        )}
-                </section>
-            )}
-
-            {initialKeyword === '' && (
-                <section className="mt-12">
-                    <div className="mb-6 flex items-center justify-between">
-                        <h2 className="text-2xl font-semibold">
-                            {seasonYear}年 {seasonLabel}アニメ
-                        </h2>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4 min-[680px]:grid-cols-3 min-[1100px]:grid-cols-5">
-                        {displayedSeasonalAnime.map(anime => (
-                            <SeasonalAnimeCard
-                                key={anime.id}
-                                anime={anime}
+                            <Input
+                                type="text"
+                                value={keyword}
+                                onChange={(e) => setKeyword(e.target.value)}
+                                placeholder="作品タイトルで検索"
                             />
-                        ))}
-                    </div>
-
-                    {seasonalAnimeTotalPages > 1 && (
-                        <div className="mt-8 flex flex-wrap justify-center gap-2">
-                            <button
-                                type="button"
-                                onClick={() => setSeasonPage((page) => Math.max(page - 1, 1))}
-                                disabled={seasonPage === 1}
-                                className="rounded-md border px-3 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-50"
-                            >
-                                前へ
+                            <button type="submit"
+                            className="mt-4 rounded-md bg-gray-500 px-4 py-2 text-white hover:bg-gray-700 min-[680px]:w-auto">
+                                検索
                             </button>
+                        </section>
+                    </form>
+                    {initialKeyword !== '' && (
+                        <section className="mt-8">
+                            <div className="mb-4 flex items-center justify-between">
+                                <h2 className="mb-4 text-xl font-semibold">
+                                    検索結果：{animes.length}件
+                                </h2>
+                            </div>
+                                {animes.length > 0 ? (
+                                    <div className="grid grid-cols-2 gap-4 min-[680px]:grid-cols-3 min-[1100px]:grid-cols-5
 
-                            {Array.from(
-                                { length: seasonalAnimeTotalPages },
-                                (_, index) => index + 1,
-                                ).map((page) => (
-                                    <button
-                                        key={page}
-                                        type="button"
-                                        onClick={() => {
-                                            setSeasonPage(page);
-                                            window.scrollTo({
-                                                top: 0,
-                                                behavior: 'smooth',
-                                            });
-                                        }}
-                                        className={`rounded-md border px-3 py-2 text-sm ${
-                                            seasonPage === page
-                                                ? 'bg-primary text-primary-foreground'
-                                                : 'hover:bg-muted text-foreground'
-                                        }`}
-                                    >
-                                        {page}
-                                    </button>
+
+                                    ">
+                                        {animes.map(anime => (
+                                        <article
+                                            key={anime.id}
+                                            className="group flex h-full flex-col overflow-hidden rounded-xl border bg-background transition hover:-translate-y-1 hover:shadow-lg">
+                                                <Link
+                                                    href={`/animes/${anime.id}?keyword=${encodeURIComponent(initialKeyword)}`}
+                                                    className="flex flex-1 flex-col focus:outline-none focus:ring-2 focus:ring-ring"
+                                                >
+                                                    <div className="aspect-[16/9] w-full overflow-hidden bg-muted">
+                                                            {anime.main_picture ? (
+                                                                <img
+                                                                    src={
+                                                                        anime.main_picture.large ??
+                                                                        anime.main_picture.medium
+                                                                    }
+                                                                    alt={anime.title
+                                                                    }
+                                                                    className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                                                                />
+                                                            ) : (
+                                                                <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
+                                                                'No Image'
+                                                                </div>
+                                                            )}
+                                                    </div>
+                                                    <div className="p-3 space-y-2 min-[680px]:p-4">
+                                                        <h3 className="text-sm font-semibold min-[680px]:text-lg">
+                                                            {anime.title}
+                                                        </h3>
+                                                        <p className="text-sm text-muted-foreground">
+                                                            放送年：{anime.start_date ?? '未定'}
+                                                        </p>
+                                                        <div className="flex flex-wrap gap-2">
+                                                            {anime.genres.length > 0 ? (
+                                                                anime.genres.map((genre) => (
+                                                                    <span
+                                                                        key={genre.id}
+                                                                        className="rounded-full bg-muted px-2 py-1 text-xs text-muted-foreground"
+                                                                    >
+                                                                        {genre.name}
+                                                                    </span>
+                                                                ))
+                                                            ) : (
+                                                                <span className="text-xs text-muted-foreground">ジャンル情報なし</span>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                </Link>
+                                                <div className="mt-auto flex min-h-14 items-end justify-center p-4 pt-0">
+                                                    <div className="flex w-full justify-center">
+                                                        {!auth.user ? (
+                                                            <Link
+                                                                href="/login"
+                                                                className="block w-full rounded-md px-4 py-2 text-sm text-center font-medium hover:bg-muted">
+                                                                    +登録する
+                                                            </Link>
+                                                        ) : anime.registered_status && anime.user_anime_id ? (
+                                                            <UpdateAnimeStatusDialog
+                                                                userAnimeId={anime.user_anime_id}
+                                                                currentStatus={anime.registered_status}
+                                                            />
+                                                        ) : (
+                                                            <RegisterAnimeDialog anime={anime} />
+                                                        )}
+                                                    </div>
+                                                </div>
+                                        </article>
+                                        ))}
+                                </div>
+                                ) : (
+                                    <p className="text-muted-foreground">
+                                    検索結果はありません。
+                                    </p>
+                                )}
+                        </section>
+                    )}
+
+                    {initialKeyword === '' && (
+                        <section className="mt-12">
+                            <div className="mb-6 flex items-center justify-between">
+                                <h2 className="text-2xl font-semibold">
+                                    {seasonYear}年 {seasonLabel}アニメ
+                                </h2>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4 min-[680px]:grid-cols-3 min-[1100px]:grid-cols-5">
+                                {displayedSeasonalAnime.map(anime => (
+                                    <SeasonalAnimeCard
+                                        key={anime.id}
+                                        anime={anime}
+                                    />
                                 ))}
-                            
-                            <button
-                                type="button"
-                                onClick={() =>
-                                    setSeasonPage((page) =>
-                                        Math.min(page + 1, seasonalAnimeTotalPages),
-                                    )
-                                }
-                                disabled={seasonPage === seasonalAnimeTotalPages}
-                                className="rounded-md border px-3 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-50"
-                            >
-                                次へ
-                            </button>
-                        </div>
-                        )}
-                </section>
-            )}
+                            </div>
+
+                            {seasonalAnimeTotalPages > 1 && (
+                                <div className="mt-8 flex flex-wrap justify-center gap-2">
+                                    <button
+                                        type="button"
+                                        onClick={() => setSeasonPage((page) => Math.max(page - 1, 1))}
+                                        disabled={seasonPage === 1}
+                                        className="rounded-md border px-3 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-50"
+                                    >
+                                        前へ
+                                    </button>
+
+                                    {Array.from(
+                                        { length: seasonalAnimeTotalPages },
+                                        (_, index) => index + 1,
+                                        ).map((page) => (
+                                            <button
+                                                key={page}
+                                                type="button"
+                                                onClick={() => {
+                                                    setSeasonPage(page);
+                                                    window.scrollTo({
+                                                        top: 0,
+                                                        behavior: 'smooth',
+                                                    });
+                                                }}
+                                                className={`rounded-md border px-3 py-2 text-sm ${
+                                                    seasonPage === page
+                                                        ? 'bg-primary text-primary-foreground'
+                                                        : 'hover:bg-muted text-foreground'
+                                                }`}
+                                            >
+                                                {page}
+                                            </button>
+                                        ))}
+
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            setSeasonPage((page) =>
+                                                Math.min(page + 1, seasonalAnimeTotalPages),
+                                            )
+                                        }
+                                        disabled={seasonPage === seasonalAnimeTotalPages}
+                                        className="rounded-md border px-3 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-50"
+                                    >
+                                        次へ
+                                    </button>
+                                </div>
+                                )}
+                        </section>
+                    )}
+                </div>
         </>
     );
 }
