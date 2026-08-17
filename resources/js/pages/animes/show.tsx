@@ -220,7 +220,7 @@ export default function Show({
                                 {anime.synopsis ?? 'あらすじ未定'}
                             </p>
                         </div>
-                        <div className="mt-4 max-w-xs">
+                        <div className="mx-auto mt-4 w-full max-w-sm min-[680px]:mx-0 min-[680px]:max-w-xs">
                             {!auth.user ? (
                                 <Link
                                     href="/login"
