@@ -295,7 +295,7 @@ export default function Dashboard({
     return (
         <>
             <Head title="マイページ" />
-            <div className="flex w-full flex-col gap-6 min-[1100px]:flex-row min-[1100px]:shrink-0">
+            <div className="flex w-full flex-col gap-6 px-6 min-[1100px]:flex-row min-[1100px]:shrink-0">
                 <div className="min-w-0 flex-1">
                     <section>
                         <h1 className="text-2xl font-bold">マイページ</h1>
@@ -521,7 +521,7 @@ export default function Dashboard({
                         <div>
                             <div
                                 id="anime-list"
-                                className="grid grid-cols-2 gap-4 min-[680px]:grid-cols-3 min-[1100px]:grid-cols-5">
+                                className="grid grid-cols-2 gap-4 min-[680px]:grid-cols-3 min-[1100px]:grid-cols-[repeat(auto-fit,minmax(190px,1fr))]">
                                 {userAnimes.data.map((userAnime) => (
                                     <article
                                         key={userAnime.id}
@@ -562,7 +562,7 @@ export default function Dashboard({
                                                 attachedEmotionTagIds={
                                                     userAnime.attachedEmotionTagIds
                                                 }
-                                                triggerClassName="h-10 w-full cursor-pointer rounded-md text-sm font-semibold hover:bg-muted"
+                                                triggerClassName="h-10 w-full cursor-pointer whitespace-nowrap rounded-md text-sm font-semibold hover:bg-muted"
                                             />
                                         {userAnime.status === 'completed' && (
                                             <>
@@ -571,12 +571,12 @@ export default function Dashboard({
                                                         userAnimeId={userAnime.id}
                                                         review={userAnime.review}
                                                         triggerLabel="レビュー編集"
-                                                        triggerClassName="h-10 w-full cursor-pointer rounded-md border text-sm font-medium hover:bg-muted"
+                                                        triggerClassName="h-10 w-full cursor-pointer whitespace-nowrap rounded-md border text-sm font-medium hover:bg-muted"
                                                     />
                                             ) : (
                                                 <CreateReviewDialog
                                                     userAnimeId={userAnime.id}
-                                                    triggerClassName="h-10 w-full cursor-pointer rounded-md border text-sm font-medium hover:bg-muted"
+                                                    triggerClassName="h-10 w-full cursor-pointer whitespace-nowrap rounded-md border text-sm font-medium hover:bg-muted"
                                                 />
                                             )}
                                             </>
