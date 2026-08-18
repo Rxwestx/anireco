@@ -81,17 +81,18 @@ export default function Search({
                     <form onSubmit={handleSearch} className="mt-4 flex flex-col gap-2">
                         <section>
                             <h1 className="text-2xl font-bold">アニメ検索</h1>
-
-                            <Input
-                                type="text"
-                                value={keyword}
-                                onChange={(e) => setKeyword(e.target.value)}
-                                placeholder="作品タイトルで検索"
-                            />
-                            <button type="submit"
-                            className="mt-4 rounded-md bg-gray-500 px-4 py-2 text-white hover:bg-gray-700 min-[680px]:w-auto">
-                                検索
-                            </button>
+                            <div className="flex flex-col gap-2 min-[680px]:flex-row min-[680px]:items-center">
+                                <Input
+                                    type="text"
+                                    value={keyword}
+                                    onChange={(e) => setKeyword(e.target.value)}
+                                    placeholder="作品タイトルで検索"
+                                />
+                                <button type="submit"
+                                className="shrink-0 cursor-pointer rounded-md bg-gray-500 px-4 py-2 text-white transition-colors hover:bg-gray-700 min-[680px]:w-auto">
+                                    検索
+                                </button>
+                            </div>
                         </section>
                     </form>
                     {initialKeyword !== '' && (
