@@ -80,7 +80,7 @@ return (
                 </DialogTitle>
             </DialogHeader>
 
-            <div>
+            <div className="space-y-6 px-6 py-5">
                 <p className="mb-2 text-sm font-semibold">
                     作品名
                 </p>
