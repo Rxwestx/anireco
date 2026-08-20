@@ -9,7 +9,7 @@ use App\Services\MyAnimeListService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
-
+use Throwable;
 
 class AnimeController extends Controller
 {
@@ -20,7 +20,22 @@ class AnimeController extends Controller
         DeepLService $deepLService,
         ): Response{
 
-        $anime = $myAnimeListService->getAnimeByMalId($malId);
+        try {
+            $anime = $myAnimeListService->getAnimeByMalId($malId);
+        } catch (Throwable $e) {
+            report($e);
+
+        return Inertia::render('animes/show', [
+            'anime' => null,
+            'emotionTags' => collect(),
+            'attachedEmotionTagIds' => collect(),
+            'watchNotes' => collect(),
+            'review' => null,
+            'publicReviews' => collect(),
+            'keyword' => $request->query('keyword', ''),
+            'apiError' =>'現在アニメ情報を取得できません。時間をおいて再度お試しください。',
+            ]);
+        }
 
         $anime['synopsis'] = $deepLService->translateToJapanese(
             $anime['synopsis'] ?? '',
@@ -29,7 +44,7 @@ class AnimeController extends Controller
         $genreNames = collect($anime['genres'] ?? [])
             ->pluck('name')
             ->all();
-        
+
         $translatedGenreNames = $deepLService->translateManyToJapanese(
             $genreNames,
         );
@@ -161,7 +176,20 @@ class AnimeController extends Controller
         int $malId,
         MyAnimeListService $myAnimeListService,
     ): Response {
-        $anime = $myAnimeListService->getAnimeByMalId($malId);
+        try {
+            $anime = $myAnimeListService->getAnimeByMalId($malId);
+        } catch (Throwable $e) {
+            report($e);
+
+            return Inertia::render('animes/reviews/index', [
+                'anime' => null,
+                'publicReviews' => null,
+                'keyword' => $request->query('keyword', ''),
+                'apiError' =>
+                    '現在アニメ情報を取得できません。時間をおいて再度お試しください。',
+            ]);
+        }
+
         $publicReviews = Review::query()
             ->with([
                 'userAnime.user:id,name',
