@@ -38,16 +38,39 @@ type PaginatedPublicReviews = {
 };
 
 type ReviewsPageProps = {
-    anime: Anime;
-    publicReviews: PaginatedPublicReviews;
+    anime: Anime | null;
+    publicReviews: PaginatedPublicReviews | null;
     keyword?: string;
+    apiError?: string;
 };
 
 export default function ReviewsIndex({
     anime,
     publicReviews,
     keyword = '',
+    apiError = '',
 }: ReviewsPageProps) {
+    if(apiError || !anime || !publicReviews) {
+        return (
+            <>
+                <Head title="公開レビュー" />
+                <main className="mx-auto w-full max-w-4xl px-4 py-8">
+                    <Link
+                        href= "/search"
+                        className="text-sm text-muted-foreground hover:text-foreground"
+                    >
+                        ◀︎ アニメ作品詳細に戻る
+                    </Link>
+                    <section className="mt-6 rounded-xl border p-6 text-center">
+                        <p className="text-sm text-muted-foreground">{apiError ||
+                            '現在アニメ情報を取得できません。時間をおいて再度お試しください。'}
+                        </p>
+                    </section>
+                </main>
+            </>
+        );
+    }
+
     return (
         <>
             <Head title={`${anime.title} - 公開レビュー`} />
