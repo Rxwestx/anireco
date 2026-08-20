@@ -3,18 +3,14 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
-
+use Illuminate\Support\Facades\Cache;
 
 class MyAnimeListService
 {
     /**
      * Create a new class instance.
      */
-    public function searchAnime(
-        string $keyword,
-        int $limit = 20,
-        int $offset = 0
-    ): array
+    public function searchAnime(string $keyword): array
 
     {
         $normalizedKeyword = mb_convert_kana(
@@ -23,45 +19,66 @@ class MyAnimeListService
             'UTF-8'
         );
 
-        $response = Http::timeout(10)
-        ->withHeaders([
-            'X-MAL-CLIENT-ID' => config('services.myanimelist.client_id'),
-        ])->get('https://api.myanimelist.net/v2/anime', [
-            'q' => $normalizedKeyword,
-            'limit' => $limit,
-            'offset' => $offset,
-            'fields' => implode(',', [
-                'id',
-                'title',
-                'alternative_titles',
-                'main_picture',
-                'start_date',
-                'genres',
-            ]),
-        ]);
+        $cacheKey = 'mal.search.' . md5($normalizedKeyword);
 
-        if ($response->status() === 400) {
-            return [];
-        }
-        $response->throw();
-        $animeList = $response->json('data', []);
+        return Cache::remember(
+            $cacheKey,
+            now()->addMinutes(10),
+            function () use ($normalizedKeyword):array {
+                $items = [];
+                $offset = 0;
+                $limit= 100;
+                $maxResults =200;
 
-        $items = array_map(function (array $item):array {
-            $anime = $item['node'];
+                do {
+                    $response = Http::timeout(10)
+                    ->withHeaders([
+                        'X-MAL-CLIENT-ID' => config('services.myanimelist.client_id'),
+                    ])
+                    ->get(
+                        'https://api.myanimelist.net/v2/anime',
+                        [
+                            'q' => $normalizedKeyword,
+                            'limit' => $limit,
+                            'offset' => $offset,
+                            'fields' => implode(',', [
+                                'id',
+                                'title',
+                                'alternative_titles',
+                                'main_picture',
+                                'start_date',
+                                'genres',
+                            ]),
+                        ],
+                    );
 
-            return [
-                'id' => $anime['id'],
-                'title' => $anime['alternative_titles']['ja'] ?? $anime['title'],
-                'main_picture' => $anime['main_picture'] ?? null,
-                'start_date' => $anime['start_date'] ?? null,
-                'genres' => $anime['genres'] ?? [],
-            ];
-        }, $animeList);
-
-        return [
-            'items' => $items,
-            'has_next_page' =>filled($response->json('paging.next')),
-        ];
+                if ($response->status() === 400) {
+                    return [];
+                }
+                $response->throw();
+                $animeList = $response->json('data', []);
+                foreach ($animeList as $item) {
+                    $anime = $item['node'];
+                    $items[] = [
+                        'id' => $anime['id'],
+                        'title' =>
+                            $anime['alternative_titles']['ja']
+                            ?? $anime['title'],
+                        'main_picture' =>
+                        $anime['main_picture'] ?? null,
+                        'start_date' =>
+                            $anime['start_date'] ?? null,
+                        'genres' =>
+                            $anime['genres'] ?? [],
+                    ];
+                }
+                $hasNextPage =
+                    filled($response->json('paging.next'));
+                $offset += $limit;
+                } while ($hasNextPage);
+                return $items;
+                },
+            );
     }
 
     public function getAnimeByMalId(int $malId): array
