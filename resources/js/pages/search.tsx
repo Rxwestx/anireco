@@ -2,7 +2,6 @@ import { Head, Link,router,usePage } from '@inertiajs/react';
 import type { SubmitEventHandler } from 'react';
 import { useState } from 'react';
 import SeasonalAnimeCard from '@/components/animes/SeasonalAnimeCard';
-import type { SeasonalAnime } from '@/components/animes/SeasonalAnimeCard';
 import { Input } from '@/components/ui/input';
 import RegisterAnimeDialog from '@/components/ui/RegisterAnimeDialog';
 import UpdateAnimeStatusDialog from '@/components/ui/UpdateAnimeStatusDialog';
@@ -33,10 +32,15 @@ type Anime = {
 type SearchProps = {
     keyword: string;
     animes: Anime[];
-    seasonalAnime: SeasonalAnime[];
+    seasonalAnime: Anime[];
     seasonYear: number;
     seasonLabel: string;
-}
+    searchApiError?: string | null;
+    seasonalApiError?: string | null;
+    searchPage: number;
+    searchTotal: number;
+    searchTotalPages: number;
+};
 
 // Laravel側から受け取った keywordを初期値として設定するために、propsでinitialKeywordとして受け取る。
 export default function Search({
@@ -45,6 +49,12 @@ export default function Search({
     seasonalAnime,
     seasonYear,
     seasonLabel,
+    searchApiError = null,
+    seasonalApiError = null,
+    searchPage,
+    searchTotal,
+    searchTotalPages,
+
 }: SearchProps) {
 
     const [keyword, setKeyword] = useState(initialKeyword);
@@ -73,6 +83,33 @@ export default function Search({
         });
     };
 
+    const handleSeasonPageChange = (page: number) => {
+        setSeasonPage(page);
+
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
+    }
+
+    const handleSearchPageChange = (page: number) => {
+        router.get(
+            '/search',
+            {
+                keyword: initialKeyword,
+                page,
+            },
+            {
+                onSuccess: () => {
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth',
+                    });
+                },
+            },
+        );
+    };
+
     return (
         <>
             <Head title="アニメ検索" />
@@ -99,13 +136,18 @@ export default function Search({
                         <section className="mt-8">
                             <div className="mb-4 flex items-center justify-between">
                                 <h2 className="mb-4 text-xl font-semibold">
-                                    検索結果：{animes.length}件
+                                    検索結果：{searchTotal}件
                                 </h2>
                             </div>
-                                {animes.length > 0 ? (
+                            {searchApiError ? (
+                                <div className="rounded-xl border p-6">
+                                    <p className="text-sm text-muted-foreground">
+                                        {searchApiError}
+                                    </p>
+                                </div>
+                            ) : animes.length > 0 ? (
+                                <>
                                     <div className="grid grid-cols-2 gap-4 min-[680px]:grid-cols-3 min-[1100px]:grid-cols-5
-
-
                                     ">
                                         {animes.map(anime => (
                                         <article
@@ -175,12 +217,66 @@ export default function Search({
                                                 </div>
                                         </article>
                                         ))}
-                                </div>
-                                ) : (
-                                    <p className="text-muted-foreground">
-                                    検索結果はありません。
-                                    </p>
+                                    </div>
+
+                                {searchTotalPages > 1 && (
+                                    <div className="mt-8 flex justify-center gap-2">
+                                        <button
+                                            type="button"
+                                            onClick={() =>
+                                                handleSearchPageChange(
+                                                    Math.max(searchPage - 1, 1),
+                                                )
+                                            }
+                                            disabled={searchPage === 1}
+                                            className="cursor-pointer rounded-md border px-3 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-50"
+                                        >
+                                            前へ
+                                        </button>
+
+                                        {Array.from(
+                                            { length: searchTotalPages },
+                                            (_, index) => index + 1,
+                                        ).map((page) => (
+                                        <button
+                                        key={page}
+                                            type="button"
+                                            onClick={() =>
+                                                handleSearchPageChange(page)
+                                            }
+                                            className={`cursor-pointer rounded-md border px-3 py-2 text-sm ${
+                                                searchPage === page
+                                                    ? 'bg-primary text-primary-foreground'
+                                                    : 'text-foreground hover:bg-muted'
+                                            }`}
+                                        >
+                                            {page}
+                                        </button>
+                                        ))}
+
+                                        <button
+                                            type="button"
+                                            onClick={() =>
+                                                handleSearchPageChange(
+                                                    Math.min(
+                                                        searchPage + 1,
+                                                        searchTotalPages,
+                                                    ),
+                                                )
+                                            }
+                                            disabled={searchPage === searchTotalPages}
+                                            className="cursor-pointer rounded-md border px-3 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-50"
+                                        >
+                                            次へ
+                                        </button>
+                                    </div>
                                 )}
+                                </>
+                            ) : (
+                                <p className="text-muted-foreground">
+                                検索結果はありません。
+                                </p>
+                            )}
                         </section>
                     )}
 
@@ -192,64 +288,70 @@ export default function Search({
                                 </h2>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-4 min-[680px]:grid-cols-3 min-[1100px]:grid-cols-5">
-                                {displayedSeasonalAnime.map(anime => (
-                                    <SeasonalAnimeCard
-                                        key={anime.id}
-                                        anime={anime}
-                                    />
-                                ))}
-                            </div>
-
-                            {seasonalAnimeTotalPages > 1 && (
-                                <div className="mt-8 flex flex-wrap justify-center gap-2">
-                                    <button
-                                        type="button"
-                                        onClick={() => setSeasonPage((page) => Math.max(page - 1, 1))}
-                                        disabled={seasonPage === 1}
-                                        className="rounded-md border px-3 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-50"
-                                    >
-                                        前へ
-                                    </button>
-
-                                    {Array.from(
-                                        { length: seasonalAnimeTotalPages },
-                                        (_, index) => index + 1,
-                                        ).map((page) => (
-                                            <button
-                                                key={page}
-                                                type="button"
-                                                onClick={() => {
-                                                    setSeasonPage(page);
-                                                    window.scrollTo({
-                                                        top: 0,
-                                                        behavior: 'smooth',
-                                                    });
-                                                }}
-                                                className={`rounded-md border px-3 py-2 text-sm ${
-                                                    seasonPage === page
-                                                        ? 'bg-primary text-primary-foreground'
-                                                        : 'hover:bg-muted text-foreground'
-                                                }`}
-                                            >
-                                                {page}
-                                            </button>
-                                        ))}
-
-                                    <button
-                                        type="button"
-                                        onClick={() =>
-                                            setSeasonPage((page) =>
-                                                Math.min(page + 1, seasonalAnimeTotalPages),
-                                            )
-                                        }
-                                        disabled={seasonPage === seasonalAnimeTotalPages}
-                                        className="rounded-md border px-3 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-50"
-                                    >
-                                        次へ
-                                    </button>
+                            {seasonalApiError ? (
+                                <div className="rounded-xl border p-6">
+                                    <p className="text-sm text-muted-foreground">
+                                        {seasonalApiError}
+                                    </p>
                                 </div>
-                                )}
+                            ) : (
+                                <>
+                                    <div className="grid grid-cols-2 gap-4 min-[680px]:grid-cols-3 min-[1100px]:grid-cols-5">
+                                        {displayedSeasonalAnime.map(anime => (
+                                            <SeasonalAnimeCard
+                                                key={anime.id}
+                                                anime={anime}
+                                            />
+                                        ))}
+                                    </div>
+
+                                    {seasonalAnimeTotalPages > 1 && (
+                                        <div className="mt-8 flex flex-wrap justify-center gap-2">
+                                            <button
+                                                type="button"
+                                                onClick={() => handleSeasonPageChange(Math.max(seasonPage - 1, 1))}
+                                                disabled={seasonPage === 1}
+                                                className="rounded-md border px-3 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-50"
+                                            >
+                                                前へ
+                                            </button>
+
+                                        {Array.from(
+                                            { length: seasonalAnimeTotalPages },
+                                            (_, index) => index + 1,
+                                            ).map((page) => (
+                                                <button
+                                                    key={page}
+                                                    type="button"
+                                                    onClick={() => {
+                                                        handleSeasonPageChange(page);
+                                                    }}
+                                                    className={`rounded-md border px-3 py-2 text-sm ${
+                                                        seasonPage === page
+                                                            ? 'bg-primary text-primary-foreground'
+                                                            : 'hover:bg-muted text-foreground'
+                                                    }`}
+                                                >
+                                                    {page}
+                                                </button>
+                                            ))}
+
+                                            <button
+                                                type="button"
+                                                onClick={() =>
+                                                    handleSeasonPageChange(
+                                                        Math.min(seasonPage + 1, seasonalAnimeTotalPages),
+                                                    )
+                                                }
+                                                disabled={seasonPage === seasonalAnimeTotalPages}
+                                                className="rounded-md border px-3 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-50"
+                                            >
+                                                次へ
+                                            </button>
+                                        </div>
+                                    )}
+                                </>
+                            )}
                         </section>
                     )}
                 </div>
