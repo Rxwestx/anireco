@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Facades\Cache; 
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
 use Throwable;
@@ -16,7 +16,8 @@ class DeepLService
         }
 
             try {
-                $response = Http::withHeaders([
+                $response = Http::timeout(10)
+                ->withHeaders([
                     'Authorization' =>
                         'DeepL-Auth-Key ' . config('services.deepl.auth_key'),
                 ])->post(
@@ -68,10 +69,11 @@ class DeepLService
 
         if ($textsToTranslate !== []) {
             try {
-                $response = Http::withHeaders([
-                    'Authorization' =>
-                        'DeepL-Auth-Key ' . config('services.deepl.auth_key'),
-                ])->post(
+                $response = Http::timeout(10)
+                    ->withHeaders([
+                        'Authorization' =>
+                            'DeepL-Auth-Key ' . config('services.deepl.auth_key'),
+                    ])->post(
                     config('services.deepl.base_url') . '/v2/translate',
                     [
                         'text' => $textsToTranslate,
