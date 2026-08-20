@@ -27,11 +27,16 @@ class AnimeSearchController extends Controller
         $animes =[];
         $searchTotal = 0;
         $searchTotalPages = 0;
+        $searchIsTruncated = false;
         $searchApiError = null;
 
         if($keyword !=='') {
             try {
-                $allAnimes = $myAnimeListService->searchAnime($keyword);
+                $searchResult = $myAnimeListService->searchAnime($keyword);
+
+                $allAnimes = $searchResult['items'];
+                $searchIsTruncated = $searchResult['is_truncated'];
+
                 $searchTotal = count($allAnimes);
                 $searchTotalPages = (int) ceil($searchTotal / $perPage);
                 if ($searchTotalPages > 0 && $page > $searchTotalPages) {
@@ -145,6 +150,7 @@ class AnimeSearchController extends Controller
             'searchPage' => $page,
             'searchTotal' => $searchTotal,
             'searchTotalPages' => $searchTotalPages,
+            'searchIsTruncated' => $searchIsTruncated,
         ]);
     }
 }
