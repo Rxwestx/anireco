@@ -72,13 +72,14 @@ type PublicReview = {
 };
 
 type ShowProps = {
-    anime: Anime;
+    anime: Anime | null;
     emotionTags: EmotionTag[];
     attachedEmotionTagIds: number[];
     watchNotes: WatchNote[];
     review: Review | null;
     publicReviews?: PublicReview[];
     keyword?: string;
+    apiError?: string;
 };
 
 const sourceLabels: Record<string, string> = {
@@ -104,6 +105,8 @@ export default function Show({
     review,
     publicReviews = [],
     keyword = '',
+    apiError = '',
+
 }: ShowProps) {
     const { auth } = usePage<{ auth: Auth }>().props;
 
@@ -114,6 +117,30 @@ export default function Show({
     const tagForm = useForm({
         emotion_tag_id: '',
     });
+
+    if(apiError || !anime) {
+        return (
+            <>
+                <Head title="アニメ詳細" />
+                <main className="mx-auto w-full max-w-6xl px-4 py-8">
+                    <Link
+                        href={keyword
+                            ? `/search?keyword=${encodeURIComponent(keyword)}`
+                            : '/search'
+                        }
+                        className="mb-6 inline-flex items-center text-sm text-muted-foreground transition hover:text-foreground hover:underline"
+                    >
+                        ◀︎ 検索に戻る
+                    </Link>
+                    <div className="rounded-lg border p-6 text-center">
+                        <p className="text-sm text-muted-foreground">
+                            {apiError || '現在アニメ情報を取得できません。時間をおいて再度お試しください。'}
+                        </p>
+                    </div>
+                </main>
+            </>
+        );
+    }
 
     const attachedEmotionTags = emotionTags.filter((emotionTag) =>
         attachedEmotionTagIds.includes(emotionTag.id),
