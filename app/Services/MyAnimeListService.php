@@ -16,7 +16,7 @@ class MyAnimeListService
         $normalizedKeyword = mb_convert_kana(
             trim($keyword),
             'KVas',
-            'UTF-8'
+            'UTF-8',
         );
 
         $cacheKey = 'mal.search.' . md5($normalizedKeyword);
@@ -29,6 +29,7 @@ class MyAnimeListService
                 $offset = 0;
                 $limit= 100;
                 $maxResults =200;
+                $isTruncated = false;
 
                 do {
                     $response = Http::timeout(10)
@@ -52,31 +53,86 @@ class MyAnimeListService
                         ],
                     );
 
-                if ($response->status() === 400) {
-                    return [];
-                }
-                $response->throw();
-                $animeList = $response->json('data', []);
-                foreach ($animeList as $item) {
-                    $anime = $item['node'];
-                    $items[] = [
-                        'id' => $anime['id'],
-                        'title' =>
-                            $anime['alternative_titles']['ja']
-                            ?? $anime['title'],
-                        'main_picture' =>
-                        $anime['main_picture'] ?? null,
-                        'start_date' =>
-                            $anime['start_date'] ?? null,
-                        'genres' =>
-                            $anime['genres'] ?? [],
-                    ];
-                }
+                    if ($response->status() === 400) {
+                        return [
+                            'items' => [],
+                            'is_truncated' => false,
+                        ];
+                    }
+                    $response->throw();
+                    $animeList = $response->json('data', []);
+
+                    foreach ($animeList as $item) {
+                        $anime = $item['node'];
+                        $titles = array_filter([
+                            $anime['title'] ?? null,
+                            $anime['alternative_titles']['ja'] ?? null,
+                            $anime['alternative_titles']['en'] ?? null,
+                            ...($anime['alternative_titles']['synonyms'] ?? []),
+                        ]);
+
+                        $matchScore = 0;
+
+                        foreach ($titles as $title) {
+                            $normalizedTitle = mb_convert_kana(
+                                mb_strtolower($title),
+                                'KVas',
+                                'UTF-8'
+                            );
+
+                            if (str_contains(
+                                $normalizedTitle,
+                                mb_strtolower($normalizedKeyword),
+                            )) {
+                                $matchScore = 1;
+                                break;
+                            }
+                        }
+
+                        $items[] = [
+                            'id' => $anime['id'],
+                            'title' =>
+                                $anime['alternative_titles']['ja']
+                                ?? $anime['title'],
+                            'main_picture' =>
+                                $anime['main_picture'] ?? null,
+                            'start_date' =>
+                                $anime['start_date'] ?? null,
+                            'genres' =>
+                                $anime['genres'] ?? [],
+                            'match_score' => $matchScore,
+                        ];
+
+                        if (count($items) >= $maxResults) {
+                            $isTruncated = true;
+                            break 2;
+                            }
+                    }
+
                 $hasNextPage =
                     filled($response->json('paging.next'));
                 $offset += $limit;
+
                 } while ($hasNextPage);
-                return $items;
+
+                usort(
+                    $items,
+                    fn(array $a, array $b): int =>
+                        $b['match_score'] <=> $a['match_score'],
+                );
+
+                $items = array_map(
+                    function (array $item): array {
+                        unset($item['match_score']);
+
+                        return $item;
+                    },
+                    $items,
+                );
+                return [
+                    'items' => $items,
+                    'is_truncated' => $isTruncated,
+                ];
                 },
             );
     }
