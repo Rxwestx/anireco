@@ -10,7 +10,12 @@ class MyAnimeListService
     /**
      * Create a new class instance.
      */
-    public function searchAnime(string $keyword): array
+    public function searchAnime(
+        string $keyword,
+        int $limit = 20,
+        int $offset = 0
+    ): array
+
     {
         $normalizedKeyword = mb_convert_kana(
             trim($keyword),
@@ -18,11 +23,13 @@ class MyAnimeListService
             'UTF-8'
         );
 
-        $response = Http::withHeaders([
+        $response = Http::timeout(10)
+        ->withHeaders([
             'X-MAL-CLIENT-ID' => config('services.myanimelist.client_id'),
         ])->get('https://api.myanimelist.net/v2/anime', [
             'q' => $normalizedKeyword,
-            'limit' => 20,
+            'limit' => $limit,
+            'offset' => $offset,
             'fields' => implode(',', [
                 'id',
                 'title',
@@ -39,7 +46,7 @@ class MyAnimeListService
         $response->throw();
         $animeList = $response->json('data', []);
 
-        return array_map(function (array $item):array {
+        $items = array_map(function (array $item):array {
             $anime = $item['node'];
 
             return [
@@ -50,11 +57,17 @@ class MyAnimeListService
                 'genres' => $anime['genres'] ?? [],
             ];
         }, $animeList);
+
+        return [
+            'items' => $items,
+            'has_next_page' =>filled($response->json('paging.next')),
+        ];
     }
 
     public function getAnimeByMalId(int $malId): array
     {
-        $response = Http::withHeaders([
+        $response = Http::timeout(10)
+        ->withHeaders([
             'X-MAL-CLIENT-ID' => config('services.myanimelist.client_id'),
         ])->get("https://api.myanimelist.net/v2/anime/{$malId}", [
             'fields' => implode(',', [
@@ -99,7 +112,8 @@ class MyAnimeListService
         string $season,
         int $limit =10,
     ): array{
-        $response = Http::withHeaders([
+        $response = Http::timeout(10)
+        ->withHeaders([
             'X-MAL-CLIENT-ID' => config('services.myanimelist.client_id'),
         ])->get("https://api.myanimelist.net/v2/anime/season/{$year}/{$season}",
             [
