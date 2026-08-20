@@ -7,6 +7,7 @@ use App\Models\UserAnime;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
+use Throwable;
 
 class AnimeSearchController extends Controller
 {
@@ -20,9 +21,33 @@ class AnimeSearchController extends Controller
         ]);
 
         $keyword = $request->string('keyword')->toString();
-        $animes = $keyword !==''
-        ? $myAnimeListService->searchAnime($keyword)
-        : [];
+        $page = max(1, $request->integer('page', 1));
+        $perPage = 20;
+
+        $animes =[];
+        $searchTotal = 0;
+        $searchTotalPages = 0;
+        $searchApiError = null;
+
+        if($keyword !=='') {
+            try {
+                $allAnimes = $myAnimeListService->searchAnime($keyword);
+                $searchTotal = count($allAnimes);
+                $searchTotalPages = (int) ceil($searchTotal / $perPage);
+                if ($searchTotalPages > 0 && $page > $searchTotalPages) {
+                    $page = $searchTotalPages;
+                }
+                $animes = array_slice(
+                    $allAnimes,
+                    ($page - 1) * $perPage,
+                    $perPage,
+                );
+            } catch (Throwable $e) {
+                report($e);
+                $searchApiError =
+                '現在アニメ情報を取得できません。時間をおいて再度お試しください。';
+            }
+        }
 
         $registeredUserAnimes = collect();
 
@@ -36,13 +61,20 @@ class AnimeSearchController extends Controller
             $month <= 12 => ['fall', '秋'],
         };
 
-        $seasonalAnime = $myAnimeListService
-            ->getSeasonalAnime(
-                $year,
-                $season,
-                100,
-            );
-        
+        $seasonalAnime =[];
+        $seasonalApiError = null;
+        try {
+            $seasonalAnime = $myAnimeListService->getSeasonalAnime(
+                    $year,
+                    $season,
+                    100,
+                );
+        } catch (Throwable $e) {
+            report($e);
+            $seasonalApiError =
+            '現在アニメ情報を取得できません。時間をおいて再度お試しください。';
+        }
+
 
         if ($request->user()) {
             $malIds = collect($animes)
@@ -108,6 +140,11 @@ class AnimeSearchController extends Controller
             'seasonalAnime' => $seasonalAnime,
             'seasonYear' => $year,
             'seasonLabel' => $seasonLabel,
+            'searchApiError'=> $searchApiError,
+            'seasonalApiError'=> $seasonalApiError,
+            'searchPage' => $page,
+            'searchTotal' => $searchTotal,
+            'searchTotalPages' => $searchTotalPages,
         ]);
     }
 }
