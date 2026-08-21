@@ -25,45 +25,36 @@ class MyAnimeListService
             $cacheKey,
             now()->addMinutes(10),
             function () use ($normalizedKeyword):array {
-                $items = [];
-                $offset = 0;
-                $limit= 100;
-                $maxResults =200;
-                $isTruncated = false;
-
-                do {
-                    $response = Http::timeout(10)
-                    ->withHeaders([
-                        'X-MAL-CLIENT-ID' => config('services.myanimelist.client_id'),
-                    ])
-                    ->get(
-                        'https://api.myanimelist.net/v2/anime',
-                        [
-                            'q' => $normalizedKeyword,
-                            'limit' => $limit,
-                            'offset' => $offset,
-                            'fields' => implode(',', [
-                                'id',
-                                'title',
-                                'alternative_titles',
-                                'main_picture',
-                                'start_date',
-                                'genres',
-                            ]),
-                        ],
-                    );
-
+                $response = Http::timeout(10)
+                ->withHeaders([
+                    'X-MAL-CLIENT-ID' => config('services.myanimelist.client_id'),
+                ])->get(
+                    'https://api.myanimelist.net/v2/anime',
+                    [
+                        'q' => $normalizedKeyword,
+                        'limit' => 100,
+                        'fields' => implode(',', [
+                            'id',
+                            'title',
+                            'alternative_titles',
+                            'main_picture',
+                            'start_date',
+                            'genres',
+                        ]),
+                    ],
+                );
                     if ($response->status() === 400) {
-                        return [
-                            'items' => [],
-                            'is_truncated' => false,
-                        ];
+                        return [];
                     }
                     $response->throw();
+
                     $animeList = $response->json('data', []);
 
-                    foreach ($animeList as $item) {
+                    $items = [];
+
+                    foreach ($animeList as $index => $item) {
                         $anime = $item['node'];
+
                         $titles = array_filter([
                             $anime['title'] ?? null,
                             $anime['alternative_titles']['ja'] ?? null,
@@ -71,7 +62,7 @@ class MyAnimeListService
                             ...($anime['alternative_titles']['synonyms'] ?? []),
                         ]);
 
-                        $matchScore = 0;
+                        $matchKeyword =  false;
 
                         foreach ($titles as $title) {
                             $normalizedTitle = mb_convert_kana(
@@ -84,9 +75,13 @@ class MyAnimeListService
                                 $normalizedTitle,
                                 mb_strtolower($normalizedKeyword),
                             )) {
-                                $matchScore = 1;
+                                $matchKeyword = true;
                                 break;
                             }
+                        }
+
+                        if (! $matchKeyword && $index >= 20) {
+                            continue;
                         }
 
                         $items[] = [
@@ -100,28 +95,17 @@ class MyAnimeListService
                                 $anime['start_date'] ?? null,
                             'genres' =>
                                 $anime['genres'] ?? [],
-                            'match_score' => $matchScore,
+                            'match_score' =>
+                                $matchKeyword ? 1 : 0,
                         ];
-
-                        if (count($items) >= $maxResults) {
-                            $isTruncated = true;
-                            break 2;
-                            }
                     }
-
-                $hasNextPage =
-                    filled($response->json('paging.next'));
-                $offset += $limit;
-
-                } while ($hasNextPage);
-
                 usort(
                     $items,
                     fn(array $a, array $b): int =>
                         $b['match_score'] <=> $a['match_score'],
                 );
 
-                $items = array_map(
+                return array_map(
                     function (array $item): array {
                         unset($item['match_score']);
 
@@ -129,12 +113,8 @@ class MyAnimeListService
                     },
                     $items,
                 );
-                return [
-                    'items' => $items,
-                    'is_truncated' => $isTruncated,
-                ];
-                },
-            );
+            },
+        );
     }
 
     public function getAnimeByMalId(int $malId): array
