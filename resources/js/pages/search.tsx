@@ -7,6 +7,7 @@ import RegisterAnimeDialog from '@/components/ui/RegisterAnimeDialog';
 import UpdateAnimeStatusDialog from '@/components/ui/UpdateAnimeStatusDialog';
 import type { Auth } from '@/types';
 
+
 type WatchingStatus =
         | 'want_to_watch'
         | 'watching'
@@ -40,6 +41,7 @@ type SearchProps = {
     searchPage: number;
     searchTotal: number;
     searchTotalPages: number;
+    searchIsTruncated: boolean;
 };
 
 // Laravel側から受け取った keywordを初期値として設定するために、propsでinitialKeywordとして受け取る。
@@ -54,6 +56,7 @@ export default function Search({
     searchPage,
     searchTotal,
     searchTotalPages,
+    searchIsTruncated,
 
 }: SearchProps) {
 
@@ -110,6 +113,19 @@ export default function Search({
         );
     };
 
+    const searchPaginationStart = Math.max(
+        1,
+        Math.min(
+            searchPage - 4,
+            Math.max(searchTotalPages - 9, 1),
+        ),
+    );
+
+    const searchPaginationEnd = Math.min(
+        searchPaginationStart + 9,
+        searchTotalPages,
+    );
+
     return (
         <>
             <Head title="アニメ検索" />
@@ -136,7 +152,10 @@ export default function Search({
                         <section className="mt-8">
                             <div className="mb-4 flex items-center justify-between">
                                 <h2 className="mb-4 text-xl font-semibold">
-                                    検索結果：{searchTotal}件
+                                    検索結果：
+                                    {searchIsTruncated
+                                        ? `${searchTotal}件以上`
+                                        : `${searchTotal}件`}
                                 </h2>
                             </div>
                             {searchApiError ? (
@@ -235,8 +254,13 @@ export default function Search({
                                         </button>
 
                                         {Array.from(
-                                            { length: searchTotalPages },
-                                            (_, index) => index + 1,
+                                            { length:
+                                                searchPaginationEnd -
+                                                searchPaginationStart +
+                                                1,
+                                             },
+                                            (_, index) =>
+                                                searchPaginationStart + index,
                                         ).map((page) => (
                                         <button
                                         key={page}
@@ -286,6 +310,10 @@ export default function Search({
                                 <h2 className="text-2xl font-semibold">
                                     {seasonYear}年 {seasonLabel}アニメ
                                 </h2>
+
+                                <p className="mt-1 text-sm text-muted-foreground">
+                                    全{seasonalAnime.length}件
+                                </p>
                             </div>
 
                             {seasonalApiError ? (
@@ -311,7 +339,7 @@ export default function Search({
                                                 type="button"
                                                 onClick={() => handleSeasonPageChange(Math.max(seasonPage - 1, 1))}
                                                 disabled={seasonPage === 1}
-                                                className="rounded-md border px-3 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-50"
+                                                className="cursor-pointer rounded-md border px-3 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-50"
                                             >
                                                 前へ
                                             </button>
@@ -326,7 +354,7 @@ export default function Search({
                                                     onClick={() => {
                                                         handleSeasonPageChange(page);
                                                     }}
-                                                    className={`rounded-md border px-3 py-2 text-sm ${
+                                                    className={`cursor-pointer rounded-md border px-3 py-2 text-sm ${
                                                         seasonPage === page
                                                             ? 'bg-primary text-primary-foreground'
                                                             : 'hover:bg-muted text-foreground'
@@ -344,7 +372,7 @@ export default function Search({
                                                     )
                                                 }
                                                 disabled={seasonPage === seasonalAnimeTotalPages}
-                                                className="rounded-md border px-3 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-50"
+                                                className="cursor-pointer rounded-md border px-3 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-50"
                                             >
                                                 次へ
                                             </button>
