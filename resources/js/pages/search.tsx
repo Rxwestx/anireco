@@ -89,11 +89,13 @@ export default function Search({
     const handleSeasonPageChange = (page: number) => {
         setSeasonPage(page);
 
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth',
-        });
-    }
+        document
+            .getElementById('anime-search-form')
+            ?.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start',
+            });
+    };
 
     const handleSearchPageChange = (page: number) => {
         router.get(
@@ -104,9 +106,11 @@ export default function Search({
             },
             {
                 onSuccess: () => {
-                    window.scrollTo({
-                        top: 0,
-                        behavior: 'smooth',
+                    document
+                        .getElementById('anime-search-form')
+                        ?.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start',
                     });
                 },
             },
@@ -131,7 +135,10 @@ export default function Search({
             <Head title="アニメ検索" />
 
                 <div className="w-full px-4 min-[680px]:px-6 min-[1100px]:px-8">
-                    <form onSubmit={handleSearch} className="mt-4 flex flex-col gap-2">
+                    <form
+                    id="anime-search-form"
+                    onSubmit={handleSearch}
+                    className="mt-4 flex flex-col gap-2">
                         <section>
                             <h1 className="text-2xl font-bold">アニメ検索</h1>
                             <div className="flex flex-col gap-2 min-[680px]:flex-row min-[680px]:items-center">
