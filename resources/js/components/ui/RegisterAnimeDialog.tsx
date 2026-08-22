@@ -67,7 +67,7 @@ export default function RegisterAnimeDialog({
                     setErrorMessage(null);
                     setOpen(true);
                 }}
-                className="h-10 w-full cursor-pointer rounded-md px-4 py-2 hover:bg-muted">
+                className="h-10 w-full rounded-md px-4 py-2 cursor-pointer hover:bg-muted">
                     +登録する
             </button>
 
@@ -88,7 +88,7 @@ export default function RegisterAnimeDialog({
                     <SelectContent >
                         <SelectItem value="want_to_watch"className="cursor-pointer">
                             <span className="flex items-center gap-2">
-                                <Circle className="size-4 fill-current" />
+                                <Circle className="size-4 fill-current hover:cursor-pointer" />
                                 見たい
                             </span>
                         </SelectItem>
