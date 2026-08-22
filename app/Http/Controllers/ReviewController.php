@@ -119,6 +119,7 @@ class ReviewController extends Controller
             'comment' => [
                 'nullable',
                 'string',
+                'max:1500',
             ],
             'recommend_category' => [
                 'nullable',
