@@ -142,7 +142,6 @@ class AnimeSearchController extends Controller
         return Inertia::render('search', [
             'keyword' => $keyword,
             'animes' => $animes,
-            'registeredStatus' => $registeredUserAnimes,
             'seasonalAnime' => $seasonalAnime,
             'seasonYear' => $year,
             'seasonLabel' => $seasonLabel,
