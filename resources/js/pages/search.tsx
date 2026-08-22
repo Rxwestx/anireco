@@ -41,7 +41,7 @@ type SearchProps = {
     searchPage: number;
     searchTotal: number;
     searchTotalPages: number;
-    searchIsTruncated: boolean;
+
 };
 
 // Laravel側から受け取った keywordを初期値として設定するために、propsでinitialKeywordとして受け取る。
@@ -56,7 +56,7 @@ export default function Search({
     searchPage,
     searchTotal,
     searchTotalPages,
-    searchIsTruncated,
+
 
 }: SearchProps) {
 
@@ -160,9 +160,7 @@ export default function Search({
                             <div className="mb-4 flex items-center justify-between">
                                 <h2 className="mb-4 text-xl font-semibold">
                                     検索結果：
-                                    {searchIsTruncated
-                                        ? `${searchTotal}件以上`
-                                        : `${searchTotal}件`}
+                                    {searchTotal}件
                                 </h2>
                             </div>
                             {searchApiError ? (
@@ -228,7 +226,7 @@ export default function Search({
                                                         {!auth.user ? (
                                                             <Link
                                                                 href="/login"
-                                                                className="block w-full rounded-md px-4 py-2 text-sm text-center font-medium hover:bg-muted">
+                                                                className="block w-full cursor-pointer rounded-md px-4 py-2 text-center text-sm font-medium transition-colors hover:bg-muted">
                                                                     +登録する
                                                             </Link>
                                                         ) : anime.registered_status && anime.user_anime_id ? (
@@ -364,7 +362,7 @@ export default function Search({
                                                     className={`cursor-pointer rounded-md border px-3 py-2 text-sm ${
                                                         seasonPage === page
                                                             ? 'bg-primary text-primary-foreground'
-                                                            : 'hover:bg-muted text-foreground'
+                                                            : 'text-foreground hover:bg-muted'
                                                     }`}
                                                 >
                                                     {page}

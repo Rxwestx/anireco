@@ -78,10 +78,10 @@ export default function UpdateAnimeStatusDialog({
                 <Button
                     type="button"
                     variant="outline"
-                    className={
-                        triggerClassName ??
-                        "w-full cursor-pointer"}
-                        >
+                    className={`w-full hover:cursor-pointer ${
+                        triggerClassName ?? ''
+                    }`}
+                >
                     {statusLabels[currentStatus]}
                 </Button>
             </DialogTrigger>
@@ -102,7 +102,7 @@ export default function UpdateAnimeStatusDialog({
                     </SelectTrigger>
 
                     <SelectContent>
-                        <SelectItem value="want_to_watch"className="cursor-pointer">
+                        <SelectItem value="want_to_watch">
                             <span className="flex items-center gap-2">
                                 <Circle className="size-4 fill-current" />
                                 見たい
