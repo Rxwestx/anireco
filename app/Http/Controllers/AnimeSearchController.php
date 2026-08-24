@@ -31,8 +31,35 @@ class AnimeSearchController extends Controller
 
         if($keyword !=='') {
             try {
+                $seasonSearch = $this->parseSeasonSearch($keyword);
 
-                $allAnimes = $myAnimeListService->searchAnime($keyword);
+                if ($seasonSearch) {
+                    if($seasonSearch['season']) {
+                        $allAnimes = $myAnimeListService->getSeasonalAnime(
+                            $seasonSearch['year'],
+                            $seasonSearch['season'],
+                            100,
+                        );
+                    } else {
+                        $allAnimes = [];
+
+                        foreach(
+                            ['winter', 'spring', 'summer', 'fall']
+                            as $searchSeason
+                        ) {
+                            $allAnimes = array_merge(
+                                $allAnimes,
+                                $myAnimeListService->getSeasonalAnime(
+                                    $seasonSearch['year'],
+                                    $searchSeason,
+                                    100,
+                                ),
+                            );
+                        }
+                    }
+                } else {
+                    $allAnimes = $myAnimeListService->searchAnime($keyword);
+                }
 
                 $searchTotal = count($allAnimes);
                 $searchTotalPages = (int) ceil($searchTotal / $perPage);
@@ -69,16 +96,20 @@ class AnimeSearchController extends Controller
 
         $seasonalAnime =[];
         $seasonalApiError = null;
-        try {
-            $seasonalAnime = $myAnimeListService->getSeasonalAnime(
-                    $year,
-                    $season,
-                    100,
-                );
-        } catch (Throwable $e) {
-            report($e);
-            $seasonalApiError =
-            '現在アニメ情報を取得できません。時間をおいて再度お試しください。';
+
+        if($keyword === '') {
+            try {
+                $seasonalAnime = $myAnimeListService->getSeasonalAnime(
+                        $year,
+                        $season,
+                        100,
+                    );
+            } catch (Throwable $e) {
+                report($e);
+
+                $seasonalApiError =
+                '現在アニメ情報を取得できません。時間をおいて再度お試しください。';
+            }
         }
 
 
@@ -152,4 +183,60 @@ class AnimeSearchController extends Controller
             'searchTotalPages' => $searchTotalPages,
         ]);
     }
+
+    private function parseSeasonSearch(string $keyword): ?array
+    {
+        $normalizedKeyword = mb_convert_kana(
+            trim($keyword),
+            'KVas',
+            'UTF-8',
+        );
+
+        $seasonMap = [
+            '冬' => 'winter',
+            '春' => 'spring',
+            '夏' => 'summer',
+            '秋' => 'fall',
+        ];
+
+        // 例：2026年春、2026 春、2026年春アニメ
+        if (preg_match(
+            '/^(?<year>\d{4})\s*年?\s*(?<season>[冬春夏秋])(?:の?アニメ)?$/u',
+            $normalizedKeyword,
+            $matches,
+            )) {
+            return [
+                'year' => (int) $matches['year'],
+                'season' => $seasonMap[$matches['season']],
+            ];
+        }
+
+        // 例：春アニメ、春のアニメ
+        if (preg_match(
+            '/^(?<season>[冬春夏秋])(?:の?アニメ)?$/u',
+            $normalizedKeyword,
+            $matches,
+            )) {
+            return [
+            'year' => now()->year,
+            'season' => $seasonMap[$matches['season']],
+            ];
+        }
+
+        // 例：2026、2026年
+        if (preg_match(
+            '/^(?<year>\d{4})\s*年?$/u',
+            $normalizedKeyword,
+            $matches,
+            )) {
+                return[
+                    'year' => (int) $matches['year'],
+                    'season' => null,
+                ];
+            }
+
+        return null;
+    }
 }
+
+
