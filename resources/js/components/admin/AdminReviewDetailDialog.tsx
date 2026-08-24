@@ -175,7 +175,7 @@ return (
                 </p>
             </div>
 
-            <DialogFooter className="sticky bottom-0 border-t  px-6 py-4">
+            <DialogFooter className="sticky bottom-0 border-t bg-background px-6 py-4">
                 <button
                     type="button"
                     onClick={() => setOpen(false)}
