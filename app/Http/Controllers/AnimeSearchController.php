@@ -27,7 +27,7 @@ class AnimeSearchController extends Controller
 
                 $isSeasonKeyword = in_array(
                     $keyword,
-                    ['winter', 'spring', 'summer', 'fall'],
+                    ['冬', '春', '夏', '秋'],
                     true
                 );
 
