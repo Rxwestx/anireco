@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import RegisterAnimeDialog from '@/components/ui/RegisterAnimeDialog';
 import UpdateAnimeStatusDialog from '@/components/ui/UpdateAnimeStatusDialog';
 import type { Auth } from '@/types';
+import { search } from '@/routes/anime';
 
 
 type WatchingStatus =
@@ -62,6 +63,8 @@ export default function Search({
 
     const [keyword, setKeyword] = useState(initialKeyword);
 
+    const [searchValidationError,setSearchValidationError] = useState('');
+
     const [seasonPage, setSeasonPage] = useState(1);
 
     const seasonalAnimePerPage = 20;
@@ -80,9 +83,26 @@ export default function Search({
 
     const handleSearch: SubmitEventHandler<HTMLFormElement> = (e) => {
         e.preventDefault();
+
+        const trimmedKeyword = keyword.trim();
+
+        const isSeasonKeyword = ["冬", "春", "夏", "秋"].includes(trimmedKeyword,);
+
+        if(
+            !isSeasonKeyword &&
+            trimmedKeyword.length < 2
+        ) {
+
+            setSearchValidationError(
+                '検索キーワードは2文字以上で入力してください。'
+            );
+            
+            return;
+        }
+
         // 検索処理を実装する
         router.get('/search', {
-            keyword
+            keyword: trimmedKeyword,
         });
     };
 
@@ -155,6 +175,11 @@ export default function Search({
                             </div>
                         </section>
                     </form>
+                    {searchValidationError && (
+                        <p className="mt-2 text-sm text-red-600">
+                            {searchValidationError}
+                        </p>
+                    )}
                     {initialKeyword !== '' && (
                         <section className="mt-8">
                             <div className="mb-4 flex items-center justify-between">
