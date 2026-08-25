@@ -17,7 +17,25 @@ class AnimeSearchController extends Controller
     ): Response
     {
         $request->validate([
-            'keyword' => ['nullable', 'string', 'min:2'],
+            'keyword' => ['nullable',
+            'string',
+            function(string $attribute, mixed $value, \Closure $fail) {
+                if ($value === null || $value === '') {
+                    return;
+                }
+                $keyword = trim((string) $value);
+
+                $isSeasonKeyword = in_array(
+                    $keyword,
+                    ['winter', 'spring', 'summer', 'fall'],
+                    true
+                );
+
+                if(! $isSeasonKeyword && mb_strlen($keyword) < 2) {
+                    $fail('検索キーワードは2文字以上で入力してください。');
+                }
+            },
+        ],
         ]);
 
         $keyword = $request->string('keyword')->toString();
