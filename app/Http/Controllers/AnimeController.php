@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Review;
 use App\Models\UserAnime;
-use App\Services\DeepLService;
+// use App\Services\DeepLService;
 use App\Services\MyAnimeListService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -17,8 +17,8 @@ class AnimeController extends Controller
         Request $request,
         int $malId,
         MyAnimeListService $myAnimeListService,
-        DeepLService $deepLService,
-        ): Response{
+        // DeepLService $deepLService,
+        ): Response {
 
         try {
             $anime = $myAnimeListService->getAnimeByMalId($malId);
@@ -33,31 +33,31 @@ class AnimeController extends Controller
             'review' => null,
             'publicReviews' => collect(),
             'keyword' => $request->query('keyword', ''),
-            'apiError' =>'現在アニメ情報を取得できません。時間をおいて再度お試しください。',
+            'apiError' => '現在アニメ情報を取得できません。時間をおいて再度お試しください。',
             ]);
         }
 
-        $anime['synopsis'] = $deepLService->translateToJapanese(
-            $anime['synopsis'] ?? '',
-        );
+        // $anime['synopsis'] = $deepLService->translateToJapanese(
+        //     $anime['synopsis'] ?? '',
+        // );
 
-        $genreNames = collect($anime['genres'] ?? [])
-            ->pluck('name')
-            ->all();
+        // $genreNames = collect($anime['genres'] ?? [])
+        //     ->pluck('name')
+        //     ->all();
 
-        $translatedGenreNames = $deepLService->translateManyToJapanese(
-            $genreNames,
-        );
+        // $translatedGenreNames = $deepLService->translateManyToJapanese(
+        //     $genreNames,
+        // );
 
-        $anime['genres'] = collect($anime['genres'] ?? [])
-            ->map(function (array $genre, int $index) use ($translatedGenreNames) {
-                return [
-                    ...$genre,
-                    'name' => $translatedGenreNames[$index]
-                        ?? $genre['name'],
-                ];
-            })
-            ->all();
+        // $anime['genres'] = collect($anime['genres'] ?? [])
+        //     ->map(function (array $genre, int $index) use ($translatedGenreNames) {
+        //         return [
+        //             ...$genre,
+        //             'name' => $translatedGenreNames[$index]
+        //                 ?? $genre['name'],
+        //         ];
+        //     })
+        //     ->all();
 
         $userAnime = null;
         $emotionTags = collect();
