@@ -13,6 +13,8 @@ class AnimeMaster extends Model
     protected $fillable = [
         'mal_id',
         'title',
+        'title_en',
+        'title_romaji',
         'cover_image',
         'description',
         'genre',
