@@ -24,10 +24,12 @@ class UserAnimeController extends Controller
         $anime = $myAnimeListService
         ->getAnimeByMalId($validated['anime_id']);
 
-        $animeMaster = AnimeMaster::firstOrCreate(
+        $animeMaster = AnimeMaster::updateOrCreate(
             ['mal_id' => $anime['id']],
             [
                 'title' => $anime['title'],
+                'title_en' => $anime['title_en'] ?? null,
+                'title_romaji' => $anime['title_romaji'] ?? null,
                 'cover_image' => $anime['main_picture']['large']
                 ?? $anime['main_picture']['medium'] ?? null,
                 'description' => $anime['synopsis'] ?? null,
