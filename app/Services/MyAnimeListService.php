@@ -50,6 +50,7 @@ class MyAnimeListService
 
                     $animeList = $response->json('data', []);
 
+
                     $items = [];
 
                     foreach ($animeList as $index => $item) {
@@ -89,6 +90,10 @@ class MyAnimeListService
                             'title' =>
                                 $anime['alternative_titles']['ja']
                                 ?? $anime['title'],
+                            'title_en' =>
+                                $anime['alternative_titles']['en'] ?? null,
+                            'title_romaji' =>
+                                $anime['title'] ?? null,
                             'main_picture' =>
                                 $anime['main_picture'] ?? null,
                             'start_date' =>
@@ -144,6 +149,8 @@ class MyAnimeListService
             'id' => $anime['id'],
             'title' => $anime['alternative_titles'] ['ja'] ??
             $anime['title'],
+            'title_en' => $anime['alternative_titles']['en'] ?? null,
+            'title_romaji' => $anime['title'] ?? null,
             'main_picture' => $anime['main_picture'] ?? null,
             'start_date' => $anime['start_date'] ?? null,
             'genres' => $anime['genres'] ?? [],
