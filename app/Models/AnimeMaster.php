@@ -21,6 +21,12 @@ class AnimeMaster extends Model
         'source',
         'num_episodes',
         'broadcast_year',
+        'mal_rank',
+        'mal_synced_at',
+    ];
+
+    protected $casts = [
+        'mal_synced_at' => 'datetime',
     ];
 
     public function userAnimes(): HasMany
