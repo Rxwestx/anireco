@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\MyAnimeListService;
 use App\Models\UserAnime;
+use App\Services\MyAnimeListService;
+use App\Services\AnimeSearchService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -13,7 +14,8 @@ class AnimeSearchController extends Controller
 {
     public function index(
         Request $request,
-        MyAnimeListService $myAnimeListService
+        MyAnimeListService $myAnimeListService,
+        AnimeSearchService $animeSearchService,
     ): Response
     {
         $request->validate([
@@ -76,7 +78,7 @@ class AnimeSearchController extends Controller
                         }
                     }
                 } else {
-                    $allAnimes = $myAnimeListService->searchAnime($keyword);
+                    $allAnimes = $animeSearchService->searchLocal($keyword);
                 }
 
                 $searchTotal = count($allAnimes);
