@@ -56,7 +56,7 @@ export function AppSidebar() {
         },
     ];
 
-    if (auth.user ?.role === 'admin') {
+    if (auth.user?.role === 'admin') {
         mainNavItems.push({
             title: '管理者用ページ',
             href: '/admin/reviews',
