@@ -171,6 +171,7 @@ class MyAnimeListService
         int $year,
         string $season,
         int $limit =10,
+        int $offset = 0,
     ): array{
         $response = Http::timeout(10)
         ->withHeaders([
@@ -178,6 +179,7 @@ class MyAnimeListService
         ])->get("https://api.myanimelist.net/v2/anime/season/{$year}/{$season}",
             [
                 'limit' => $limit,
+                'offset' => $offset,
                 'sort' => 'anime_num_list_users',
                 'fields' => implode(',', [
                     'id',
