@@ -76,6 +76,10 @@ class SyncAnimeMastersFromMal extends Command
                 . ':' .count($animeList)
                 . '件同期しました。'
             );
+
+            if ($page < $pages - 1) {
+                usleep(500_000);
+            }
         }
         $this->info(
             '同期完了:合計' . $totalSynced . '件'
