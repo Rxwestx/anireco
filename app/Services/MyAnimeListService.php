@@ -172,23 +172,27 @@ class MyAnimeListService
         int $offset = 0,
     ): array {
         $response = Http::timeout(10)
-        ->withHeaders([
-            'X-MAL-CLIENT-ID' => config('services.myanimelist.client_id'),
-        ])
-        ->get("https://api.myanimelist.net/v2/anime/ranking", [
-            'ranking_type' => 'all',
-            'limit' => $limit,
-            'offset' => $offset,
-            'fields' => implode(',', [
-                'id',
-                'title',
-                'alternative_titles',
-                'main_picture',
-                'start_date',
-                'genres',
-                'rank',
-            ]),
-        ]);
+            ->retry(
+                times:3,
+                sleepMilliseconds: 1000,
+            )
+            ->withHeaders([
+                'X-MAL-CLIENT-ID' => config('services.myanimelist.client_id'),
+            ])
+            ->get("https://api.myanimelist.net/v2/anime/ranking", [
+                'ranking_type' => 'all',
+                'limit' => $limit,
+                'offset' => $offset,
+                'fields' => implode(',', [
+                    'id',
+                    'title',
+                    'alternative_titles',
+                    'main_picture',
+                    'start_date',
+                    'genres',
+                    'rank',
+                ]),
+            ]);
 
         $response->throw();
 
