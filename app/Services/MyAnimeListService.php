@@ -167,6 +167,56 @@ class MyAnimeListService
         ];
     }
 
+    public function getAnimeRanking(
+        int $limit = 100,
+        int $offset = 0,
+    ): array {
+        $response = Http::timeout(10)
+        ->withHeaders([
+            'X-MAL-CLIENT-ID' => config('services.myanimelist.client_id'),
+        ])
+        ->get("https://api.myanimelist.net/v2/anime/ranking", [
+            'ranking_type' => 'all',
+            'limit' => $limit,
+            'offset' => $offset,
+            'fields' => implode(',', [
+                'id',
+                'title',
+                'alternative_titles',
+                'main_picture',
+                'start_date',
+                'genres',
+                'rank',
+            ]),
+        ]);
+
+        $response->throw();
+
+        return array_values(
+            array_map(
+            function (array $item): array {
+                $anime = $item['node'];
+
+                return [
+                    'id' => $anime['id'],
+                    'title' => $anime['alternative_titles']['ja']
+                        ?? $anime['title'],
+                    'title_en' => $anime['alternative_titles']['en']
+                        ?? null,
+                    'title_romaji' => $anime['title'] ?? null,
+                    'main_picture' => $anime['main_picture'] ?? null,
+                    'start_date' => $anime['start_date'] ?? null,
+                    'genres' => $anime['genres'] ?? [],
+                    'mal_rank' => $item['ranking']['rank']
+                        ?? $anime['rank']
+                        ?? null,
+                ];
+            },
+            $response->json('data', []),
+            ),
+        );
+    }
+
     public function getSeasonalAnime(
         int $year,
         string $season,
