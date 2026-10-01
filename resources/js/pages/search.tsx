@@ -31,10 +31,15 @@ type Anime = {
         registered_status: WatchingStatus | null;
 };
 
+type SeasonalAnime = Anime & {
+    mean: number | null;
+    status: string | null;
+};
+
 type SearchProps = {
     keyword: string;
     animes: Anime[];
-    seasonalAnime: Anime[];
+    seasonalAnime: SeasonalAnime[];
     seasonYear: number;
     seasonLabel: string;
     searchApiError?: string | null;
@@ -96,7 +101,7 @@ export default function Search({
             setSearchValidationError(
                 '検索キーワードは2文字以上で入力してください。'
             );
-            
+
             return;
         }
 
