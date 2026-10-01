@@ -46,12 +46,10 @@ class SyncAnimeMastersFromMal extends Command
                 break;
             }
 
-            foreach ($animeList as $anime) {
-                AnimeMaster::updateOrCreate(
-                    [
+            $rows = collect($animeList)
+                ->map(function (array $anime): array {
+                    return [
                         'mal_id' => $anime['id'],
-                    ],
-                    [
                         'title' => $anime['title'],
                         'title_en' => $anime['title_en'],
                         'title_romaji' => $anime['title_romaji'],
@@ -60,15 +58,31 @@ class SyncAnimeMastersFromMal extends Command
                             ?? null,
                         'genre' => collect($anime['genres'])
                             ->pluck('name')
-                            ->implode('、'),
+                            ->implode(', '),
                         'broadcast_year' => $anime['start_date']
-                            ? (int)substr($anime['start_date'], 0, 4)
+                            ? (int) substr($anime['start_date'], 0, 4)
                             : null,
                         'mal_rank' => $anime['mal_rank'],
                         'mal_synced_at' => now()->utc(),
-                    ],
-                );
-            }
+                    ];
+                })
+                ->all();
+
+            AnimeMaster::query()->upsert(
+                $rows,
+                ['mal_id'],
+                [
+                    'title',
+                    'title_en',
+                    'title_romaji',
+                    'cover_image',
+                    'genre',
+                    'broadcast_year',
+                    'mal_rank',
+                    'mal_synced_at',
+                ],
+            );
+
             $totalSynced += count($animeList);
 
             $this->info(
